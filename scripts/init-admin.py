@@ -1,6 +1,6 @@
 import sys
 import mongoengine as me
-from mahjong import models
+from noppakao import models
 import datetime
 from flask_bcrypt import Bcrypt
 
@@ -37,9 +37,9 @@ def create_user_admin():
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        me.connect(db="mahjongdb", host=sys.argv[1])
+        me.connect(db="noppakaodb", host=sys.argv[1])
     else:
-        me.connect(db="mahjongdb")
+        me.connect(db="noppakaodb")
     print("start create")
     if not check_has_user_admin_and_reset_pwd():
         create_user_admin()

@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "mahjong"
+name = "noppakao"
 version = "0.1.0"
 description = ""
 authors = ["bomzyx <bomkung123456@hotmail.com>"]
@@ -27,7 +27,7 @@ certifi = "^2023.7.22"
 requests = "^2.31.0"
 
 [tool.poetry.scripts]                                                           
-mahjong-web = "mahjong.cmd.web:main"
+noppakao-web = "noppakao.cmd.web:main"
 
 [build-system]
 requires = ["poetry-core"]

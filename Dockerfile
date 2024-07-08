@@ -12,7 +12,7 @@ ENV PYTHON=/venv/bin/python3
 RUN $PYTHON -m pip install wheel poetry gunicorn uwsgi
 
 WORKDIR /app
-COPY mahjong/cmd /app/mahjong/cmd
+COPY noppakao/cmd /app/noppakao/cmd
 COPY poetry.lock pyproject.toml /app/
 
 RUN $PYTHON -m pip install --upgrade poetry
@@ -20,7 +20,7 @@ RUN $PYTHON -m pip install --upgrade poetry
 RUN $PYTHON -m poetry config virtualenvs.create false 
 RUN . /venv/bin/activate && $PYTHON -m poetry install --no-interaction --only main
 
-COPY mahjong/web/static/package.json mahjong/web/static/package-lock.json mahjong/web/static/
-RUN npm install --prefix mahjong/web/static
+COPY noppakao/web/static/package.json noppakao/web/static/package-lock.json noppakao/web/static/
+RUN npm install --prefix noppakao/web/static
 COPY . /app
-ENV MAHJONG_SETTINGS=/app/mahjong-development.cfg
+ENV NOPPHAKAO_SETTINGS=/app/noppakao-development.cfg
