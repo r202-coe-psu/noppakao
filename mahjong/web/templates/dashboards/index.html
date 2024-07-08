@@ -1,0 +1,108 @@
+{% extends "base/default-page.html" %}
+
+{% block content %}
+<style>
+    .dashboard-box {
+        color: rgb(0, 255, 35);
+        width: 200px;
+        height: 50px;
+        background-color: #2a2a2a;
+        border: 1px solid rgb(123, 123, 123);
+        border-radius: 5px;
+        text-align: center;
+        line-height: 50px;
+        font-family: monospace;
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+
+    .table-container {
+        margin-bottom: 20px;
+    }
+
+    /* Add a custom class for left-aligning score */
+    .left-aligned {
+        text-align: left;
+    }
+</style>
+
+<div class="dashboard-box">
+    DASHBOARD
+</div>
+<div class="ui grid">
+    <div class="two column row">
+        <div class="column">
+            <div class="table-container">
+                <table class="ui inverted table">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="color: rgb(0, 255, 35);">Rating</th>
+                            <th></th>
+                            <th scope="col" style="color: rgb(0, 255, 35);">Team</th>
+                            <th scope="col" class="left-aligned" style="color: rgb(0, 255, 35);">Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for team in teams %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>
+                                {% if team.picture %}
+                                <h3 class="ui picture header">
+                                    <img src="{{team.get_picture()}}" class="ui mini rounded picture">
+                                </h3>
+                                {% endif %}
+                            </td>
+                            <td>{{ team.name }}</td>
+                            <!-- Add the left-aligned class to align score data to the left -->
+                            {% if team.score == none %}
+                            <td class="left-aligned">0</td>
+                            {% else %}
+                            <td class="left-aligned">{{ team.score }}</td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="column">
+            <div class="table-container">
+                <table class="ui inverted table">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="color: rgb(0, 255, 35);">Rating</th>
+                            <th></th>
+                            <th scope="col" style="color: rgb(0, 255, 35);">Name</th>
+                            <th scope="col" style="color: rgb(0, 255, 35);">Team</th>
+                            <th scope="col" class="left-aligned" style="color: rgb(0, 255, 35);">Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>
+                                {% if user.team.picture %}
+                                <h3 class="ui picture header">
+                                    <img src="{{ user.team.get_picture()}}" class="ui mini rounded picture">
+                                </h3>
+                                {% endif %}
+                            </td>
+                            <td>{{ user.get_fullname() }}</td>
+                            <td>{{ user.team.name }}</td>
+                            <!-- Add the left-aligned class to align score data to the left -->
+                            {% if user.score == none %}
+                            <td class="left-aligned">0</td>
+                            {% else %}
+                            <td class="left-aligned">{{ user.score }}</td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

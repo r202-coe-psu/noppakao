@@ -1,0 +1,40 @@
+version: '3'
+services:
+    mongodb:
+        image: mongo
+        container_name: mahjong-mongodb
+        volumes:
+            - ../deployment/mahjong/mongodb/data/db:/data/db
+            - /etc/localtime:/etc/localtime:ro
+        restart: always
+        networks:
+            - default
+        logging:
+            options:
+                max-size: "10m"
+                max-file: "3"
+    web:
+        build: .
+        image: mahjong-image
+        container_name: mahjong-web
+        volumes:
+            - ../deployment:/deployment
+            - /etc/localtime:/etc/localtime:ro
+        ports:
+            - 9000:9000
+        links:
+            - mongodb
+        networks:
+            - default
+        restart: always
+        environment:
+            MAHJONG_SETTINGS: /app/mahjong-development.cfg
+        command:
+            /venv/bin/gunicorn --bind 0.0.0.0:9000 "mahjong.web:create_app()" --log-file=- --log-level debug --capture-output
+        logging:
+            options:
+                max-size: "10m"
+                max-file: "3"
+
+networks:
+    default:

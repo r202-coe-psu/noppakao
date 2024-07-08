@@ -1,0 +1,176 @@
+{% extends "/base/base-layout.html" %}
+
+{% block default_head %}
+<style type="text/css">
+  .ui.main.menu {
+    display: none;
+  }
+
+  .full.height {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .full.height>.toc .ui.menu {
+    border-radius: 0;
+    border-width: 0 1px 0 0;
+    margin: 0;
+    width: inherit;
+    max-height: 100vh;
+    height: 100vh;
+    overflow: auto;
+  }
+
+  .toc {
+    position: fixed;
+    z-index: 1;
+    width: 300px;
+    flex: 0 0 auto;
+    background-color: #1b1c1d;
+  }
+
+  .article {
+    flex: 1 1 auto;
+    min-width: 0px;
+    margin-left: 300px;
+  }
+
+  .footer {
+    border-top: 1px solid #DDDDDD !important;
+    box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.08) inset !important;
+    background-color: #FAFAFA !important;
+    margin-top: 30px !important;
+  }
+
+  .main-content {
+    margin: 20px !important;
+    margin-top: 20px;
+    min-height: 75vh;
+  }
+
+  .introduction {
+    margin-left: 20px !important;
+    border-bottom: 1px solid #DDDDDD;
+    padding-bottom: 10px !important;
+  }
+
+  @media only screen and (max-width: 1050px) {
+    .toc {
+      display: none !important;
+    }
+
+    .article {
+      margin-left: 0px;
+    }
+
+    .ui.main.menu {
+      display: block !important;
+    }
+
+    .introduction {
+      display: none !important;
+    }
+
+    .fixed.menu>.container {
+      width: 100% !important;
+    }
+  }
+</style>
+
+<script type="text/javascript">
+  $(document)
+    .ready(function () {
+
+      $('.left.sidebar.menu')
+        .sidebar('attach events', '.launch.icon.item', 'show')
+        ;
+      $('.launch.icon.item')
+        .removeClass('disabled')
+        ;
+
+      $('.ui.dropdown')
+        .dropdown()
+        ;
+    })
+    ;
+</script>
+
+{% endblock default_head %}
+
+
+{% block body %}
+{# begin slide menu #}
+<div class="ui vertical inverted sidebar large menu left" style="height: 100%;">
+  {% include "/base/sidebar.html" with context %}
+</div>
+<div class="ui fixed inverted main menu" style="background-color: rgb(30, 30, 30); ">
+  <div class="ui container">
+    {% if current_user.is_authenticated %}
+    <a class="launch icon item" style="gap: 10px;">
+      <i class="content icon"></i>
+    </a>
+    {% endif %}
+    <div class="item">
+      <div style="display: flex; align-items: center;">
+        <img style="width: 45px; height: 100%; margin-right: 15px;"
+          src="https://media.istockphoto.com/id/848933026/nl/vector/konijn-schedel-met-wortelen.jpg?s=170667a&w=0&k=20&c=Emnk3ukmEQAGa40JdH4LtQ39dfNnEMDcrIlEXfgAVPI=" />
+        <p class="ui header" style="color: white; margin-top:2px">
+          RABBITS CTF
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="pusher">
+  <div class="full height">
+
+    {# begin default left side toc #}
+    {% if current_user.is_authenticated and current_user.status == 'active'%}
+    <div class="toc" style="height: 100%;">
+      {% include "/base/sidebar.html" with context %}
+    </div>
+
+    {# end default left side toc #}
+
+    {# begin main article #}
+
+    <div class="article">
+      {% else %}
+      <div class="article" style="margin-left: 0px;">
+        {% endif%}
+        <header>
+          <div class="ui segment"
+            style="background-color: rgb(30, 30, 30); width:100%; border-bottom: 1px solid rgb(0, 255, 35);">
+            <div class="introduction" style="border-bottom: none; padding-bottom: 0px !important;">
+              <div style="display: flex; justify-content: space-between;">
+                <div style="display: flex; align-items: center;">
+                  <img style="width: 45px; height: 100%; margin-right: 15px;"
+                    src="https://media.istockphoto.com/id/848933026/nl/vector/konijn-schedel-met-wortelen.jpg?s=170667a&w=0&k=20&c=Emnk3ukmEQAGa40JdH4LtQ39dfNnEMDcrIlEXfgAVPI=" />
+                  <p class="ui header" style="color: white; margin-top:2px">
+                    RABBITS CTF
+                  </p>
+                </div>
+                {%if current_user.score %}
+                <div style="display: flex; align-items: center;">
+                  <p class="ui header" style="color: white; margin-top:2px">
+                    Point {{ current_user.score }}
+                  </p>
+                </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main style="margin-top: 1em; min-height: 75vh; padding: 3em; ">
+          {% block content %}{% endblock %}
+        </main>
+      </div>
+      {# end main article #}
+
+    </div>
+  </div>
+
+  {% endblock body %}

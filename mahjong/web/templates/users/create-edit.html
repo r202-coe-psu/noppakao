@@ -1,0 +1,69 @@
+{% extends "/base/default-page.html" %}
+{% import '/base/html-renderer.html' as renderer %}
+
+{% block content %}
+<style>
+  .ui.segment {
+    color: rgb(0, 255, 35);
+    background-color: rgb(10, 10, 10);
+    border: 1px solid rgb(123, 123, 123);
+    border-radius: 5px;
+  }
+
+  .ui.primary.button {
+    background-color: rgb(0, 255, 35);
+    /* Change this to the desired color */
+    color: #000000;
+    /* Change this to the desired text color */
+  }
+
+  .field {
+    background-color: rgb(10, 10, 10);
+
+  }
+</style>
+<form method="POST">
+  <div class="ui segment">
+    <h1>{{"Edit" if "edit" in request.path else "Create"}} User</h1>
+    <div class="ui form">
+      {{ form.csrf_token }}
+      <div class="form-group">
+        {{ renderer.render_select(form.team) }}
+      </div>
+      <div class="form-group">
+        {{ renderer.render_field(form.username) }}
+      </div>
+      {% if "edit" not in request.path %}
+      <div class="field">
+        {{ renderer.render_field(form.password) }}
+      </div>
+      <div class="field">
+        {{ renderer.render_field(form.confirm_password) }}
+      </div>
+      {% endif %}
+      <div class="two fields">
+        {{ renderer.render_field(form.first_name)}}
+        {{ renderer.render_field(form.last_name)}}
+      </div>
+      <div class="form-group">
+        {{ renderer.render_field(form.email) }}
+      </div>
+      {% if msg_error %}
+      <div class="ui negative message">
+        <div class="header">{{ msg_error }}</div>
+      </div>
+      {% endif %}
+      <p></p>
+      <button type="submit" class="ui primary button">Submit</button>
+    </div>
+  </div>
+</form>
+{% endblock %}
+{% block additional_js %}
+<script>
+  function showDeleteModal(user_id) {
+    user_id ? $('.ui.small.modal.' + user_id).modal('show') : $('.ui.small.modal').modal('hide')
+      ;
+  }
+</script>
+{% endblock %}

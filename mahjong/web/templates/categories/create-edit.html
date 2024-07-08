@@ -1,0 +1,30 @@
+{% extends "base/default-page.html" %}
+{% import '/base/html-renderer.html' as renderer %}
+
+{% block content %}
+<style>
+    .ui.segment {
+      background-color: rgb(10, 10, 10); 
+      border-radius: 5px;
+      color: rgb(0, 255, 35);
+    }
+    .ui.primary.button {
+        background-color: rgb(0, 255, 35);
+        color: black;
+    }
+  </style>
+    <div class="ui segment" style="border: 1px solid rgb(123, 123, 123);">
+        {% if 'create' in request.path %}
+        <h1>Create Category</h1>
+        {% else %}
+        <h1>Edit Category</h1>
+        {% endif %}
+    </div>
+
+    <div class="ui segment" style="border: 1px solid rgb(123, 123, 123);">
+        <form method="POST" class="ui form" enctype="multipart/form-data">
+            {{ form.csrf_token }}
+            {{ renderer.render_field(form.name )}}
+        <button class="ui primary button" type="submit">Submit</button>
+    </div>
+{% endblock %}

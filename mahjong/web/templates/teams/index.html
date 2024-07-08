@@ -1,0 +1,90 @@
+{% extends "base/default-page.html" %}
+{% import '/base/html-renderer.html' as renderer %}
+
+
+
+{% block content %}
+<style>
+    .ui.segment {
+        background-color: rgb(10, 10, 10);
+        border-radius: 5px;
+    }
+
+    .ui.header {
+        color: rgb(0, 255, 35);
+    }
+
+    .blue-button {
+        background-color: rgb(0, 120, 255);
+        color: white;
+    }
+
+    .ui.primary.labeled.icon.button {
+        background-color: rgb(0, 255, 35);
+        color: black;
+    }
+</style>
+<div class="ui segment" style="border: 1px solid rgb(123, 123, 123);">
+    <h1 class="ui header">
+        TEAMS
+    </h1>
+</div>
+<div class="ui segment" style="border: 1px solid rgb(123, 123, 123);">
+
+    <a class="ui primary labeled icon button" href="{{url_for('teams.create_or_edit')}}">
+        <i class="add icon"></i>
+        Create team
+    </a>
+    <table class="ui selectable inverted table">
+        <thead>
+            <tr>
+                <th>TEAM</th>
+                <th>status</th>
+                <th>Edit</th>
+                <th>Delete</th>
+                <th>Recover</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for team in teams %}
+            <tr>
+                <td data-label="Name">{{ team.name }}</td>
+                <td data-label="Email">{{ team.status }}</td>
+                <td data-label="edit"><a href="{{url_for('teams.create_or_edit', team_id=team.id)}}"><i
+                            class="edit icon yellow"></i></a></td>
+                <td data-label="delete"><a onclick="showDeleteModal('{{ team.id }}')"><i class="trash icon red"></i></a>
+                </td>
+                <td data-label="Recover"><a href="{{ url_for('teams.recover',team_id=team.id)}}"><i
+                            class="redo icon"></i></a>
+                </td>
+            </tr>
+            <div class="ui small modal {{team.id}}"
+                style="background-color: black; color: white;font-size: 20px; border: 1px solid rgb(0, 255, 35);">
+                <div class="header"
+                    style="background-color: black; color: white;font-size: 20px; border: 1px solid rgb(0, 255, 35);">
+                    Change Status Team</div>
+                <div class="content" style="background-color: black; color: white;font-size: 20px;">
+                    <h4 class="ui headers">
+                        {{ ("Are you sure you want to change status") }} : <span class="ui red text"> {{ team.name
+                            }} ?</span>
+                    </h4>
+                    <a class="ui right floated negative button" style="margin-bottom: 1em;"
+                        href="{{url_for('teams.delete', team_id=team.id)}}">
+                        {{ ("Delete") }}</i>
+                    </a>
+
+                </div>
+            </div>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+{% block additional_js %}
+<script>
+    function showDeleteModal(team) {
+        team ? $('.ui.small.modal.' + team).modal('show') : $('.ui.small.modal').modal('hide')
+            ;
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="{{ url_for('static', filename='node_modules/jquery/dist/jquery.min.js') | add_date_url }}"></script>
+  <script
+    src="{{ url_for('static', filename='node_modules/fomantic-ui-css/semantic.min.js') | add_date_url }}"></script>
+  <link rel="stylesheet" type="text/css" media="all"
+    href="{{ url_for('static', filename='node_modules/fomantic-ui-css/semantic.min.css') | add_date_url }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') | add_date_url }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/color.css') | add_date_url }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/color.css') | add_date_url }}">
+  {% block default_head %}{% endblock %}
+  {% block additional_head %}{% endblock %}
+  <style>
+    td {
+      font-family: monospace;
+      font-size: 16px;
+    }
+
+    th {
+      font-family: monospace;
+      font-size: 20px;
+    }
+
+    p {
+      font-family: monospace;
+      font-size: 20px;
+    }
+
+    .ui.header {
+      font-family: monospace;
+      font-size: 18px;
+    }
+
+    .ui.primary.labeled.icon.button {
+      font-family: monospace;
+      font-size: 15px;
+    }
+
+    .ui.content {
+      font-family: monospace;
+      font-size: 15px;
+    }
+  </style>
+
+  <title>
+    {% block title %}
+    {{ config.get('APP_TITLE') }}
+    {% endblock %}
+  </title>
+</head>
+
+<body>
+  <div class="pusher" style="background-image: url('https://i.pinimg.com/originals/b8/08/b0/b808b00787dfa4e3efc94d6bae4d4f04.jpg');
+    background-repeat: no-repeat;
+    background-attachment: fixed; 
+    background-size: 100% 100%;">
+    {% block body %}{% endblock body %}
+  </div>
+</body>
+
+{% block additional_js %}{% endblock %}
+
+</html>
