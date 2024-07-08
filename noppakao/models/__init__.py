@@ -1,6 +1,6 @@
 from flask_mongoengine import MongoEngine
 from .users import User
-from .flags import FlagQuestion
+from .questions import FlagQuestion
 from .categories import Category
 from .updates import UpdateInformation
 from .teams import Teams

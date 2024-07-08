@@ -14,16 +14,16 @@ class User(me.Document, UserMixin):
     phone_number = me.StringField(max_length=10, default="")
     status = me.StringField(default="active")
     roles = me.ListField(me.StringField(), default=["user"])
+    
+    organization = me.StringField()
     team = me.ReferenceField("Teams", dbref=True)
-    score = me.IntField(default=0)
+    score = me.IntField(default=0, required=True)
 
     created_date = me.DateTimeField(required=True, default=datetime.datetime.now)
     updated_date = me.DateTimeField(required=True, default=datetime.datetime.now)
     last_login_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
     )
-    update_info = me.EmbeddedDocumentListField("UpdateInformation")
-
     def set_password(self, password):
         from werkzeug.security import generate_password_hash
 
