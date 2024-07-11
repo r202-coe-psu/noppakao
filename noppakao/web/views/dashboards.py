@@ -22,7 +22,7 @@ module = Blueprint("dashboards", __name__, url_prefix="/dashboard")
 @module.route("/", methods=["GET", "POST"])
 @login_required
 def index():
-    teams = models.Teams.objects(status="active").order_by("-score", "updated_date")
+    teams = models.Team.objects(status="active").order_by("-score", "updated_date")
     users = models.User.objects(
         status="active", roles__ne="admin", team__in=teams
     ).order_by("-score", "updated_date")

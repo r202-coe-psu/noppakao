@@ -1,9 +1,8 @@
 from flask_mongoengine import MongoEngine
 from .users import User
-from .questions import FlagQuestion
+from .questions import Question
 from .categories import Category
-from .updates import UpdateInformation
-from .teams import Teams
+from .teams import Team
 
 db = MongoEngine()
 

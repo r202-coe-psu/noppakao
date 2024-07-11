@@ -1,6 +1,5 @@
 import mongoengine as me
 import datetime
-from .updates import UpdateInformation
 
 STATUS_CHOICES = [
     "active",

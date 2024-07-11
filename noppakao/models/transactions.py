@@ -1,7 +1,6 @@
 import mongoengine as me
 import datetime
 from flask_login import UserMixin
-from .updates import UpdateInformation
 
 TRANSCATION_TYPE = [
     "hint",

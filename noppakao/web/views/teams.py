@@ -24,7 +24,7 @@ module = Blueprint("teams", __name__, url_prefix="/teams")
 @module.route("/", methods=["GET", "POST"])
 @login_required
 def index():
-    teams = models.Teams.objects()
+    teams = models.Team.objects()
     return render_template("teams/index.html", teams=teams)
 
 
@@ -32,11 +32,11 @@ def index():
 @module.route("<team_id>/edit", methods=["GET", "POST"])
 @login_required
 def create_or_edit(team_id):
-    teams = models.Teams.objects()
+    teams = models.Team.objects()
     form = forms.teams.TeamsForm()
 
     if team_id:
-        teams = models.Teams.objects.get(id=team_id)
+        teams = models.Team.objects.get(id=team_id)
         form = forms.teams.TeamsForm(obj=teams)
 
     if not form.validate_on_submit():
@@ -44,7 +44,7 @@ def create_or_edit(team_id):
         return render_template("/teams/create_or_edit.html", form=form, teams=teams)
 
     if not team_id:
-        teams = models.Teams(
+        teams = models.Team(
             created_by=current_user._get_current_object(),
             last_updated_by=current_user._get_current_object(),
         )
@@ -72,7 +72,7 @@ def create_or_edit(team_id):
 @module.route("/<team_id>/delete", methods=["GET", "POST"])
 @login_required
 def delete(team_id):
-    teams = models.Teams.objects.get(id=team_id)
+    teams = models.Team.objects.get(id=team_id)
     teams.status = "disactive"
     teams.save()
     return redirect(
@@ -83,7 +83,7 @@ def delete(team_id):
 @module.route("/<team_id>/recover", methods=["GET", "POST"])
 @login_required
 def recover(team_id):
-    team = models.Teams.objects.get(id=team_id)
+    team = models.Team.objects.get(id=team_id)
     team.status = "active"
     team.save()
     return redirect(url_for("teams.index"))
@@ -94,7 +94,7 @@ def recover(team_id):
 def get_image(team_id):
     response = Response()
     response.status_code = 404
-    team = models.Teams.objects.get(id=team_id)
+    team = models.Team.objects.get(id=team_id)
     if team.picture:
         response = send_file(
             team.picture,

@@ -31,7 +31,7 @@ bcrypt = Bcrypt()
 @module.route("/", methods=["GET", "POST"])
 @login_required
 def index():
-    submit_flags = models.FlagQuestion.objects()
+    submit_flags = models.Question.objects()
     flag = request.args.get("flag")
     submit_flag_id = request.args.get("submit_flag_id")
 
@@ -53,9 +53,9 @@ def index():
 @module.route("<submit_flag_id>/download_file", methods=["GET", "POST"])
 @login_required
 def download(submit_flag_id):
-    submit_flag = models.FlagQuestion.objects(id=submit_flag_id)
+    submit_flag = models.Question.objects(id=submit_flag_id)
     try:
-        submit_flag = models.FlagQuestion.objects(id=submit_flag_id).first()
+        submit_flag = models.Question.objects(id=submit_flag_id).first()
     except:
         return abort(404)
 
@@ -72,8 +72,8 @@ def download(submit_flag_id):
 def submit_flag_question(submit_flag_id, flag):
 
     try:
-        submit_flag = models.FlagQuestion.objects.get(id=submit_flag_id)
-        team = models.Teams.objects.get(id=current_user.team.id)
+        submit_flag = models.Question.objects.get(id=submit_flag_id)
+        team = models.Team.objects.get(id=current_user.team.id)
     except:
         return redirect(url_for("submit_flags.index"))
 

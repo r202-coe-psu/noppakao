@@ -6,7 +6,7 @@ from wtforms import fields, widgets, validators
 from noppakao import models
 
 BaseUploadDataForm = model_form(
-    models.FlagQuestion,
+    models.Question,
     FlaskForm,
     exclude=[
         "upload_by",

@@ -6,7 +6,7 @@ from wtforms import fields, widgets, validators
 from noppakao import models
 
 BaseTeamsForm = model_form(
-    models.Teams,
+    models.Team,
     FlaskForm,
     exclude=["created_by", "created_date", "last_updated_by", "updated_date", "score"],
     field_args={"name": {"label": "Name"}, "status": {"label": "Status"}},

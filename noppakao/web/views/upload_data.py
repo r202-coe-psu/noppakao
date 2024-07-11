@@ -29,7 +29,7 @@ module = Blueprint("upload_data", __name__, url_prefix="/upload_data")
 @module.route("/")
 @login_required
 def index():
-    submit_flags = models.FlagQuestion.objects()
+    submit_flags = models.Question.objects()
     return render_template("/upload_data/index.html", submit_flags=submit_flags)
 
 
@@ -41,12 +41,12 @@ def index():
 @module.route("/<submit_flag_id>/edit", methods=["GET", "POST"])
 @login_required
 def create_or_edit(submit_flag_id):
-    upload_data = models.FlagQuestion.objects()
+    upload_data = models.Question.objects()
     form = forms.flags.UploadDataForm()
     categories = models.Category.objects(status="active")
 
     if submit_flag_id:
-        upload_data = models.FlagQuestion.objects.get(id=submit_flag_id)
+        upload_data = models.Question.objects.get(id=submit_flag_id)
         form = forms.flags.UploadDataForm(obj=upload_data)
         upload_data.update_info.append(
             updater_info.create_update_information(current_user, request, "updated")
@@ -59,7 +59,7 @@ def create_or_edit(submit_flag_id):
         return render_template("/upload_data/create-edit.html", form=form)
 
     if not submit_flag_id:
-        upload_data = models.FlagQuestion(
+        upload_data = models.Question(
             upload_by=current_user._get_current_object(),
             last_updated_by=current_user._get_current_object(),
         )
@@ -98,7 +98,7 @@ def create_or_edit(submit_flag_id):
 @module.route("<submit_flag_id>/delete", methods=["GET", "POST"])
 @login_required
 def delete(submit_flag_id):
-    submit_flag = models.FlagQuestion.objects.get(id=submit_flag_id)
+    submit_flag = models.Question.objects.get(id=submit_flag_id)
     submit_flag.delete()
     return redirect(url_for("upload_data.index"))
 

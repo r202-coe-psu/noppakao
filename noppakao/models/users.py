@@ -1,7 +1,6 @@
 import mongoengine as me
 import datetime
 from flask_login import UserMixin
-from .updates import UpdateInformation
 
 
 class User(me.Document, UserMixin):
@@ -16,7 +15,7 @@ class User(me.Document, UserMixin):
     roles = me.ListField(me.StringField(), default=["user"])
     
     organization = me.StringField()
-    team = me.ReferenceField("Teams", dbref=True)
+    team = me.ReferenceField("Team", dbref=True)
     score = me.IntField(default=0, required=True)
 
     created_date = me.DateTimeField(required=True, default=datetime.datetime.now)

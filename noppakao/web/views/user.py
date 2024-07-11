@@ -44,7 +44,7 @@ def index():
 def create_or_edit(user_id):
     form = forms.accounts.RegistrationForm()
     user = models.User.objects()
-    teams = models.Teams.objects(status="active")
+    teams = models.Team.objects(status="active")
     msg_error = ""
 
     if user_id:
@@ -81,7 +81,7 @@ def create_or_edit(user_id):
         )
 
     if not user_id:
-        team = models.Teams.objects.get(id=form.team.data)
+        team = models.Team.objects.get(id=form.team.data)
         username = form.username.data
         first_name = form.first_name.data
         last_name = form.last_name.data
@@ -101,7 +101,7 @@ def create_or_edit(user_id):
         )
     else:
         form.populate_obj(user)
-        team = models.Teams.objects.get(id=form.team.data)
+        team = models.Team.objects.get(id=form.team.data)
         user.team = team
 
     user.save()
