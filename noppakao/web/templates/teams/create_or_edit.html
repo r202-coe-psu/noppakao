@@ -26,6 +26,7 @@
     <form method="POST" class="ui form" enctype="multipart/form-data">
         {{ form.csrf_token }}
         {{ renderer.render_field(form.name )}}
+        {{ form.members(class="ui fluid search dropdown" ) }}
         {{ renderer.render_field(form.picture )}}
         <button class="ui primary button" type="submit">Submit</button>
 </div>
