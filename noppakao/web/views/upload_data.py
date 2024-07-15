@@ -42,12 +42,12 @@ def index():
 @login_required
 def create_or_edit(submit_flag_id):
     upload_data = models.Question.objects()
-    form = forms.flags.UploadDataForm()
+    form = forms.questions.UploadDataForm()
     categories = models.Category.objects(status="active")
 
     if submit_flag_id:
         upload_data = models.Question.objects.get(id=submit_flag_id)
-        form = forms.flags.UploadDataForm(obj=upload_data)
+        form = forms.questions.UploadDataForm(obj=upload_data)
         upload_data.update_info.append(
             updater_info.create_update_information(current_user, request, "updated")
         )

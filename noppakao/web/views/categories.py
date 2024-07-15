@@ -48,6 +48,7 @@ def create_or_edit(category_id):
         )
 
     if not form.validate_on_submit():
+        print("--------->", form.errors)
         return render_template(
             "/categories/create-edit.html",
             form=form,
@@ -57,14 +58,11 @@ def create_or_edit(category_id):
     if not category_id:
         categories = models.Category(
             created_by=current_user._get_current_object(),
-            last_updated_by=current_user._get_current_object(),
-        )
-        categories.update_info.append(
-            updater_info.create_update_information(current_user, request, "created")
+            updated_by=current_user._get_current_object(),
         )
 
     form.populate_obj(categories)
-    categories.last_updated_by = current_user._get_current_object()
+    categories.updated_by = current_user._get_current_object()
     categories.save()
     return redirect(
         url_for("categories.index"),
