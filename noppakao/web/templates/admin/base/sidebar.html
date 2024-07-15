@@ -1,6 +1,8 @@
 {% if current_user.is_authenticated %}
 <a href="{{ url_for('admin.teams.index') }}"> AllTeam </a>
 <a href="{{ url_for('admin.dashboards.index') }}"> Dashboard </a>
+<a href="{{ url_for('admin.categories.index') }}"> categories </a>
+<a href="{{ url_for('admin.challenges.index') }}"> challenges </a>
 
 {% endif %}
 

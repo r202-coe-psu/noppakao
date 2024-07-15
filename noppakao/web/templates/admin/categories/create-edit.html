@@ -1,0 +1,19 @@
+{% extends "admin/base/default-page.html" %}
+
+{% block content %}
+
+<div class="ui segment" style="border: 1px solid rgb(123, 123, 123);">
+    {% if 'create' in request.path %}
+    <h1>Create Category</h1>
+    {% else %}
+    <h1>Edit Category</h1>
+    {% endif %}
+</div>
+
+<div class="ui segment" style="border: 1px solid rgb(123, 123, 123);">
+    <form method="POST" class="ui form" enctype="multipart/form-data">
+        {{ form.csrf_token }}
+        {{ form.name }}
+        <button class="ui primary button" type="submit">Submit</button>
+</div>
+{% endblock %}

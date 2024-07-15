@@ -1,0 +1,85 @@
+{% extends "admin/base/default-page.html" %}
+
+
+{% block content %}
+<style>
+    .ui.segment {
+        background-color: rgb(10, 10, 10);
+        border-radius: 5px;
+    }
+
+    .ui.header {
+        color: rgb(0, 255, 35);
+    }
+
+    .blue-button {
+        background-color: rgb(0, 120, 255);
+        color: white;
+    }
+
+    .ui.primary.labeled.icon.button {
+        background-color: rgb(0, 255, 35);
+        color: black;
+    }
+</style>
+<div class="ui segment" style="border: 1px solid rgb(123, 123, 123);">
+    <h1 class="ui header">
+        Categories
+    </h1>
+</div>
+<div class="ui segment" style="border: 1px solid rgb(123, 123, 123);">
+
+    <a class="ui primary labeled icon button" href="{{url_for('admin.categories.create_or_edit')}}">
+        <i class="add icon"></i>
+        Create Category
+    </a>
+    <table class="ui selectable inverted table">
+        <thead>
+            <tr>
+                <th>Category name</th>
+                <th>status</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in categories %}
+            <tr>
+                <td data-label="Name">{{ category.name }}</td>
+                <td data-label="Email">{{ category.status }}</td>
+                <td data-label="edit"><a
+                        href="{{url_for('admin.categories.create_or_edit', category_id=category.id)}}"><i
+                            class="edit icon yellow"></i></a></td>
+                <td data-label="delete"><a onclick="showDeleteModal('{{ category.id }}')"><i
+                            class="trash icon red"></i></a>
+                </td>
+            </tr>
+            <div class="ui small modal {{category.id}}"
+                style="background-color: black; color: white;font-size: 20px; border: 1px solid rgb(0, 255, 35);">
+                <div class="header"
+                    style="background-color: black; color: white;font-size: 20px; border: 1px solid rgb(0, 255, 35);">
+                    Change Status Category</div>
+                <div class="content" style="background-color: black; color: white;font-size: 20px;">
+                    <h4 class="ui headers">
+                        {{ ("Are you sure you want to change status") }} : <span class="ui red text"> {{ category.name
+                            }} ?</span>
+                    </h4>
+                    <a class="ui right floated negative button" style="margin-bottom: 1em;"
+                        href="{{url_for('admin.categories.delete', category_id=category.id)}}">
+                        {{ ("Delete") }}</i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+{% block additional_js %}
+<script>
+    function showDeleteModal(category) {
+        category ? $('.ui.small.modal.' + category).modal('show') : $('.ui.small.modal').modal('hide')
+            ;
+    }
+</script>
+{% endblock %}

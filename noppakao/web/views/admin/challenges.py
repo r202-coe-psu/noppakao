@@ -92,7 +92,7 @@ def create_or_edit(challenge_id):
     challenge.category = models.Category.objects(id=form.category.data).first()
     challenge.updated_by = current_user
     challenge.save()
-    return redirect(url_for("challenges.index"))
+    return redirect(url_for("admin.challenges.index"))
 
 
 @module.route("<challenge_id>/download_file", methods=["GET", "POST"])
