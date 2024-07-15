@@ -3,10 +3,9 @@ import datetime
 
 from flask import url_for
 
-STATUS_CHOICES = [
-    "active",
-    "disactive"
-]
+STATUS_CHOICES = ["active", "disactive"]
+
+
 class Team(me.Document):
     meta = {"collection": "teams"}
 
@@ -14,7 +13,6 @@ class Team(me.Document):
     organization = me.StringField()
     picture = me.FileField()
 
-    score = me.IntField(required=True, default=0)
     members = me.ListField(me.ReferenceField("User", dbref=True))
 
     status = me.StringField(default="active", choices=STATUS_CHOICES, required=True)
@@ -24,6 +22,9 @@ class Team(me.Document):
     updated_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
     )
+
+    def get_score(self, event):
+        return 0
 
     def get_picture(self):
         if self.picture:
