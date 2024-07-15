@@ -1,0 +1,96 @@
+{% extends "admin/base/default-page.html" %}
+
+{% block content %}
+<style>
+    .ui.card {
+        font-size: 20px;
+        font-family: monospace;
+        margin-bottom: 20px;
+        width: 200%;
+        background-color: rgb(0, 0, 0);
+        color: black !important;
+
+    }
+
+    .ui.card .content {
+        padding: 10px;
+    }
+
+    .ui.card .content h5.ui.sub.header {
+        margin-top: 0px;
+    }
+
+    .ui.card .extra.content {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .ui.modal {
+        max-width: 60%;
+        margin: auto;
+    }
+
+    .ui.primary.button {
+        width: 200%;
+        font-size: 18px;
+    }
+
+    .ui.small.modal {
+        background-color: rgb(0, 0, 0);
+        /* Change this to the desired color */
+        color: #fff;
+        /* Change this to the desired text color */
+    }
+
+    .box {
+        inline-size: auto;
+        overflow-wrap: break-word;
+    }
+</style>
+<a href="{{ url_for('challenges.create_or_edit') }}">
+    create challenge
+</a>
+<div class="ui stackable four column grid">
+    {% for challenge in challenges %}
+    <div class="four wide column">
+        <div class="ui card">
+            <div class="content">
+                <div style="display: flex; justify-content: space-between;">
+                    <div class="header" style='color: rgb(251, 251, 251) ;'>{{ challenge.name }}</div>
+                    <div class="solve" style="color: rgb(251, 251, 251);">solve :
+                    </div>
+                </div>
+            </div>
+            <div style="background-color: rgb(0, 255, 35); width: 100%; height: 1px"></div>
+            <div class="content">
+                <div class="ui small feed">
+                    <div class="content" style="font-size:18px">
+                        <h5 class="ui sub header" style='color: rgb(251, 251, 251);'>Point: {{ challenge.point }}</h5>
+                        <h5 class="ui sub header" style='color: rgb(251, 251, 251);'>Type: {{ challenge.category.name
+                            }}
+                        </h5>
+                    </div>
+                </div>
+            </div>
+            <div style="background-color: rgb(0, 255, 35); width: 100%; height: 1px"></div>
+
+
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block additional_js %}
+<script>
+    function showChallenge(challenge) {
+        challenge ? $('.ui.small.modal.' + challenge).modal('show') : $('.ui.small.modal').modal('hide')
+            ;
+    }
+</script>
+<script>
+    function Hint(msg) {
+        alert('Hist : ' + msg);
+    }
+</script>
+{% endblock %}

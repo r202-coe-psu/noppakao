@@ -1,0 +1,18 @@
+{% extends "base/default-page.html" %}
+{% import '/base/html-renderer.html' as renderer %}
+
+{% block content %}
+<form enctype="multipart/form-data" method="post">
+  {{ form.csrf_token }}
+  {{ form.name }}
+  {{ form.description }}
+  {{ form.category }}
+  {{ form.hint }}
+  {{ form.answer }}
+  {{ form.answer_type }}
+  {{ form.challenge_url }}
+  {{ form.uploaded_file }}
+
+  <button type="submit">save</button>
+</form>
+{% endblock %}
