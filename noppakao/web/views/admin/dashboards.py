@@ -23,4 +23,4 @@ module = Blueprint("dashboards", __name__, url_prefix="/dashboard")
 @acl.roles_required("admin")
 def index():
 
-    return render_template("dashboards/index.html")
+    return render_template("admin/dashboards/index.html")

@@ -1,0 +1,22 @@
+{% extends "admin/base/default-page.html" %}
+
+
+
+
+{% block content %}
+
+{% for team in teams %}
+{{ team.name }}
+{% endfor %}
+
+{% endblock %}
+
+
+{% block additional_js %}
+<script>
+    function showDeleteModal(team) {
+        team ? $('.ui.small.modal.' + team).modal('show') : $('.ui.small.modal').modal('hide')
+            ;
+    }
+</script>
+{% endblock %}
