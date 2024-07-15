@@ -1,5 +1,41 @@
 {% extends "/base/base-layout.html" %}
 
+<div class="ui fixed main menu">
+  <a class="launch icon item">
+    <i class="content icon"></i>
+  </a>
+  <div class="item">
+    <a id="link" href="" style="color: black;">
+      {{ config.get('APP_TITLE') }}
+    </a>
+    <div class="right menu">
+      {% if current_user.is_authenticated %}
+      <div class="ui dropdown item right">
+        <i class="user icon"></i>
+        {{ current_user.first_name }}
+        {{ current_user.last_name }}
+        <i class="dropdown icon"></i>
+        <div class="menu">
+          <a href="{{ url_for('accounts.logout') }}">
+            <div class="item">
+              <span class="ui red text">
+                <i class="power off icon"></i>
+                Logout
+              </span>
+            </div>
+          </a>
+        </div>
+      </div>
+      {% else %}
+      <div class="ui item right">
+        <a class="ui icon top right pointing small" href="{{url_for('accounts.login')}}">
+          <i class="sign in alternate icon"></i>
+          <span class="text">Login</span>
+        </a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
 {% block body %}
 <div>{% include "/base/navbar.html" %}</div>
 
@@ -32,83 +68,4 @@
     document.getElementById("content-desktop");
   }
 </script>
-
-{% endblock default_head %}
-
-
-{% block body %}
-{# begin slide menu #}
-<div class="ui vertical inverted sidebar large menu left" style="height: 100%;">
-  {% include "/base/sidebar.html" with context %}
-</div>
-<div class="ui fixed inverted main menu" style="background-color: rgb(30, 30, 30); ">
-  <div class="ui container">
-    {% if current_user.is_authenticated %}
-    <a class="launch icon item" style="gap: 10px;">
-      <i class="content icon"></i>
-    </a>
-    {% endif %}
-    <div class="item">
-      <div style="display: flex; align-items: center;">
-        <img style="width: 45px; height: 100%; margin-right: 15px;"
-          src="https://media.istockphoto.com/id/848933026/nl/vector/konijn-schedel-met-wortelen.jpg?s=170667a&w=0&k=20&c=Emnk3ukmEQAGa40JdH4LtQ39dfNnEMDcrIlEXfgAVPI=" />
-        <p class="ui header" style="color: white; margin-top:2px">
-          RABBITS CTF
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<div class="pusher">
-  <div class="full height">
-
-    {# begin default left side toc #}
-    {% if current_user.is_authenticated and current_user.status == 'active'%}
-    <div class="toc" style="height: 100%;">
-      {% include "/base/sidebar.html" with context %}
-    </div>
-
-    {# end default left side toc #}
-
-    {# begin main article #}
-
-    <div class="article">
-      {% else %}
-      <div class="article" style="margin-left: 0px;">
-        {% endif%}
-        <header>
-          <div class="ui basic segment"
-            style="background-color: #242649; width:100%; border-bottom: 3px solid #242649;">
-            <div class="introduction" style="border-bottom: none; padding-bottom: 0px !important;">
-              <div style="display: flex; justify-content: space-between;">
-                <div style="display: flex; align-items: center;">
-                  <img style="width: 45px; height: 100%; margin-right: 15px;"
-                    src="https://media.istockphoto.com/id/848933026/nl/vector/konijn-schedel-met-wortelen.jpg?s=170667a&w=0&k=20&c=Emnk3ukmEQAGa40JdH4LtQ39dfNnEMDcrIlEXfgAVPI=" />
-                  <p class="ui header" style="color: white; margin-top:2px">
-                    RABBITS CTF
-                  </p>
-                </div>
-                {%if current_user.score %}
-                <div style="display: flex; align-items: center;">
-                  <p class="ui header" style="color: white; margin-top:2px">
-                    Point {{ current_user.score }}
-                  </p>
-                </div>
-                {% endif %}
-              </div>
-            </div>
-          </div>
-        </header>
-
-        <main style="margin-top: 1em; min-height: 75vh; padding: 3em; ">
-          {% block content %}{% endblock %}
-        </main>
-      </div>
-      {# end main article #}
-
-    </div>
-  </div>
-
-  {% endblock body %}
+{% endblock body %}
