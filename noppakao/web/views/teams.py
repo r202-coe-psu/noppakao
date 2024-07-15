@@ -24,7 +24,7 @@ module = Blueprint("teams", __name__, url_prefix="/teams")
 @module.route("/", methods=["GET", "POST"])
 @login_required
 def index():
-    teams = models.Team.objects()
+    teams = models.Team.objects(status="active")
     return render_template("teams/index.html", teams=teams)
 
 
@@ -32,16 +32,16 @@ def index():
 @module.route("<team_id>/edit", methods=["GET", "POST"])
 @login_required
 def create_or_edit(team_id):
-    teams = models.Team.objects()
+    team = None
     form = forms.teams.TeamsForm()
 
     if team_id:
-        teams = models.Team.objects.get(id=team_id)
-        form = forms.teams.TeamsForm(obj=teams)
+        team = models.Team.objects.get(id=team_id)
+        form = forms.teams.TeamsForm(obj=team)
 
     if not form.validate_on_submit():
         print(form.errors)
-        return render_template("/teams/create_or_edit.html", form=form, teams=teams)
+        return render_template("/teams/create_or_edit.html", form=form, team=team)
 
     if not team_id:
         teams = models.Team(
