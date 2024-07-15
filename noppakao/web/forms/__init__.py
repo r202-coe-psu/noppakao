@@ -1,3 +1,3 @@
-from . import accounts, categories, questions, teams
+from . import accounts, categories, challenges, teams
 
-__all__ = [accounts, categories, questions, teams]
+__all__ = [accounts, categories, challenges, teams]

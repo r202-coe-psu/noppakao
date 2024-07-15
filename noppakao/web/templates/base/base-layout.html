@@ -9,6 +9,7 @@
   <script src="{{ url_for('static', filename='node_modules/jquery/dist/jquery.min.js') | add_date_url }}"></script>
   <script
     src="{{ url_for('static', filename='node_modules/fomantic-ui-css/semantic.min.js') | add_date_url }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <link rel="stylesheet" type="text/css" media="all"
     href="{{ url_for('static', filename='node_modules/fomantic-ui-css/semantic.min.css') | add_date_url }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') | add_date_url }}">
@@ -16,37 +17,6 @@
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/color.css') | add_date_url }}">
   {% block default_head %}{% endblock %}
   {% block additional_head %}{% endblock %}
-  <style>
-    td {
-      font-family: monospace;
-      font-size: 16px;
-    }
-
-    th {
-      font-family: monospace;
-      font-size: 20px;
-    }
-
-    p {
-      font-family: monospace;
-      font-size: 20px;
-    }
-
-    .ui.header {
-      font-family: monospace;
-      font-size: 18px;
-    }
-
-    .ui.primary.labeled.icon.button {
-      font-family: monospace;
-      font-size: 15px;
-    }
-
-    .ui.content {
-      font-family: monospace;
-      font-size: 15px;
-    }
-  </style>
 
   <title>
     {% block title %}
@@ -56,14 +26,27 @@
 </head>
 
 <body>
-  <div class="pusher" style="background-color: #ffffff;
-    background-repeat: no-repeat;
-    background-attachment: fixed; 
-    background-size: 100% 100%;">
+  <div class="pusher">
     {% block body %}{% endblock body %}
   </div>
 </body>
+<script>
+  $('.ui.dropdown')
+    .dropdown();
+  $(document)
+    .ready(function () {
+      $('.left.sidebar.menu')
+        .sidebar('attach events', '.launch.icon.item', 'show')
+        ;
+    })
+    ;
+</script>
 
+<style type="text/css">
+  #link:hover {
+    text-decoration: underline;
+  }
+</style>
 {% block additional_js %}{% endblock %}
 
 </html>

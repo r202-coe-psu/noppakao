@@ -10,11 +10,12 @@ from noppakao import models
 BaseRegistrationForm = model_form(
     models.User,
     FlaskForm,
-    exclude=["created_date", "updated_date", "last_login_date", "roles", "score"],
+    exclude=["created_date", "updated_date", "last_login_date", "roles"],
     field_args={
         "username": {"label": "Username"},
         "first_name": {"label": "Firstname"},
         "last_name": {"label": "Lastname"},
+        "display_name": {"label": "Hacker name"},
     },
 )
 
@@ -30,7 +31,6 @@ class RegistrationForm(BaseRegistrationForm):
     email = fields.StringField(
         "Email", validators=[validators.Email(), validators.DataRequired()]
     )
-    team = fields.SelectField("Team")
 
 
 class UpdateUserForm(BaseRegistrationForm):

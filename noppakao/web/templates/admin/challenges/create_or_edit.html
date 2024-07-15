@@ -1,4 +1,4 @@
-{% extends "base/default-page.html" %}
+{% extends "admin/base/default-page.html" %}
 {% import '/base/html-renderer.html' as renderer %}
 
 {% block content %}
@@ -10,7 +10,7 @@
   {{ form.hint }}
   {{ form.answer }}
   {{ form.answer_type }}
-  {{ form.question_url }}
+  {{ form.challenge_url }}
   {{ form.uploaded_file }}
 
   <button type="submit">save</button>

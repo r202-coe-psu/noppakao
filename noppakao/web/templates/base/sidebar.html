@@ -5,8 +5,8 @@
       <div class="sidebar-heading header" style="padding-top: 2rem; margin-bottom:2rem;">
         <a href="{{url_for('accounts.index' )}}">
           <div
-            style="color: white; font-weight: bold; text-align:center; background-color: #242649; align-items: center; font-size:large;">
-            TEAM : {{current_user.team.name}}
+            style="color: white; font-weight: bold; text-align:center; background-color: rgb(30, 30, 30); align-items: center; font-size:large;">
+            TEAM : 
           </div>
 
         </a>
@@ -15,9 +15,9 @@
       <a class="item" href="{{url_for('dashboards.index' )}}">
         <span style="font-size: 16px;"> Dashboard </span><i class="trophy icon"></i>
       </a>
-      <div style="background-color: rgb(255, 255, 255); width: 100%; height: 1px"></div>
-      <a class="item" href="{{url_for('questions.index')}}">
-        <span style="font-size: 16px;">Questions</span><i class="flag checkered icon"></i>
+      <div style="background-color: rgb(0, 255, 35); width: 100%; height: 1px"></div>
+      <a class="item" href="{{url_for('challenges.index')}}">
+        Challenges<i class="flag checkered icon"></i>
       </a>
       <div style="background-color: rgb(255, 255, 255); width: 100%; height: 1px"></div>
       {% if current_user.has_roles('admin') %}

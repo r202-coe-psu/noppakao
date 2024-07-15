@@ -3,26 +3,34 @@ import datetime
 from flask_login import UserMixin
 
 
+class Organization(me.Document):
+    meta = {"collection": "organizations"}
+    name = me.StringField(required=True)
+    logo = me.ImageField()
+    provice = me.StringField()
+
+
 class User(me.Document, UserMixin):
     meta = {"collection": "users"}
-    username = me.StringField(required=True, unique=True, max_length=64)
-    password = me.BinaryField(required=True)
+
+    display_name = me.StringField(default="", max_length=255)
     first_name = me.StringField(required=True, max_length=128)
     last_name = me.StringField(required=True, max_length=128)
+
+    username = me.StringField(required=True, unique=True, max_length=64)
+    password = me.BinaryField(required=True)
     email = me.StringField(required=True, unique=True)
     phone_number = me.StringField(max_length=10, default="")
     status = me.StringField(default="active")
     roles = me.ListField(me.StringField(), default=["user"])
-    
-    organization = me.StringField()
-    team = me.ReferenceField("Team", dbref=True)
-    score = me.IntField(default=0, required=True)
+    organization = me.ReferenceField("Organization", dbref=True)
 
     created_date = me.DateTimeField(required=True, default=datetime.datetime.now)
     updated_date = me.DateTimeField(required=True, default=datetime.datetime.now)
     last_login_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
     )
+
     def set_password(self, password):
         from werkzeug.security import generate_password_hash
 

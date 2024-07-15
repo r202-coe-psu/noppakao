@@ -1,0 +1,76 @@
+{% extends "base/default-page.html" %}
+
+{% block content %}
+<div>
+    <div class="ui secondary menu" style="font-size: medium;">
+        <div class="item">
+            <h3><i class="star icon"></i> Challenges</h3>
+        </div>
+        <div class="item">
+            <i class="user friends icon"></i> Team Rank
+        </div>
+        <div class="right menu">
+            <div class="item">
+                <i class="user friends icon"></i> Team Score 0
+            </div>
+            <div class="item">
+                <i class="user friends icon"></i> Team Rank 0
+            </div>
+        </div>
+    </div>
+
+    <div class="ui cards">
+        <div class="card">
+            <div class="content">
+                <div class="header">
+                    <i class="chess queen icon" style="visibility: visible;"></i>
+                    Question Category
+                </div>
+                <div class="content" style="margin-top: 1rem;">
+                    <table class="ui table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Age</th>
+                                <th>Job</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>John</td>
+                                <td>25</td>
+                                <td>Developer</td>
+                            </tr>
+                            <tr>
+                                <td>Jane</td>
+                                <td>28</td>
+                                <td>Designer</td>
+                            </tr>
+                            <tr>
+                                <td>Mike</td>
+                                <td>32</td>
+                                <td>Manager</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block additional_js %}
+<script>
+    function showQuestion(question) {
+        question ? $('.ui.small.modal.' + question).modal('show') : $('.ui.small.modal').modal('hide')
+            ;
+    }
+</script>
+<script>
+    function Hint(msg) {
+        alert('Hist : ' + msg);
+    }
+</script>
+{% endblock %}

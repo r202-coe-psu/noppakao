@@ -1,0 +1,33 @@
+<div class="ui large menu" style="background-color: rgb(50, 78, 156); border-radius: 0 !important;">
+    <a class="item" style="color: white;">R202 logo</a>
+    <a class="launch icon item" style="gap: 10px; color: white;"><i class="content icon"></i></a>
+    <a class="item" style="color: white;"><i class="user tie icon"></i>Name</a>
+    <a class="item" style="color: white;"><i class="users icon"></i>Teams</a>
+    <div class="right menu">
+        <a class="item" style="color: white;"><i class="tv icon"></i>IP address</a>
+        <a class="item" style="color: white;"><i class="compass outline icon"></i>09:00(UTC+7)</a>
+        <a class="item" style="color: white;"><i class="clock outline icon"></i>0d 7h 59m 42s</a>
+        <a class="item" style="color: white;" href="{{url_for('accounts.logout')}}"><i class="power off icon"
+                style="color: red;"></i>Logout</a>
+    </div>
+</div>
+<div class="ui vertical inverted sidebar large menu left" style="height: 100%;">
+    {% include "/base/sidebar.html" with context %}
+</div>
+<script type="text/javascript">
+    $(document)
+        .ready(function () {
+
+            $('.left.sidebar.menu')
+                .sidebar('attach events', '.launch.icon.item', 'show')
+                ;
+            $('.launch.icon.item')
+                .removeClass('disabled')
+                ;
+
+            $('.ui.dropdown')
+                .dropdown()
+                ;
+        })
+        ;
+</script>

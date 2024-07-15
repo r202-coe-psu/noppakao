@@ -9,6 +9,7 @@ EVENT_TYPE = ["solo", "team"]
 class Event(me.Document):
     meta = {"collection": "events"}  # ตั้งชื่อ collection
 
+    code = me.StringField(required=True, unique=True)
     name = me.StringField(required=True, max_length=256)  # หัวข้อโจทย์
     description = me.StringField()  # รายละเอียด
     type = me.StringField(required=True, choices=EVENT_TYPE, default="solo")
@@ -50,9 +51,9 @@ class EventCompetitor(me.Document):
     updated_by = me.ReferenceField("User", dbref=True, required=True)  # คนสุดท้ายที่กดอัพเดต
 
 
-class EventQuestion(me.Document):
+class EventChallenge(me.Document):
     event = me.ReferenceField("Event", dbref=True, required=True)
-    question = me.ReferenceField("Question", dbref=True, required=True)
+    challenge = me.ReferenceField("Challenge", dbref=True, required=True)
 
     first_blood_score = me.IntField(required=True, default=0, min=0)
     success_score = me.IntField(required=True, default=0, min=0)

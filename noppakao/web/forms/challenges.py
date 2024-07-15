@@ -5,11 +5,11 @@ from wtforms import fields, widgets, validators
 
 from noppakao import models
 
-BaseQuestionForm = model_form(
-    models.Question,
+BaseChallengeForm = model_form(
+    models.Challenge,
     FlaskForm,
     exclude=[
-        "question_file",
+        "challenge_file",
         "status",
         "created_date",
         "created_by",
@@ -42,17 +42,17 @@ BaseQuestionForm = model_form(
             },
         },
         "answer_type": {"label": "Answer Type"},
-        "question_url": {
-            "label": "Question URL",
+        "challenge_url": {
+            "label": "Challenge URL",
             "render_kw": {
-                "placeholder": "Question URL",
+                "placeholder": "Challenge URL",
             },
         },
     },
 )
 
 
-class QuestionForm(BaseQuestionForm):
+class ChallengeForm(BaseChallengeForm):
     uploaded_file = file.FileField(
         "File type (.zip)",
         validators=[],

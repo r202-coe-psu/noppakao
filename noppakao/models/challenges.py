@@ -6,9 +6,9 @@ STATUS_CHOICES = ["active", "disactive"]
 ANSWER_TYPES = ["flag", "plaintext"]
 
 
-class QuestionResource(me.Document):
-    meta = {"collection": "question_resources"}
-    question = me.ReferenceField("Question", dbref=True)
+class ChallengeResource(me.Document):
+    meta = {"collection": "challenge_resources"}
+    challenge = me.ReferenceField("Challenge", dbref=True)
     file = me.FileField()  # จัดเก็บไฟล์
     status = me.StringField(
         default="active", choices=STATUS_CHOICES, required=True
@@ -23,8 +23,8 @@ class QuestionResource(me.Document):
     updated_by = me.ReferenceField("User", dbref=True, required=True)  # คนสุดท้ายที่กดอัพเดต
 
 
-class Question(me.Document):
-    meta = {"collection": "questions"}  # ตั้งชื่อ collection
+class Challenge(me.Document):
+    meta = {"collection": "challenges"}  # ตั้งชื่อ collection
 
     name = me.StringField(required=True, max_length=256)  # หัวข้อโจทย์
     description = me.StringField()  # รายละเอียด
@@ -34,8 +34,8 @@ class Question(me.Document):
     answer = me.StringField(required=True, max_length=512)  # ธงหรือก็คือคำตอบ
     answer_type = me.StringField(choices=ANSWER_TYPES, default="flag", required=True)
 
-    # Question Information
-    question_url = me.StringField()
+    # Challenge Information
+    challenge_url = me.StringField()
 
     status = me.StringField(
         default="active", choices=STATUS_CHOICES, required=True
