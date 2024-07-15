@@ -24,113 +24,113 @@ from .. import oauth
 
 from . import paginations
 
-module = Blueprint("questions", __name__, url_prefix="/questions")
+module = Blueprint("challenges", __name__, url_prefix="/challenges")
 bcrypt = Bcrypt()
 
 
 @module.route("/", methods=["GET", "POST"])
 @login_required
 def index():
-    questions = models.Question.objects()
+    challenges = models.Challenge.objects()
     flag = request.args.get("flag")
-    question_id = request.args.get("question_id")
+    challenge_id = request.args.get("challenge_id")
 
-    if flag and question_id:
+    if flag and challenge_id:
         return redirect(
             url_for(
-                "questions.question_question",
-                question_id=question_id,
+                "challenges.challenge_challenge",
+                challenge_id=challenge_id,
                 flag=flag,
             )
         )
 
     return render_template(
-        "questions/index.html",
-        questions=questions,
+        "challenges/index.html",
+        challenges=challenges,
     )
 
 
-@module.route("/create", methods=["GET", "POST"], defaults={"question_id": None})
-@module.route("/<question_id>/edit", methods=["GET", "POST"])
+@module.route("/create", methods=["GET", "POST"], defaults={"challenge_id": None})
+@module.route("/<challenge_id>/edit", methods=["GET", "POST"])
 @login_required
-def create_or_edit(question_id):
-    question = None
-    form = forms.questions.QuestionForm()
+def create_or_edit(challenge_id):
+    challenge = None
+    form = forms.challenges.ChallengeForm()
 
-    if question_id:
-        question = models.Question.objects(id=question_id).first()
-        form = forms.questions.QuestionForm(obj=question)
+    if challenge_id:
+        challenge = models.Challenge.objects(id=challenge_id).first()
+        form = forms.challenges.ChallengeForm(obj=challenge)
     form.category.choices = [
         (f"{category.id}", category.name)
         for category in models.Category.objects(status="active")
     ]
     if not form.validate_on_submit():
-        if question:
-            form.category.data = str(question.category.id)
+        if challenge:
+            form.category.data = str(challenge.category.id)
         print(form.errors)
         return render_template(
-            "questions/create_or_edit.html", form=form, question=question
+            "challenges/create_or_edit.html", form=form, challenge=challenge
         )
-    if not question_id:
-        question = models.Question()
-        question.created_by = current_user
-    form.populate_obj(question)
-    if not question_id:
+    if not challenge_id:
+        challenge = models.Challenge()
+        challenge.created_by = current_user
+    form.populate_obj(challenge)
+    if not challenge_id:
         if form.uploaded_file.data:
-            question.question_file.put(
+            challenge.challenge_file.put(
                 form.uploaded_file.data,
                 filename=form.uploaded_file.data.filename,
                 content_type=form.uploaded_file.data.content_type,
             )
     else:
         if form.uploaded_file.data:
-            question.question_file.replace(
+            challenge.challenge_file.replace(
                 form.uploaded_file.data,
                 filename=form.uploaded_file.data.filename,
                 content_type=form.uploaded_file.data.content_type,
             )
-    question.category = models.Category.objects(id=form.category.data).first()
-    question.updated_by = current_user
-    question.save()
-    return redirect(url_for("questions.index"))
+    challenge.category = models.Category.objects(id=form.category.data).first()
+    challenge.updated_by = current_user
+    challenge.save()
+    return redirect(url_for("challenges.index"))
 
 
-@module.route("<question_id>/download_file", methods=["GET", "POST"])
+@module.route("<challenge_id>/download_file", methods=["GET", "POST"])
 @login_required
-def download(question_id):
-    question = models.Question.objects(id=question_id)
+def download(challenge_id):
+    challenge = models.Challenge.objects(id=challenge_id)
     try:
-        question = models.Question.objects(id=question_id).first()
+        challenge = models.Challenge.objects(id=challenge_id).first()
     except:
         return abort(404)
 
     res = send_file(
-        question.upload_file,
-        download_name=question.upload_file.filename,
-        mimetype=question.upload_file.content_type,
+        challenge.upload_file,
+        download_name=challenge.upload_file.filename,
+        mimetype=challenge.upload_file.content_type,
     )
     return res
 
 
-@module.route("<question_id>/question/<flag>", methods=["GET", "POST"])
+@module.route("<challenge_id>/challenge/<flag>", methods=["GET", "POST"])
 @login_required
-def question_question(question_id, flag):
+def challenge_challenge(challenge_id, flag):
 
     try:
-        question = models.Question.objects.get(id=question_id)
+        challenge = models.Challenge.objects.get(id=challenge_id)
         team = models.Team.objects.get(id=current_user.team.id)
     except:
-        return redirect(url_for("questions.index"))
+        return redirect(url_for("challenges.index"))
 
-    if check_password_hash(question.flag, flag) and not "admin" in current_user.roles:
-        if not current_user.team.name in question.problem_solvers:
-            current_user.score += question.point
-            team.score += question.point
-            question.problem_solvers.append(current_user.team.name)
+    if check_password_hash(challenge.flag, flag) and not "admin" in current_user.roles:
+        if not current_user.team.name in challenge.problem_solvers:
+            current_user.score += challenge.point
+            team.score += challenge.point
+            challenge.problem_solvers.append(current_user.team.name)
             team.updated_date = datetime.datetime.now()
             current_user.updated_date = datetime.datetime.now()
 
-    question.save()
+    challenge.save()
     current_user.save()
     team.save()
-    return redirect(url_for("questions.index"))
+    return redirect(url_for("challenges.index"))

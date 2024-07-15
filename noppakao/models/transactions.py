@@ -21,7 +21,7 @@ class Transaction(me.Document):
     status = me.StringField(choices=TRANSACTION_STATUS, default="fail", required=True)
 
     score = me.IntField(required=True)
-    event_question = me.ReferenceField("EventQuestion", required=True)
+    event_challenge = me.ReferenceField("EventChallenge", required=True)
 
     answer = me.StringField(required=True)
     team = me.ReferenceField("Team")

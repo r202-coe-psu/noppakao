@@ -50,9 +50,9 @@ class EventCompetitor(me.Document):
     updated_by = me.ReferenceField("User", dbref=True, required=True)  # คนสุดท้ายที่กดอัพเดต
 
 
-class EventQuestion(me.Document):
+class EventChallenge(me.Document):
     event = me.ReferenceField("Event", dbref=True, required=True)
-    question = me.ReferenceField("Question", dbref=True, required=True)
+    challenge = me.ReferenceField("Challenge", dbref=True, required=True)
 
     first_blood_score = me.IntField(required=True, default=0, min=0)
     success_score = me.IntField(required=True, default=0, min=0)
