@@ -34,58 +34,6 @@ def index():
     )
 
 
-@module.route(
-    "/register",
-    methods=["GET", "POST"],
-)
-def create_or_edit():
-    form = forms.accounts.RegistrationForm()
-    user = models.User.objects()
-    msg_error = ""
-
-    if not form.validate_on_submit():
-
-        user.username = form.username.data
-        print(form.errors)
-        return render_template(
-            "/accounts/register.html", form=form, user=user, msg_error=msg_error
-        )
-
-    check_user = models.User.objects(username=form.username.data)
-    check_email = models.User.objects(email=form.email.data)
-
-    if check_user and not "edit" in request.path:
-        msg_error = "This user is already in use"
-        return render_template(
-            "/accounts/register.html", form=form, user=user, msg_error=msg_error
-        )
-    if check_email and not "edit" in request.path:
-        msg_error = "This email is already in use"
-        return render_template(
-            "/accounts/register.html", form=form, user=user, msg_error=msg_error
-        )
-
-    display_name = form.display_name.data
-    username = form.username.data
-    first_name = form.first_name.data
-    last_name = form.last_name.data
-    password = bcrypt.generate_password_hash(form.password.data)
-    user = models.User(
-        display_name=display_name,
-        username=username,
-        password=password,
-        first_name=first_name,
-        last_name=last_name,
-        email=form.email.data,
-        last_login_date=datetime.datetime.now(),
-        status="unregistered",
-    )
-    user.save()
-    return redirect(
-        url_for("users.index"),
-    )
-
-
 @module.route("/<user_id>/delete", methods=["GET", "POST"])
 @login_required
 def delete(user_id):
