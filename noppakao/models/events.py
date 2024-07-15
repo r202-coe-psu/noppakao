@@ -9,6 +9,7 @@ EVENT_TYPE = ["solo", "team"]
 class Event(me.Document):
     meta = {"collection": "events"}  # ตั้งชื่อ collection
 
+    code = me.StringField(required=True, unique=True)
     name = me.StringField(required=True, max_length=256)  # หัวข้อโจทย์
     description = me.StringField()  # รายละเอียด
     type = me.StringField(required=True, choices=EVENT_TYPE, default="solo")

@@ -35,35 +35,20 @@ def index():
 
 
 @module.route(
-    "/create",
+    "/register",
     methods=["GET", "POST"],
-    defaults={"user_id": None},
 )
-@module.route("/<user_id>/edit", methods=["GET", "POST"])
-@login_required
-def create_or_edit(user_id):
+def create_or_edit():
     form = forms.accounts.RegistrationForm()
     user = models.User.objects()
-    teams = models.Team.objects(status="active")
     msg_error = ""
-
-    if user_id:
-        user = models.User.objects.get(id=user_id)
-        form = forms.accounts.UpdateUserForm(obj=user)
-        user.update_info.append(
-            updater_info.create_update_information(current_user, request, "updated")
-        )
-        form.username.validators = []
-        form.password.validators = []
-
-    form.team.choices = [(i.id, i.name) for i in teams]
 
     if not form.validate_on_submit():
 
         user.username = form.username.data
         print(form.errors)
         return render_template(
-            "/users/create-edit.html", form=form, user=user, msg_error=msg_error
+            "/accounts/register.html", form=form, user=user, msg_error=msg_error
         )
 
     check_user = models.User.objects(username=form.username.data)
@@ -72,38 +57,29 @@ def create_or_edit(user_id):
     if check_user and not "edit" in request.path:
         msg_error = "This user is already in use"
         return render_template(
-            "/users/create-edit.html", form=form, user=user, msg_error=msg_error
+            "/accounts/register.html", form=form, user=user, msg_error=msg_error
         )
     if check_email and not "edit" in request.path:
         msg_error = "This email is already in use"
         return render_template(
-            "/users/create-edit.html", form=form, user=user, msg_error=msg_error
+            "/accounts/register.html", form=form, user=user, msg_error=msg_error
         )
 
-    if not user_id:
-        team = models.Team.objects.get(id=form.team.data)
-        username = form.username.data
-        first_name = form.first_name.data
-        last_name = form.last_name.data
-        password = bcrypt.generate_password_hash(form.password.data)
-        user = models.User(
-            username=username,
-            password=password,
-            first_name=first_name,
-            last_name=last_name,
-            team=team,
-            email=form.email.data,
-            last_login_date=datetime.datetime.now(),
-            status="unregistered",
-        )
-        user.update_info.append(
-            updater_info.create_update_information(current_user, request, "created")
-        )
-    else:
-        form.populate_obj(user)
-        team = models.Team.objects.get(id=form.team.data)
-        user.team = team
-
+    display_name = form.display_name.data
+    username = form.username.data
+    first_name = form.first_name.data
+    last_name = form.last_name.data
+    password = bcrypt.generate_password_hash(form.password.data)
+    user = models.User(
+        display_name=display_name,
+        username=username,
+        password=password,
+        first_name=first_name,
+        last_name=last_name,
+        email=form.email.data,
+        last_login_date=datetime.datetime.now(),
+        status="unregistered",
+    )
     user.save()
     return redirect(
         url_for("users.index"),
