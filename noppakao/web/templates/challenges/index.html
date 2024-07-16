@@ -18,44 +18,63 @@
 			</div>
 		</div>
 	</div>
-
-	<div class="ui cards">
-		<div class="card">
-			<div class="content">
-				<div class="header">
-					<i class="chess queen icon" style="visibility: visible;"></i>
-					Question Category
-				</div>
-				<div class="content" style="margin-top: 1rem;">
-					<table class="ui table">
-						<thead>
-							<tr>
-								<th class="eight wide">Challenges</th>
-								<th class="four wide">Point</th>
-								<th class="four wide">Solves</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>John</td>
-								<td>25</td>
-								<td>Developer</td>
-							</tr>
-							<tr>
-								<td>Jane</td>
-								<td>28</td>
-								<td>Designer</td>
-							</tr>
-							<tr>
-								<td>Mike</td>
-								<td>32</td>
-								<td>Manager</td>
-							</tr>
-						</tbody>
-					</table>
+	<div class="ui grid center aligned">
+		{% for i in range(6) %}
+		<div class="five wide column" id="card-template">
+			<div class="ui cards">
+				<div class="ui fluid card">
+					<div class="content">
+						<div class="header">
+							<i class="chess queen icon" style="visibility: visible;"></i>
+							Question Category
+						</div>
+						<div class="content" style="margin-top: 1rem;">
+							<table class="ui table" style="border: none !important;">
+								<thead>
+									<tr>
+										<th class="one wide"></th>
+										<th class="six wide">Challenges</th>
+										<th class="two wide center aligned">Point</th>
+										<th class="two wide center aligned"><i class="tint icon"
+												style="color: red;"></i></th>
+										<th class="two wide center aligned"><i class="key icon"
+												style="color: rgb(255, 196, 0);"></i></th>
+										<th class="two wide center aligned">Solves</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td><i class="cube icon" style="color: #386CAF;"></i></td>
+										<td>John</td>
+										<td class="center aligned">25</td>
+										<td class="center aligned">10</td>
+										<td class="center aligned">-</td>
+										<td class="center aligned">0</td>
+									</tr>
+									<tr>
+										<td><i class="cube icon" style="color: #386CAF;"></i></td>
+										<td>Jane</td>
+										<td class="center aligned">28</td>
+										<td class="center aligned">10</td>
+										<td class="center aligned">-</td>
+										<td class="center aligned">0</td>
+									</tr>
+									<tr>
+										<td><i class="cube icon" style="color: #386CAF;"></i></td>
+										<td>Mike</td>
+										<td class="center aligned">32</td>
+										<td class="center aligned">10</td>
+										<td class="center aligned">-</td>
+										<td class="center aligned">0</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
+		{% endfor %}
 	</div>
 </div>
 
@@ -73,4 +92,5 @@
 		alert('Hist : ' + msg);
 	}
 </script>
+
 {% endblock %}
