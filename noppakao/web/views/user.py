@@ -71,24 +71,17 @@ def recover(user_id):
 def create_or_edit(user_id):
     form = forms.accounts.RegistrationForm()
     user = models.User.objects()
-    teams = models.Teams.objects(status="active")
     msg_error = ""
 
     if user_id:
         user = models.User.objects.get(id=user_id)
         form = forms.accounts.UpdateUserForm(obj=user)
-        user.update_info.append(
-            updater_info.create_update_information(current_user, request, "updated")
-        )
         form.username.validators = []
         form.password.validators = []
 
-    form.team.choices = [(i.id, i.name) for i in teams]
-
     if not form.validate_on_submit():
-
         user.username = form.username.data
-        print(form.errors)
+
         return render_template(
             "/users/create-edit.html", form=form, user=user, msg_error=msg_error
         )
@@ -108,28 +101,23 @@ def create_or_edit(user_id):
         )
 
     if not user_id:
-        team = models.Teams.objects.get(id=form.team.data)
         username = form.username.data
         first_name = form.first_name.data
         last_name = form.last_name.data
+        display_name = form.display_name.data
         password = bcrypt.generate_password_hash(form.password.data)
         user = models.User(
             username=username,
             password=password,
             first_name=first_name,
             last_name=last_name,
-            team=team,
+            display_name=display_name,
             email=form.email.data,
             last_login_date=datetime.datetime.now(),
             status="unregistered",
         )
-        user.update_info.append(
-            updater_info.create_update_information(current_user, request, "created")
-        )
     else:
         form.populate_obj(user)
-        team = models.Teams.objects.get(id=form.team.data)
-        user.team = team
 
     user.save()
     return redirect(

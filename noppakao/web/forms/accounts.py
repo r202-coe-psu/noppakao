@@ -59,7 +59,6 @@ class UpdateUserForm(BaseRegistrationForm):
     email = fields.StringField(
         "Email", validators=[validators.Email(), validators.DataRequired()]
     )
-    team = fields.SelectField("Team")
 
 
 class LoginForm(FlaskForm):
