@@ -82,15 +82,7 @@
                         {% for user in users %}
                         <tr>
                             <td>{{ loop.index }}</td>
-                            <td>
-                                {% if user.team.picture %}
-                                <h3 class="ui picture header">
-                                    <img src="{{ user.team.get_picture()}}" class="ui mini rounded picture">
-                                </h3>
-                                {% endif %}
-                            </td>
                             <td>{{ user.get_fullname() }}</td>
-                            <td>{{ user.team.name }}</td>
                             <!-- Add the left-aligned class to align score data to the left -->
                             {% if user.score == none %}
                             <td class="left-aligned">0</td>
