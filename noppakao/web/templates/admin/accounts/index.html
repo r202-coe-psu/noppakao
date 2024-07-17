@@ -4,12 +4,12 @@
 {% block content %}
 <style>
   .ui.segment {
-    background-color: rgb(10, 10, 10);
+    background-color: rgb(50, 78, 156);
     border-radius: 5px;
   }
 
   .ui.header {
-    color: rgb(0, 255, 35);
+    color: rgb(255, 255, 255);
   }
 
   .blue-button {
@@ -17,12 +17,8 @@
     color: white;
   }
 
-  .ui.primary.labeled.icon.button {
-    background-color: rgb(0, 255, 35);
-    color: black;
-  }
 </style>
-<div class="ui segment" style="border: 1px solid rgb(123, 123, 123);">
+<div class="ui segment" style="border: 1px solid rgb(255, 255, 255);">
 
   <h1 class="ui header">
     Users
@@ -30,42 +26,40 @@
 
 </div>
 
-<div class="ui segment" style="border: 1px solid rgb(123, 123, 123);">
+<div class="ui segment" style="border: 1px solid rgb(253, 252, 252);">
 
-  <a class="ui primary labeled icon button blue-button" href="{{url_for('users.create_or_edit')}}">
+  <a class="ui primary labeled icon button blue-button" href="{{url_for('admin.accounts.create_or_edit')}}">
     <i class="add icon"></i>
     Create user
   </a>
 
-  <table class="ui selectable inverted table">
+  <table class="ui celled table">
     <thead>
       <tr>
+        <th>Display Name</th>
         <th>Name</th>
         <th>Email</th>
         <th>Phone</th>
         <th>Status</th>
-        <th>Edit</th>
-        <th>Delete</th>
-        <th>Recover</th>
+        <th>Action</th>
       </tr>
     </thead>
     <tbody>
       {% for user in users %}
       <tr>
+        <td data-label="Name">{{user.display_name}}</td>
         <td data-label="Name">{{user.first_name}} {{user.last_name}}</td>
         <td data-label="Email">{{user.email}}</td>
         <td data-label="Phone">{{user.phone_number}}</td>
         <td data-label="Status">{{user.status}}</td>
-        <td data-label="Edit"><a href="{{url_for('users.create_or_edit', user_id=user.id)}}"><i
-              class="edit icon yellow"></i></a>
-        </td>
-        <td data-label="Delete"><a onclick="showDeleteModal('{{ user.id }}')"><i class="trash icon red"></i></a>
-        </td>
-        <td data-label="Recover"><a href="{{ url_for('users.recover',user_id=user.id)}}"><i class="redo icon"></i></a>
+        <td data-label="Edit">
+            <a href="{{url_for('users.create_or_edit', user_id=user.id)}}"><i class="edit icon yellow"></i></a> 
+            <a onclick="showDeleteModal('{{ user.id }}')"><i class="trash icon red"></i></a>
+            <a href="{{ url_for('users.recover',user_id=user.id)}}"><i class="redo icon"></i></a>
         </td>
       </tr>
       <div class="ui small modal {{user.id}}"
-        style="background-color: black; color: white;font-size: 20px; border: 1px solid rgb(0, 255, 35);">
+        style="background-color: rgb(0, 0, 0); color: white;font-size: 20px; border: 1px solid rgb(0, 255, 35);">
         <div class="header"
           style="background-color: black; color: white;font-size: 20px; border: 1px solid rgb(0, 255, 35);">{{ ("Delete
           User") }}</div>

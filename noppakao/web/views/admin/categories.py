@@ -47,7 +47,7 @@ def create_or_edit(category_id):
         )
 
     if not form.validate_on_submit():
-        print("--------->", form.errors)
+        print(form.errors)
         return render_template(
             "/admin/categories/create-edit.html",
             form=form,

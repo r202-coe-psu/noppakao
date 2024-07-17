@@ -3,28 +3,19 @@
 
 {% block content %}
 <style>
-  .ui.segment {
-    color: rgb(0, 255, 35);
-    background-color: rgb(10, 10, 10);
-    border: 1px solid rgb(123, 123, 123);
-    border-radius: 5px;
-  }
+    .ui.segment {
+      background-color: rgb(50, 78, 156);
+      border-radius: 5px;
+    }
 
-  .ui.primary.button {
-    background-color: rgb(0, 255, 35);
-    /* Change this to the desired color */
-    color: #000000;
-    /* Change this to the desired text color */
-  }
-
-  .field {
-    background-color: rgb(10, 10, 10);
-
-  }
+    .ui.header {
+        color: rgb(255, 255, 255);
+      }
 </style>
+
 <form method="POST">
   <div class="ui segment">
-    <h1>{{"Edit" if "edit" in request.path else "Create"}} User</h1>
+    <h1 class="ui header">{{"Edit" if "edit" in request.path else "Create"}} User</h1>
     <div class="ui form">
       {{ form.csrf_token }}
       <div class="form-group">
