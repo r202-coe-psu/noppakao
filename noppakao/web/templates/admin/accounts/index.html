@@ -53,9 +53,9 @@
         <td data-label="Phone">{{user.phone_number}}</td>
         <td data-label="Status">{{user.status}}</td>
         <td data-label="Edit">
-            <a href="{{url_for('users.create_or_edit', user_id=user.id)}}"><i class="edit icon yellow"></i></a> 
+            <a href="{{url_for('admin.accounts.create_or_edit', user_id=user.id)}}"><i class="edit icon yellow"></i></a> 
             <a onclick="showDeleteModal('{{ user.id }}')"><i class="trash icon red"></i></a>
-            <a href="{{ url_for('users.recover',user_id=user.id)}}"><i class="redo icon"></i></a>
+            <a href="{{ url_for('admin.accounts.recover',user_id=user.id)}}"><i class="redo icon"></i></a>
         </td>
       </tr>
       <div class="ui small modal {{user.id}}"
@@ -70,7 +70,7 @@
             ("user?") }}
           </h4>
           <a class="ui right floated negative button" style="margin-bottom: 1em;"
-            href="{{url_for('users.delete', user_id=user.id)}}">
+            href="{{url_for('admin.accounts.delete', user_id=user.id)}}">
             {{ ("Delete") }}</i>
           </a>
           <button class="ui right floated button" onclick="showDeleteModal()">{{ ("Cancel") }}</button>

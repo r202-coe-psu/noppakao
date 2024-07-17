@@ -38,12 +38,9 @@ def index():
 def delete(user_id):
     user = models.User.objects.get(id=user_id)
     user.status = "disactive"
-    user.update_info.append(
-        updater_info.create_update_information(current_user, request, "deleted")
-    )
     user.save()
     return redirect(
-        url_for("users.index"),
+        url_for("admin.accounts.index"),
     )
 
 
@@ -53,11 +50,8 @@ def recover(user_id):
     user = models.User.objects.get(id=user_id)
     user.status = "unregistered"
     user.password = bcrypt.generate_password_hash("admin")
-    user.update_info.append(
-        updater_info.create_update_information(current_user, request, "recover")
-    )
     user.save()
-    return redirect(url_for("users.index"))
+    return redirect(url_for("admin.accounts.index"))
 
 
 @module.route(
