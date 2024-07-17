@@ -21,7 +21,9 @@
       </a>
       <div style="background-color: rgb(255, 255, 255); width: 100%; height: 1px"></div>
       {% if current_user.has_roles('admin') %}
-
+      <a class="item" href="{{url_for('admin.events.index' )}}">
+        <span style="font-size: 16px;">Events</span><i class="users icon"></i>
+      </a>
       <div style="background-color: rgb(255, 255, 255); width: 100%; height: 1px"></div>
       <a class="item" href="{{url_for('categories.index')}}">
         <span style="font-size: 16px;">Categories</span><i class="folder open icon"></i>

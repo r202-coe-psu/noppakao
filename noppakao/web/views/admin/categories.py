@@ -42,9 +42,6 @@ def create_or_edit(category_id):
     if category_id:
         categories = models.Category.objects.get(id=category_id)
         form = forms.categories.CategoryForm(obj=categories)
-        categories.update_info.append(
-            updater_info.create_update_information(current_user, request, "updated")
-        )
 
     if not form.validate_on_submit():
         print(form.errors)

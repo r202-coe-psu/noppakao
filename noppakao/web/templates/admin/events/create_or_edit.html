@@ -1,0 +1,11 @@
+{% extends "admin/base/default-page.html" %}
+
+{% block content %}
+<form enctype="multipart/form-data" method="post">
+    {% for i in form%}
+    {{ i }}
+    {% endfor %}
+    <button type="submit">save</button>
+</form>
+
+{% endblock %}
