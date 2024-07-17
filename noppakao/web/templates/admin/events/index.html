@@ -13,5 +13,6 @@
     <div>Created By : {{ event.created_by.get_fullname() }}</div>
     <div>Updated Date : {{ event.updated_date }}</div>
     <div>Updated By {{ event.updated_by.get_fullname() }}</div>
+    <div><a href="{{ url_for('admin.events.create_or_edit',event_id=event.id) }}">Edit Event</a></div>
 {% endfor %}
 {% endblock %}
