@@ -1,9 +1,9 @@
 {% if current_user.is_authenticated %}
-<a href="{{ url_for('admin.teams.index') }}"> AllTeam </a>
-<a href="{{ url_for('admin.dashboards.index') }}"> Dashboard </a>
-<a href="{{ url_for('admin.categories.index') }}"> categories </a>
-<a href="{{ url_for('admin.challenges.index') }}"> challenges </a>
-
+<div><a href="{{ url_for('admin.teams.index') }}"> AllTeam </a> </div>
+<div><a href="{{ url_for('admin.dashboards.index') }}"> Dashboard </a></div>
+<div><a href="{{ url_for('admin.categories.index') }}"> categories </a></div>
+<div><a href="{{ url_for('admin.challenges.index') }}"> challenges </a></div>
+<div><a href="{{ url_for('admin.events.index') }}"> Events </a></div>
 {% endif %}
 
 {% block additional_js %}
