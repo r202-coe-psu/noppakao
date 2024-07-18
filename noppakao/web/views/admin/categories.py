@@ -70,9 +70,6 @@ def create_or_edit(category_id):
 def delete(category_id):
     categories = models.Category.objects.get(id=category_id)
     categories.status = "disactive"
-    categories.update_info.append(
-        updater_info.create_update_information(current_user, request, "deleted")
-    )
     categories.save()
     return redirect(
         url_for("admin.categories.index"),

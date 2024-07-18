@@ -22,3 +22,27 @@ BaseEventForm = model_form(
 
 class EventForm(BaseEventForm):
     type = fields.SelectField("เลือกประเภท", choices=models.events.EVENT_TYPE)
+
+
+BaseEventChallengeForm = model_form(
+    models.EventChallenge,
+    FlaskForm,
+    exclude=[
+        "event",
+        "status",
+        "created_by",
+        "created_date",
+        "updated_date",
+        "updated_by",
+    ],
+    field_args={
+        "first_blood_score": {"label": "First Blood Score"},
+        "success_score": {"label": "Score"},
+        "hint_score": {"label": "Hint Score"},
+        "fail_score": {"label": "Failure Score"},
+    },
+)
+
+
+class EventChallengeForm(BaseEventChallengeForm):
+    challenge = fields.SelectField("Challenge")

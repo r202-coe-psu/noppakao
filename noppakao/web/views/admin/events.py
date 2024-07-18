@@ -26,6 +26,51 @@ def index():
     return render_template("/admin/events/index.html", events=events)
 
 
+@module.route("/<event_id>/challenge", methods=["GET", "POST"])
+@acl.roles_required("admin")
+def challenge(event_id):
+
+    event = models.Event.objects(id=event_id).first()
+    event_challenges = models.EventChallenge.objects(event=event)
+
+    return render_template(
+        "/admin/events/challenge.html", event_challenges=event_challenges, event=event
+    )
+
+
+@module.route("/<event_id>/add_challenge", methods=["GET", "POST"])
+@acl.roles_required("admin")
+def add_challenge(event_id):
+
+    event = models.Event.objects(id=event_id).first()
+    challenges = models.Challenge.objects()
+
+    form = forms.events.EventChallengeForm()
+
+    form.challenge.choices = [
+        (str(challenge.id), challenge.name) for challenge in challenges
+    ]
+
+    if not form.validate_on_submit():
+        print(form.errors)
+        return render_template(
+            "/admin/events/event_challenge.html", event=event, form=form
+        )
+
+    challenge = models.Challenge.objects(id=form.challenge.data).first()
+    event_challenge = models.EventChallenge()
+
+    form.populate_obj(event_challenge)
+
+    event_challenge.challenge = challenge
+    event_challenge.event = event
+    event_challenge.created_by = current_user._get_current_object()
+    event_challenge.updated_by = current_user._get_current_object()
+    event_challenge.save()
+
+    return redirect(url_for("admin.events.challenge", event_id=event.id))
+
+
 @module.route("/create", methods=["GET", "POST"], defaults={"event_id": None})
 @module.route("<event_id>/edit", methods=["GET", "POST"])
 @acl.roles_required("admin")

@@ -1,0 +1,15 @@
+{% extends "admin/base/default-page.html" %}
+
+{% block content %}
+<div><a href="{{ url_for('admin.events.add_challenge',event_id=event.id) }}"> Create Challenge </a></div>
+{% for  event_challenge in event_challenges %}
+<div> Challenge Name : {{ event_challenge.challenge.name }} </div>
+<div> Challenge Category : {{ event_challenge.challenge.category.name }} </div>
+<div> First Blood Score {{ event_challenge.first_blood_score }} </div>
+<div> Success Score : {{ event_challenge.success_score }} </div>
+<div> Hint Score : {{ event_challenge.hint_score }} </div>
+<div> Fail Score : {{ event_challenge.fail_score }} </div>
+<div> Created By : {{ event_challenge.created_by.get_fullname() }} </div>
+<div> Updated By  : {{ event_challenge.updated_by.get_fullname() }} </div>
+{% endfor %}
+{% endblock %}
