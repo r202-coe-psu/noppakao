@@ -1,4 +1,4 @@
-{% extends "admin/base/default-page.html" %}
+{% extends "base/default-page.html" %}
 {% import '/base/html-renderer.html' as renderer %}
 
 {% block content %}
@@ -12,7 +12,6 @@
   {{ form.answer_type }}
   {{ form.challenge_url }}
   {{ form.uploaded_file }}
-
   <button type="submit">save</button>
 </form>
 {% endblock %}
