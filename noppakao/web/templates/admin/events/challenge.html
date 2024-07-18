@@ -2,6 +2,7 @@
 
 {% block content %}
 <div><a class="ui primary button" href="{{ url_for('admin.events.add_challenge',event_id=event.id) }}"> Create Challenge </a></div>
+<div><a class="ui primary button" href="{{ url_for('admin.events.event_role',event_id=event.id) }}"> Manege User Role </a></div>
 <div>
     <div class="ui secondary menu" style="font-size: medium;">
 		<div class="item">

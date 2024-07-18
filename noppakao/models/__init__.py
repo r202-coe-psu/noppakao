@@ -3,7 +3,7 @@ from .users import User
 from .challenges import Challenge
 from .categories import Category
 from .teams import Team
-from .events import Event, EventChallenge
+from .events import Event, EventChallenge, EventRole
 
 db = MongoEngine()
 

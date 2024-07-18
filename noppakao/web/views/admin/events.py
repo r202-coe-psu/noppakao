@@ -26,6 +26,55 @@ def index():
     return render_template("/admin/events/index.html", events=events)
 
 
+@module.route(
+    "/<event_id>/event_roles/create",
+    methods=["GET", "POST"],
+    defaults={"event_role_id": None},
+)
+@module.route(
+    "/<event_id>/event_roles/<event_role_id>/edit",
+    methods=["GET", "POST"],
+)
+@acl.roles_required("admin")
+def create_or_edit_event_role(event_id, event_role_id):
+    event = models.Event.objects(id=event_id).first()
+    form = forms.events.EventRoleForm()
+    event_role = models.EventRole()
+    users = models.User.objects()
+
+    if event_role_id:
+        event_role = models.events.EventRole.objects(id=event_role_id).first()
+        form = forms.events.EventRoleForm(obj=event_role)
+    form.user.choices = [(str(user.id), user.get_fullname()) for user in users]
+
+    if not form.validate_on_submit():
+        print(form.errors)
+        return render_template("/admin/events/create_or_edit_role.html", form=form)
+
+    form.populate_obj(event_role)
+
+    if not event_role_id:
+        event_role.created_by = current_user._get_current_object()
+        event_role.event = event
+
+    event_role.user = models.User.objects(id=form.user.data).first()
+    event_role.updated_date = datetime.datetime.now()
+    event_role.updated_by = current_user._get_current_object()
+    event_role.save()
+
+    return redirect(url_for("admin.events.event_role", event_id=event.id))
+
+
+@module.route("/<event_id>/event_roles", methods=["GET", "POST"])
+@acl.roles_required("admin")
+def event_role(event_id):
+    event = models.Event.objects(id=event_id).first()
+    event_roles = models.EventRole.objects(event=event)
+    return render_template(
+        "/admin/events/event_roles.html", event=event, event_roles=event_roles
+    )
+
+
 @module.route("/<event_id>/challenge", methods=["GET", "POST"])
 @acl.roles_required("admin")
 def challenge(event_id):

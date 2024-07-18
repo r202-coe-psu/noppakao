@@ -1,0 +1,10 @@
+{% extends "base/default-page.html" %}
+
+{% block content %}
+<div><a class="ui primary button" href="{{ url_for('admin.events.create_or_edit_event_role',event_id=event.id) }}"> Create Challenge </a></div>
+{% for event_role in event_roles %}
+{{ event_role.user.get_fullname() }}
+{{ event_role.role }}
+<div><a class="ui primary button" href="{{ url_for('admin.events.create_or_edit_event_role',event_id=event.id,event_role_id=event_role.id) }}"> Edit Challenge </a></div>
+{% endfor %}
+{% endblock %}

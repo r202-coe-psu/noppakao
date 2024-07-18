@@ -46,3 +46,24 @@ BaseEventChallengeForm = model_form(
 
 class EventChallengeForm(BaseEventChallengeForm):
     challenge = fields.SelectField("Challenge")
+
+
+BaseEventRole = model_form(
+    models.EventRole,
+    FlaskForm,
+    exclude=[
+        "event",
+        "status",
+        "created_by",
+        "created_date",
+        "updated_date",
+        "updated_by",
+    ],
+)
+
+
+class EventRoleForm(BaseEventRole):
+    user = fields.SelectField(
+        "User",
+    )
+    role = fields.SelectField("Role", choices=models.events.EVENT_ROLES)
