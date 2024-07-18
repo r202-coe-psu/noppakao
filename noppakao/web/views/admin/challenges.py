@@ -32,21 +32,16 @@ bcrypt = Bcrypt()
 @acl.roles_required("admin")
 def index():
     challenges = models.Challenge.objects()
-    flag = request.args.get("flag")
-    challenge_id = request.args.get("challenge_id")
+    event_categorys = []
 
-    if flag and challenge_id:
-        return redirect(
-            url_for(
-                "challenges.challenge_challenge",
-                challenge_id=challenge_id,
-                flag=flag,
-            )
-        )
+    for challenge in challenges:
+        if not challenge.category in event_categorys:
+            event_categorys.append(challenge.category)
 
     return render_template(
         "admin/challenges/index.html",
         challenges=challenges,
+        event_categorys=event_categorys,
     )
 
 

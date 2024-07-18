@@ -106,7 +106,7 @@ def register():
         last_name=last_name,
         email=form.email.data,
         last_login_date=datetime.datetime.now(),
-        status="unregistered",
+        status="active",
     )
     user.save()
     return redirect(

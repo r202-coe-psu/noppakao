@@ -1,15 +1,69 @@
-{% extends "admin/base/default-page.html" %}
+{% extends "base/default-page.html" %}
 
 {% block content %}
-<div><a href="{{ url_for('admin.events.add_challenge',event_id=event.id) }}"> Create Challenge </a></div>
-{% for  event_challenge in event_challenges %}
-<div> Challenge Name : {{ event_challenge.challenge.name }} </div>
-<div> Challenge Category : {{ event_challenge.challenge.category.name }} </div>
-<div> First Blood Score {{ event_challenge.first_blood_score }} </div>
-<div> Success Score : {{ event_challenge.success_score }} </div>
-<div> Hint Score : {{ event_challenge.hint_score }} </div>
-<div> Fail Score : {{ event_challenge.fail_score }} </div>
-<div> Created By : {{ event_challenge.created_by.get_fullname() }} </div>
-<div> Updated By  : {{ event_challenge.updated_by.get_fullname() }} </div>
-{% endfor %}
+<div><a class="ui primary button" href="{{ url_for('admin.events.add_challenge',event_id=event.id) }}"> Create Challenge </a></div>
+<div>
+    <div class="ui secondary menu" style="font-size: medium;">
+		<div class="item">
+			<h3><i class="star icon"></i> Challenges</h3>
+		</div>
+		<div class="item">
+			<i class="user friends icon"></i> Team Rank
+		</div>
+		<div class="right menu">
+			<div class="item">
+				<i class="user friends icon"></i> Team Score 0
+			</div>
+			<div class="item">
+				<i class="user friends icon"></i> Team Rank 0
+			</div>
+		</div>
+	</div>
+    <div class="ui grid center aligned">
+        {% for i in range((event_categorys|length)) %}
+        <div class="five wide column" id="card-template">
+            <div class="ui cards">
+                <div class="ui fluid card">
+                    <div class="ui fluid card">
+                        <div class="header">
+							<i class="chess queen icon" style="visibility: visible;"></i>
+							Question Category {{ event_categorys[i].name }}
+						</div>
+                        <div class="content" style="margin-top: 1rem;">
+							<table class="ui table" style="border: none !important;">
+								<thead>
+									<tr>
+										<th class="one wide"></th>
+										<th class="six wide">Challenges</th>
+										<th class="two wide center aligned">Point</th>
+										<th class="two wide center aligned"><i class="tint icon"
+												style="color: red;"></i></th>
+										<th class="two wide center aligned"><i class="key icon"
+												style="color: rgb(255, 196, 0);"></i></th>
+										<th class="two wide center aligned">Solves</th>
+									</tr>
+								</thead>
+								<tbody>
+                                    {% for event_challenge in event_challenges %}
+                                    {% if event_categorys[i].name == event_challenge.challenge.category.name  %}
+									<tr>
+										<td><i class="cube icon" style="color: #386CAF;"></i></td>
+										<td>{{ event_challenge.challenge.name }}</td>
+										<td class="center aligned">{{ event_challenge.success_score }}</td>
+										<td class="center aligned">{{ event_challenge.first_blood_score }} </td>
+										<td class="center aligned">{{ event_challenge.hint_score }}</td>
+										<td class="center aligned">{{ event_challenge.fail_score }} </td>
+									</tr>
+                                    {% endif %}
+                                    {% endfor %}
+								</tbody>
+							</table>
+						</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

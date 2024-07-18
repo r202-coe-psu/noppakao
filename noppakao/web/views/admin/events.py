@@ -32,9 +32,17 @@ def challenge(event_id):
 
     event = models.Event.objects(id=event_id).first()
     event_challenges = models.EventChallenge.objects(event=event)
+    event_categorys = []
+
+    for event_challenge in event_challenges:
+        if not event_challenge.challenge.category in event_categorys:
+            event_categorys.append(event_challenge.challenge.category)
 
     return render_template(
-        "/admin/events/challenge.html", event_challenges=event_challenges, event=event
+        "/admin/events/challenge.html",
+        event_challenges=event_challenges,
+        event=event,
+        event_categorys=event_categorys,
     )
 
 
@@ -54,7 +62,7 @@ def add_challenge(event_id):
     if not form.validate_on_submit():
         print(form.errors)
         return render_template(
-            "/admin/events/event_challenge.html", event=event, form=form
+            "/admin/events/create_event_challenge.html", event=event, form=form
         )
 
     challenge = models.Challenge.objects(id=form.challenge.data).first()
