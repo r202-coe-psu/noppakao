@@ -1,11 +1,100 @@
 {% extends "base/default-page.html" %}
+{% import '/base/html-renderer.html' as renderer %}
 
 {% block content %}
-<form enctype="multipart/form-data" method="post">
-    {% for i in form%}
-    {{ i }}
-    {% endfor %}
-    <button type="submit">save</button>
-</form>
+<div class="ui container">
+    <h2 class="ui dividing header">Create or Edit Event</h2>
+    <form class="ui form" enctype="multipart/form-data" method="post">
+        {{ form.csrf_token }}
+
+        <div class="field">
+            {{ form.code.label }}
+            {{ form.code(class="ui input fluid") }}
+        </div>
+
+        <div class="field">
+            {{ form.name.label }}
+            {{ form.name(class="ui input fluid") }}
+        </div>
+
+        <div class="field">
+            {{ form.description.label }}
+            {{ form.description(class="ui input fluid") }}
+        </div>
+
+        <div class="field">
+            {{ form.flag_prefix.label }}
+            {{ form.flag_prefix(class="ui input fluid") }}
+        </div>
+
+        <div class="two fields">
+            <div class="field">
+                <label>Start Date</label>
+                <div class="ui calendar" id="start_date">
+                    <div class="ui input left icon">
+                        <i class="calendar icon"></i>
+                        {{ form.started_date }}
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <label>End Date</label>
+                <div class="ui calendar" id="end_date">
+                    <div class="ui input left icon">
+                        <i class="calendar icon"></i>
+                        {{ form.ended_date }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="field">
+            {{ form.type.label }}
+            {{ form.type(class="ui dropdown fluid") }}
+        </div>
+
+        <div class="field">
+            {{ form.status.label }}
+            {{ form.status(class="ui dropdown fluid") }}
+        </div>
+
+        <button class="ui primary button" type="submit">
+            <i class="save icon"></i> Save
+        </button>
+    </form>
+</div>
+{% endblock %}
+
+{% block additional_js %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        var datetime_formatter = {
+            datetime: function (date, settings) {
+                if (!date) return '';
+                return moment(date).format('DD/MM/YYYY HH:mm');
+            }
+        };
+
+        var calendar_setting = {
+            type: 'datetime',
+            monthFirst: false,
+            formatter: datetime_formatter,
+            today: true,
+            ampm: false,
+            text: {
+                days: ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'],
+                months: ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤษจิกายน', 'ธันวาคม'],
+                monthsShort: ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'],
+                today: 'วันนี้',
+                now: 'ปัจจุบัน',
+                am: 'AM',
+                pm: 'PM'
+            },
+        };
+
+        $('#start_date_calendar').calendar(calendar_setting);
+        $('#end_date_calendar').calendar(calendar_setting);
+    });
+</script>
 
 {% endblock %}
