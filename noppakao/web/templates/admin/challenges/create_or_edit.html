@@ -2,16 +2,52 @@
 {% import '/base/html-renderer.html' as renderer %}
 
 {% block content %}
-<form enctype="multipart/form-data" method="post">
-  {{ form.csrf_token }}
-  {{ form.name }}
-  {{ form.description }}
-  {{ form.category }}
-  {{ form.hint }}
-  {{ form.answer }}
-  {{ form.answer_type }}
-  {{ form.challenge_url }}
-  {{ form.uploaded_file }}
-  <button type="submit">save</button>
-</form>
+<div class="ui container">
+  <h2 class="ui dividing header">Create or Edit Event</h2>
+  <form class="ui form" enctype="multipart/form-data" method="post">
+    {{ form.csrf_token }}
+
+    <div class="field">
+      {{ form.name.label }}
+      {{ form.name(class="ui input") }}
+    </div>
+
+    <div class="field">
+      {{ form.description.label }}
+      {{ form.description(class="ui input") }}
+    </div>
+
+    <div class="field">
+      {{ form.category.label }}
+      {{ form.category(class="ui dropdown") }}
+    </div>
+
+    <div class="field">
+      {{ form.hint.label }}
+      {{ form.hint(class="ui input") }}
+    </div>
+
+    <div class="field">
+      {{ form.answer.label }}
+      {{ form.answer(class="ui input") }}
+    </div>
+
+    <div class="field">
+      {{ form.answer_type.label }}
+      {{ form.answer_type(class="ui dropdown") }}
+    </div>
+
+    <div class="field">
+      {{ form.challenge_url.label }}
+      {{ form.challenge_url(class="ui input") }}
+    </div>
+
+    <div class="field">
+      {{ form.uploaded_file.label }}
+      {{ form.uploaded_file(class="ui input") }}
+    </div>
+
+    <button class="ui primary button" type="submit">Save</button>
+  </form>
+</div>
 {% endblock %}

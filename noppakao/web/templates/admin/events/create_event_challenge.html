@@ -1,10 +1,40 @@
 {% extends "base/default-page.html" %}
 
 {% block content %}
-<form enctype="multipart/form-data" method="post">
-    {% for i in form%}
-    {{ i }}
-    {% endfor %}
-    <button type="submit">save</button>
-</form>
+<div class="ui container">
+    <h2 class="ui dividing header">Challenge Form</h2>
+    <form class="ui form" enctype="multipart/form-data" method="post">
+        {{ form.csrf_token }}
+        <div class="field">
+            {{ form.first_blood_score.label }}
+            {{ form.first_blood_score(class="ui input") }}
+        </div>
+
+        <div class="field">
+            {{ form.success_score.label }}
+            {{ form.success_score(class="ui input") }}
+        </div>
+
+        <div class="field">
+            {{ form.hint_score.label }}
+            {{ form.hint_score(class="ui input") }}
+        </div>
+
+        <div class="field">
+            {{ form.fail_score.label }}
+            {{ form.fail_score(class="ui input") }}
+        </div>
+
+        <div class="field">
+            {{ form.challenge.label }}
+            {{ form.challenge(class="ui dropdown") }}
+        </div>
+
+        <div class="field">
+            <button class="ui large primary button" type="submit">
+                <i class="save icon"></i> Save
+            </button>
+        </div>
+    </form>
+</div>
 {% endblock %}
