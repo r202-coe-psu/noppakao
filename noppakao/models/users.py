@@ -31,6 +31,15 @@ class User(me.Document, UserMixin):
         required=True, default=datetime.datetime.now, auto_now=True
     )
 
+    def check_join_event(self, event_id):
+        from noppakao import models
+
+        event = models.Event.objects(id=event_id).first()
+        event_role = models.EventRole.objects(user=self, event=event).first()
+        if event_role:
+            return event_role
+        return None
+
     def set_password(self, password):
         from werkzeug.security import generate_password_hash
 
