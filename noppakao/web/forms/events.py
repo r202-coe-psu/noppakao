@@ -8,7 +8,7 @@ from noppakao import models
 BaseEventForm = model_form(
     models.Event,
     FlaskForm,
-    exclude=["status", "created_date", "created_by", "updated_date", "updated_by"],
+    exclude=["created_date", "created_by", "updated_date", "updated_by"],
     field_args={
         "code": {"label": "Code"},
         "name": {"label": "Name"},
@@ -22,6 +22,7 @@ BaseEventForm = model_form(
 
 class EventForm(BaseEventForm):
     type = fields.SelectField("เลือกประเภท", choices=models.events.EVENT_TYPE)
+    status = fields.SelectField("Status", choices=models.events.STATUS_CHOICES)
 
 
 BaseEventChallengeForm = model_form(
