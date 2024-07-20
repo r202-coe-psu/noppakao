@@ -1,75 +1,100 @@
 {% extends "base/default-page.html" %}
 
 {% block content %}
-<div class="ui container">
-    <h2 class="ui dividing header">Challenge Form</h2>
-    <form class="ui form" enctype="multipart/form-data" method="post">
-        {{ form.csrf_token }}
-        <div class="field">
-            {{ form.first_blood_score.label }}
-            {{ form.first_blood_score(class="ui input") }}
-        </div>
+<div class="ui container" style="padding: 2rem;">
+    <div class="ui grid">
+        <div class="four wide column" id="empty-column"></div> <!-- Empty column for centering -->
+        <div class="eight wide column">
+            <h2 class="ui dividing header">Challenge Form</h2>
+            <form class="ui form" enctype="multipart/form-data" method="post">
+                {{ form.csrf_token }}
+                <div class="field">
+                    {{ form.first_blood_score.label(class="ui label") }}
+                    {{ form.first_blood_score(class="ui input") }}
+                </div>
 
-        <div class="field">
-            {{ form.success_score.label }}
-            {{ form.success_score(class="ui input") }}
-        </div>
+                <div class="field">
+                    {{ form.success_score.label(class="ui label") }}
+                    {{ form.success_score(class="ui input") }}
+                </div>
 
-        <div class="field">
-            {{ form.hint_score.label }}
-            {{ form.hint_score(class="ui input") }}
-        </div>
+                <div class="field">
+                    {{ form.hint_score.label(class="ui label") }}
+                    {{ form.hint_score(class="ui input") }}
+                </div>
 
-        <div class="field">
-            {{ form.fail_score.label }}
-            {{ form.fail_score(class="ui input") }}
-        </div>
+                <div class="field">
+                    {{ form.fail_score.label(class="ui label") }}
+                    {{ form.fail_score(class="ui input") }}
+                </div>
+                <div class="field">
+                    {{ form.challenge.label(class="ui label") }}
+                    <select id="challenge" class="ui search selection dropdown">
+                        <option value="">Select a challenge</option>
+                        {% for choice in form.challenge.choices %}
+                        <option value="{{ choice[0] }}">{{ choice[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-        <div class="field">
-            {{ form.challenge.label }}
-            {{ form.challenge(id="challenge",class="ui dropdown") }}
+                <div class="field">
+                    <button class="ui large primary button" type="submit">
+                        <i class="save icon"></i> Save
+                    </button>
+                </div>
+            </form>
         </div>
-
-        <div class="field">
-            <button class="ui large primary button" type="submit">
-                <i class="save icon"></i> Save
-            </button>
+        <div class="eight wide column" id="challenge-detail" style="display: none;">
+            <h2 class="ui dividing header">Challenge Detail</h2>
+            <div class="ui segment response"></div>
         </div>
-    </form>
-    <div id='loader' style='display: none;'>
-        <b>Loading..</b>
     </div>
-    <div class='response'></div>
+    <div id="loader" class="ui active inverted dimmer" style="display: none;">
+        <div class="ui text loader">Loading...</div>
+    </div>
 </div>
 
 <script>
-    $(document).ready(function(){
-        $("#challenge").change(function(){
+    $(document).ready(function () {
+        // Initialize dropdown
+        $('#challenge').dropdown({
+            placeholder: 'Select a challenge',
+            clearable: true
+        });
+
+        $("#challenge").change(function () {
             var challengeId = $('#challenge').val();
-            $("#loader").show();
-            $('.response').empty();
-            setTimeout(function() {
-                $.ajax({
-                    url: '/api/challenge/' + challengeId,
-                    type: 'get',
-                    success: function(response){
-                        $('.response').append(`
-                            <p>Name: ${response.name}</p>
-                            <p>Category: ${response.category}</p>
-                            <p>Answer Type: ${response.answer_type}</p>
-                            <p>Answer: ${response.answer}</p>
-                            <p>Description: ${response.description}</p>
-                        `);
-                        $("#loader").hide();
-                    },
-                    complete:function(data){
-                        // Hide image container
-                        $("#loader").hide();
-                    }
-                });
-            }, 2000); 
+            if (challengeId) {
+                $("#loader").show();
+                $('#challenge-detail').hide(); // Hide the detail section during loading
+                $('#empty-column').hide(); // Hide the empty column during loading
+                $('.response').hide().empty();
+                setTimeout(function () {
+                    $.ajax({
+                        url: '/api/challenge/' + challengeId,
+                        type: 'get',
+                        success: function (response) {
+                            $('.response').html(`
+                                <p><strong>Name:</strong> ${response.name}</p>
+                                <p><strong>Category:</strong> ${response.category}</p>
+                                <p><strong>Answer Type:</strong> ${response.answer_type}</p>
+                                <p><strong>Answer:</strong> ${response.answer}</p>
+                                <p><strong>Description:</strong> ${response.description}</p>
+                            `);
+                        },
+                        complete: function () {
+                            $("#loader").hide();
+                            $('#challenge-detail').fadeIn(); // Show the detail section after loading
+                            $('.response').fadeIn();
+                        }
+                    });
+                }, 1000);
+            } else {
+                $('#challenge-detail').hide();
+                $('#empty-column').show(); // Show the empty column if no challenge is selected
+                $('.response').hide().empty();
+            }
         });
     });
-    
 </script>
 {% endblock %}
