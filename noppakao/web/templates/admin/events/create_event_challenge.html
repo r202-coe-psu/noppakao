@@ -47,12 +47,12 @@
         $("#challenge").change(function(){
             var challengeId = $('#challenge').val();
             $("#loader").show();
+            $('.response').empty();
             setTimeout(function() {
                 $.ajax({
                     url: '/api/challenge/' + challengeId,
                     type: 'get',
                     success: function(response){
-                        $('.response').empty();
                         $('.response').append(`
                             <p>Name: ${response.name}</p>
                             <p>Category: ${response.category}</p>
