@@ -68,7 +68,7 @@ def challenge(event_id):
             event_categorys.append(event_challenge.challenge.category)
 
     return render_template(
-        "/admin/events/challenge.html",
+        "/challenges/index.html",
         event_challenges=event_challenges,
         event=event,
         event_categorys=event_categorys,

@@ -1,96 +1,102 @@
 {% extends "base/default-page.html" %}
 
 {% block content %}
-<div>
-	<div class="ui secondary menu" style="font-size: medium;">
+<div class="ui secondary menu" style="font-size: medium;">
+	<div class="item">
+		<h3><i class="star icon"></i> Challenges</h3>
+	</div>
+	<div class="item">
+		<i class="user friends icon"></i> Team Rank
+	</div>
+	<div class="right menu">
 		<div class="item">
-			<h3><i class="star icon"></i> Challenges</h3>
+			<i class="user friends icon"></i> Team Score 0
 		</div>
 		<div class="item">
-			<i class="user friends icon"></i> Team Rank
-		</div>
-		<div class="right menu">
-			<div class="item">
-				<i class="user friends icon"></i> Team Score 0
-			</div>
-			<div class="item">
-				<i class="user friends icon"></i> Team Rank 0
-			</div>
+			<i class="user friends icon"></i> Team Rank 0
 		</div>
 	</div>
-	<div class="ui grid center aligned">
-		{% for i in range(6) %}
-		<div class="five wide column" id="card-template">
-			<div class="ui cards">
-				<div class="ui fluid card">
-					<div class="content">
-						<div class="header">
-							<i class="chess queen icon" style="visibility: visible;"></i>
-							Question Category
-						</div>
-						<div class="content" style="margin-top: 1rem;">
-							<table class="ui table" style="border: none !important;">
-								<thead>
-									<tr>
-										<th class="one wide"></th>
-										<th class="six wide">Challenges</th>
-										<th class="two wide center aligned">Point</th>
-										<th class="two wide center aligned"><i class="tint icon"
-												style="color: red;"></i></th>
-										<th class="two wide center aligned"><i class="key icon"
-												style="color: rgb(255, 196, 0);"></i></th>
-										<th class="two wide center aligned">Solves</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td><i class="cube icon" style="color: #386CAF;"></i></td>
-										<td>John</td>
-										<td class="center aligned">25</td>
-										<td class="center aligned">10</td>
-										<td class="center aligned">-</td>
-										<td class="center aligned">0</td>
-									</tr>
-									<tr>
-										<td><i class="cube icon" style="color: #386CAF;"></i></td>
-										<td>Jane</td>
-										<td class="center aligned">28</td>
-										<td class="center aligned">10</td>
-										<td class="center aligned">-</td>
-										<td class="center aligned">0</td>
-									</tr>
-									<tr>
-										<td><i class="cube icon" style="color: #386CAF;"></i></td>
-										<td>Mike</td>
-										<td class="center aligned">32</td>
-										<td class="center aligned">10</td>
-										<td class="center aligned">-</td>
-										<td class="center aligned">0</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
+</div>
+<div class="ui grid center aligned">
+	{% for i in range((event_categorys|length)) %}
+	<div class="five wide column card-trigger" id="card-template">
+		<div class="ui cards">
+			<div class="ui fluid card">
+				<div class="content">
+					<div class="header">
+						<i class="chess queen icon" style="visibility: visible;"></i>
+						Question Category {{ event_categorys[i].name }}
+					</div>
+					<div class="content" style="margin-top: 1rem;">
+						<table class="ui table" style="border: none !important;">
+							<thead>
+								<tr>
+									<th class="one wide"></th>
+									<th class="six wide">Challenges</th>
+									<th class="two wide center aligned">Point</th>
+									<th class="two wide center aligned"><i class="tint icon" style="color: red;"></i>
+									</th>
+									<th class="two wide center aligned"><i class="key icon"
+											style="color: rgb(255, 196, 0);"></i></th>
+									<th class="two wide center aligned">Solves</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for event_challenge in event_challenges %}
+								{% if event_categorys[i].name == event_challenge.challenge.category.name %}
+								<tr>
+									<td><i class="cube icon" style="color: #386CAF;"></i></td>
+									<td class="clickable-name"><a>{{ event_challenge.challenge.name }}</a></td>
+									<td class="center aligned">{{ event_challenge.success_score }}</td>
+									<td class="center aligned">{{ event_challenge.first_blood_score }} </td>
+									<td class="center aligned">{{ event_challenge.hint_score }}</td>
+									<td class="center aligned">{{ event_challenge.fail_score }} </td>
+								</tr>
+								{% endif %}
+								{% endfor %}
+							</tbody>
+						</table>
 					</div>
 				</div>
 			</div>
 		</div>
-		{% endfor %}
+	</div>
+	{% endfor %}
+</div>
+<div class="ui modal">
+	<div class="header">Look at the Actions</div>
+	<div class="content">
+		<p>They are aligned to the left</p>
+	</div>
+	<div class="content">
+		<form class="ui form">
+			<div class="field">
+				<label>Answer Flag</label>
+				<input type="text" name="answer-flag" placeholder="Answer Flag">
+			</div>
+		</form>
+	</div>
+	<div class="left actions">
+		<div class="ui negative button">Cancel</div>
+		<div class="ui positive button">Submit</div>
 	</div>
 </div>
-
 {% endblock %}
 
 {% block additional_js %}
 <script>
 	function showQuestion(question) {
-		question ? $('.ui.small.modal.' + question).modal('show') : $('.ui.small.modal').modal('hide')
-			;
+		question ? $('.ui.small.modal.' + question).modal('show') : $('.ui.small.modal').modal('hide');
 	}
-</script>
-<script>
-	function Hint(msg) {
-		alert('Hist : ' + msg);
-	}
-</script>
 
+	function Hint(msg) {
+		alert('Hint : ' + msg);
+	}
+
+	$(document).ready(function () {
+		$('.clickable-name').on('click', function () {
+			$('.ui.modal').modal('show');
+		});
+	});
+</script>
 {% endblock %}
