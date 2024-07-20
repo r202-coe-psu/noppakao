@@ -27,7 +27,7 @@
 
         <div class="field">
             {{ form.challenge.label }}
-            {{ form.challenge(class="ui dropdown") }}
+            {{ form.challenge(id="challenge",class="ui dropdown") }}
         </div>
 
         <div class="field">
@@ -36,5 +36,40 @@
             </button>
         </div>
     </form>
+    <div id='loader' style='display: none;'>
+        <b>Loading..</b>
+    </div>
+    <div class='response'></div>
 </div>
+
+<script>
+    $(document).ready(function(){
+        $("#challenge").change(function(){
+            var challengeId = $('#challenge').val();
+            $("#loader").show();
+            setTimeout(function() {
+                $.ajax({
+                    url: '/api/challenge/' + challengeId,
+                    type: 'get',
+                    success: function(response){
+                        $('.response').empty();
+                        $('.response').append(`
+                            <p>Name: ${response.name}</p>
+                            <p>Category: ${response.category}</p>
+                            <p>Answer Type: ${response.answer_type}</p>
+                            <p>Answer: ${response.answer}</p>
+                            <p>Description: ${response.description}</p>
+                        `);
+                        $("#loader").hide();
+                    },
+                    complete:function(data){
+                        // Hide image container
+                        $("#loader").hide();
+                    }
+                });
+            }, 2000); 
+        });
+    });
+    
+</script>
 {% endblock %}
