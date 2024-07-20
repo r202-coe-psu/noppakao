@@ -1,4 +1,4 @@
-<div class="ui large menu" style="background-color: rgb(50, 78, 156); border-radius: 0 !important;">
+<div class="ui large top fixed menu" style="background-color: rgb(50, 78, 156); border-radius: 0 !important;">
     <a class="item" style="color: white;">R202 logo</a>
     <a class="launch icon item" style="gap: 10px; color: white;"><i class="content icon"></i></a>
     <a class="item" style="color: white;"><i class="user tie icon"></i>Name</a>
@@ -15,19 +15,12 @@
     {% include "/base/sidebar.html" with context %}
 </div>
 <script type="text/javascript">
-    $(document)
-        .ready(function () {
+    $(document).ready(function () {
+        $('.left.sidebar.menu')
+            .sidebar('attach events', '.launch.icon.item', 'show');
 
-            $('.left.sidebar.menu')
-                .sidebar('attach events', '.launch.icon.item', 'show')
-                ;
-            $('.launch.icon.item')
-                .removeClass('disabled')
-                ;
+        $('.launch.icon.item').removeClass('disabled');
 
-            $('.ui.dropdown')
-                .dropdown()
-                ;
-        })
-        ;
+        $('.ui.dropdown').dropdown();
+    });
 </script>
