@@ -50,3 +50,26 @@ def join(event_id):
     event_role.save()
 
     return redirect(url_for("events.index", msg=msg))
+
+
+@module.route("/<event_id>/challenge", methods=["GET", "POST"])
+@login_required
+def challenge(event_id):
+    event = models.Event.objects(id=event_id).first()
+    event_challenges = models.EventChallenge.objects(event=event)
+    event_categorys = []
+
+    if not current_user.check_join_event(event.id):
+        msg = "คุณกำลังพยายามเข้าไปใน กิจกรรมที่คุณไม่ได้เข้าร่วม"
+        return redirect(url_for("events.index", msg=msg))
+
+    for event_challenge in event_challenges:
+        if not event_challenge.challenge.category in event_categorys:
+            event_categorys.append(event_challenge.challenge.category)
+
+    return render_template(
+        "/admin/events/challenge.html",
+        event_challenges=event_challenges,
+        event=event,
+        event_categorys=event_categorys,
+    )
