@@ -1,23 +1,77 @@
 {% extends "base/default-page.html" %}
 
 {% block content %}
-{% if msg %}
-    <div ><span {% if "Successfully" in msg %} class="ui success text" {% else %} class="ui error text"  {% endif %} >{{ msg }}</span></div>
-{% endif %}
-{% for event in events %}
-    
-    {% if event.status == "active" %}
-        <div> {{ event.name }}</div>
-        <div> {{event.startd_date }} - {{ event.ended_date }} </div>
-        {% if current_user.check_join_event(event.id)%}
-        <a href="{{url_for('events.challenge',event_id=event.id)}}">join</a>
-        {% else %}
-        <form action="{{url_for('events.join',event_id=event.id)}}">
-            <input id="code" name="code">
-            <button type="submit"> enroll </button>
-        </form>
-        {% endif %}
+<div class="ui container">
+    {% if msg %}
+    <div class="ui message {% if 'Successfully' in msg %}success text{% else %}error text{% endif %}">
+        <span>{{ msg }}</span>
+    </div>
     {% endif %}
 
-{% endfor %}
+    <div class="ui stackable grid" style="padding: 2rem;">
+        <div class="sixteen wide column">
+            <h2 class="ui dividing header">
+                <i class="handshake icon"></i> Joined Events
+            </h2>
+            <div class="ui stackable cards">
+                {% for event in events %}
+                {% if event.status == "active" and current_user.check_join_event(event.id) %}
+                <div class="ui card">
+                    <div class="content">
+                        <div class="header">
+                            <i class="users icon"></i> {{ event.name }}
+                        </div>
+                        <div class="meta" style="margin-top: 0.5rem;">
+                            <i class="calendar alternate outline icon"></i> {{ event.started_date.strftime("%d %b %Y")
+                            }} - {{
+                            event.ended_date.strftime("%d %b %Y") }}
+                        </div>
+                    </div>
+                    <div class="extra content">
+                        <a href="{{ url_for('events.challenge', event_id=event.id) }}" class="ui button"
+                            style="background-color: #222B68; color: white;">
+                            <i class="trophy icon"></i> Challenge
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="sixteen wide column">
+            <h2 class="ui dividing header">
+                <i class="list alternate icon"></i> Available Events
+            </h2>
+            <div class="ui stackable cards">
+                {% for event in events %}
+                {% if event.status == "active" and not current_user.check_join_event(event.id) %}
+                <div class="ui card">
+                    <div class="content">
+                        <div class="header">
+                            <i class="tag icon"></i> {{ event.name }}
+                        </div>
+                        <div class="meta" style="margin-top: 0.5rem;">
+                            <i class="calendar alternate outline icon"></i> {{ event.started_date.strftime("%d %b %Y")
+                            }} - {{
+                            event.ended_date.strftime("%d %b %Y") }}
+                        </div>
+                    </div>
+                    <div class="extra content">
+                        <form action="{{ url_for('events.join', event_id=event.id) }}" class="ui form">
+                            <div class="field">
+                                <input type="text" id="code" name="code" placeholder="Enter Code">
+                            </div>
+                            <button type="submit" class="ui button" style="background-color: #CDDFEF;">
+                                <i class="add circle icon"></i> Enroll
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
