@@ -17,23 +17,24 @@
       <div class="ui divider" style="margin: 0; background-color: #fff;"></div>
       
       {% if current_user.has_roles('admin') %}
+      <a class="item" href="{{ url_for('admin.events.index') }}" style="color: white; padding: 1rem;">
+        <i class="calendar check icon" style="font-size: 1.2rem;"></i>
+        <span style="font-size: 1rem;">Events</span>
+      </a>
+      <div class="ui divider" style="margin: 0; background-color: #fff;"></div>
+      
+      <a class="item" href="{{ url_for('categories.index') }}" style="color: white; padding: 1rem;">
+        <i class="th icon" style="font-size: 1.2rem;"></i>
+        <span style="font-size: 1rem;">Categories</span>
+      </a>
+      <div class="ui divider" style="margin: 0; background-color: #fff;"></div>
+      
       <a class="item" href="{{ url_for('admin.challenges.index') }}" style="color: white; padding: 1rem;">
         <i class="flag checkered icon" style="font-size: 1.2rem;"></i>
         <span style="font-size: 1rem;">Challenges</span>
       </a>
       <div class="ui divider" style="margin: 0; background-color: #fff;"></div>
       
-      <a class="item" href="{{ url_for('admin.events.index') }}" style="color: white; padding: 1rem;">
-        <i class="calendar check icon" style="font-size: 1.2rem;"></i>
-        <span style="font-size: 1rem;">Events</span>
-      </a>
-      <div class="ui divider" style="margin: 0; background-color: #fff;"></div>
-
-      <a class="item" href="{{ url_for('categories.index') }}" style="color: white; padding: 1rem;">
-        <i class="th icon" style="font-size: 1.2rem;"></i>
-        <span style="font-size: 1rem;">Categories</span>
-      </a>
-      <div class="ui divider" style="margin: 0; background-color: #fff;"></div>
 
       <a class="item" href="{{ url_for('teams.index') }}" style="color: white; padding: 1rem;">
         <i class="user tie icon" style="font-size: 1.2rem;"></i>
