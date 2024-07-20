@@ -1,4 +1,5 @@
 {% extends "base/default-page.html" %}
+{% import '/base/html-renderer.html' as renderer %}
 
 {% block content %}
 <div class="ui container" style="padding: 2rem;">
@@ -27,14 +28,19 @@
                     {{ form.fail_score.label(class="ui label") }}
                     {{ form.fail_score(class="ui input") }}
                 </div>
+
                 <div class="field">
                     {{ form.challenge.label(class="ui label") }}
-                    <select id="challenge" class="ui search selection dropdown">
-                        <option value="">Select a challenge</option>
-                        {% for choice in form.challenge.choices %}
-                        <option value="{{ choice[0] }}">{{ choice[1] }}</option>
-                        {% endfor %}
-                    </select>
+                    <div class="ui fluid search selection dropdown">
+                        <input type="hidden" name="challenge" id="challenge">
+                        <i class="dropdown icon"></i>
+                        <div class="default text">Select a challenge</div>
+                        <div class="menu">
+                            {% for choice in form.challenge.choices %}
+                            <div class="item" data-value="{{ choice[0] }}">{{ choice[1] }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
 
                 <div class="field">
@@ -50,15 +56,13 @@
         </div>
     </div>
     <div id="loader" class="ui active inverted dimmer" style="display: none;">
-        <l-quantum
-        size="80"
-        speed="1.75"
-        color="#165fd4" 
-        ></l-quantum>
+        <l-quantum size="80" speed="1.75" color="#165fd4"></l-quantum>
     </div>
 </div>
 
 <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/quantum.js"></script>
+</div>
+
 <script>
     $(document).ready(function () {
         // Initialize dropdown
