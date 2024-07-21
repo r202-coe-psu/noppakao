@@ -18,5 +18,7 @@ def get_all_data(challenge_id):
         "answer_type": challenge.answer_type,
         "answer": challenge.answer,
         "description": challenge.description,
+        "challenge_url": challenge.challenge_url,
+        "hint": challenge.hint,
     }
     return jsonify(data)

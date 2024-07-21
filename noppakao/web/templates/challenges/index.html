@@ -44,13 +44,13 @@
 							<tbody>
 								{% for event_challenge in event_challenges %}
 								{% if event_categorys[i].name == event_challenge.challenge.category.name %}
-								<tr>
+								<tr class="clickable-row" data-challenge-id="{{ event_challenge.challenge.id }}">
 									<td><i class="cube icon" style="color: #386CAF;"></i></td>
 									<td class="clickable-name"><a>{{ event_challenge.challenge.name }}</a></td>
 									<td class="center aligned">{{ event_challenge.success_score }}</td>
-									<td class="center aligned">{{ event_challenge.first_blood_score }} </td>
+									<td class="center aligned">{{ event_challenge.first_blood_score }}</td>
 									<td class="center aligned">{{ event_challenge.hint_score }}</td>
-									<td class="center aligned">{{ event_challenge.fail_score }} </td>
+									<td class="center aligned">{{ event_challenge.fail_score }}</td>
 								</tr>
 								{% endif %}
 								{% endfor %}
@@ -63,39 +63,82 @@
 	</div>
 	{% endfor %}
 </div>
-<div class="ui modal">
-	<div class="header">Look at the Actions</div>
+
+<div class="ui modal" id="challenge-modal">
+	<div class="header">Challenge Details</div>
 	<div class="content">
-		<p>They are aligned to the left</p>
-	</div>
-	<div class="content">
-		<form class="ui form">
+		<div class="ui segment">
+			<p id="challenge-description" class="modal-description"></p>
+			<p>
+				<a id="challenge-url" href="#" target="_blank" class="ui link" style="display: none;">Challenge URL</a>
+			</p>
+		</div>
+		<div id="challenge-hint" class="modal-hint ui blue segment" style="display: none;"></div>
+		<a id="show-hint-button" class="ui primary tertiary button" style="display: none;"><i
+				class="eye outline icon"></i>Show Hint</a>
+		<form class="ui form" style="margin-top: 2rem;">
 			<div class="field">
 				<label>Answer Flag</label>
 				<input type="text" name="answer-flag" placeholder="Answer Flag">
 			</div>
 		</form>
 	</div>
-	<div class="left actions">
-		<div class="ui negative button">Cancel</div>
-		<div class="ui positive button">Submit</div>
+	<div class="actions">
+		<div class="ui button negative">Cancel</div>
+		<div class="ui button positive">Submit</div>
 	</div>
 </div>
+
+
+
+
 {% endblock %}
 
 {% block additional_js %}
 <script>
-	function showQuestion(question) {
-		question ? $('.ui.small.modal.' + question).modal('show') : $('.ui.small.modal').modal('hide');
-	}
+	function showChallengeDetails(challengeId) {
+		$.ajax({
+			url: '/api/challenge/' + challengeId,
+			type: 'GET',
+			success: function (response) {
+				$('#challenge-description').text(response.description);
 
-	function Hint(msg) {
-		alert('Hint : ' + msg);
+				if (response.challenge_url) {
+					$('#challenge-url')
+						.attr('href', response.challenge_url)
+						.text(response.name)
+						.show();
+				} else {
+					$('#challenge-url').hide();
+				}
+
+				if (response.hint) {
+					$('#show-hint-button').show().off('click').on('click', function () {
+						$('#challenge-hint').text(response.hint).show();
+						$(this).hide();
+					});
+				} else {
+					$('#show-hint-button').hide();
+					$('#challenge-hint').hide();
+				}
+				$('#challenge-modal').modal('show');
+			},
+		});
 	}
 
 	$(document).ready(function () {
 		$('.clickable-name').on('click', function () {
-			$('.ui.modal').modal('show');
+			var challengeId = $(this).closest('.clickable-row').data('challenge-id');
+			if (challengeId) {
+				showChallengeDetails(challengeId);
+			}
+		});
+
+		$('#challenge-modal').modal({
+			onHidden: function () {
+				$('#challenge-hint').hide();
+				$('#show-hint-button').show();
+			}
 		});
 	});
 </script>
