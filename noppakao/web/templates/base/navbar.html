@@ -15,11 +15,11 @@
     <div class="right menu">
         <a class="item" style="color: white;"><i class="tv icon"></i>IP address</a>
         <a id="current-time" class="item" style="color: white;"><i class="compass outline icon"></i><span></span></a>
-        {% if event %}
+        {# {% if event %}
         <a class="item" style="color: white;"><i class="clock outline icon"></i>
             <p id="countdown"></p>
         </a>
-        {% endif %}
+        {% endif %} #}
         <a class="item" style="color: white;" href="{{url_for('accounts.logout')}}"><i class="power off icon"
                 style="color: red;"></i>Logout</a>
     </div>
@@ -62,6 +62,7 @@
         setInterval(updateTime, 60000);
     });
 </script>
+{#
 <script id="countdown">
     function countdown(ended_date) {
         const countDownDate = new Date(ended_date).getTime();
@@ -93,4 +94,4 @@
         const ended_date = "{{ event.ended_date }}";
         countdown(ended_date);
     }
-</script>
+</script> #}
