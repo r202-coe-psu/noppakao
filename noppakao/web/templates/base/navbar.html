@@ -15,11 +15,6 @@
     <div class="right menu">
         <a class="item" style="color: white;"><i class="tv icon"></i>IP address</a>
         <a id="current-time" class="item" style="color: white;"><i class="compass outline icon"></i><span></span></a>
-        {# {% if event %}
-        <a class="item" style="color: white;"><i class="clock outline icon"></i>
-            <p id="countdown"></p>
-        </a>
-        {% endif %} #}
         <a class="item" style="color: white;" href="{{url_for('accounts.logout')}}"><i class="power off icon"
                 style="color: red;"></i>Logout</a>
     </div>
@@ -62,36 +57,3 @@
         setInterval(updateTime, 60000);
     });
 </script>
-{#
-<script id="countdown">
-    function countdown(ended_date) {
-        const countDownDate = new Date(ended_date).getTime();
-
-
-        console.log("Countdown Date:", startDate);
-
-        const x = setInterval(function () {
-            const now = new Date().getTime();
-            console.log("Current Date:", startDate);
-            const distance = countDownDate - now;
-
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            document.getElementById("countdown").innerHTML = days + "d " + hours + "h "
-                + minutes + "m " + seconds + "s ";
-
-            if (distance < 0) {
-                clearInterval(x);
-                document.getElementById("countdown").innerHTML = "EXPIRED";
-            }
-        }, 1000);
-    }
-
-    window.onload = function () {
-        const ended_date = "{{ event.ended_date }}";
-        countdown(ended_date);
-    }
-</script> #}
