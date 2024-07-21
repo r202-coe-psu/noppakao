@@ -69,17 +69,13 @@
 <script type="text/javascript">
     $(document).ready(function () {
         var datetime_formatter = {
-            datetime: function (date, settings) {
-                if (!date) return '';
-                return moment(date).format('DD/MM/YYYY HH:mm');
-            }
+            datetime: "DD/MM/YYYY HH:mm"
         };
-
         var calendar_setting = {
             type: 'datetime',
             monthFirst: false,
             formatter: datetime_formatter,
-            today: true,
+            today: false,
             ampm: false,
             text: {
                 days: ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'],
@@ -91,10 +87,8 @@
                 pm: 'PM'
             },
         };
-
-        $('#start_date_calendar').calendar(calendar_setting);
-        $('#end_date_calendar').calendar(calendar_setting);
+        $('#start_date').calendar(calendar_setting);
+        $('#end_date').calendar(calendar_setting);
     });
 </script>
-
 {% endblock %}
