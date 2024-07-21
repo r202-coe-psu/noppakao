@@ -49,8 +49,20 @@ def join(event_id):
         msg = "Code mismatch"
         return redirect(url_for("events.index", msg=msg))
 
-    msg = "Successfully joined"
+    if event.type == "team":
+        team = models.Team.objects(members__in=[current_user]).first()
+        if team:
+            event_competitor = models.EventCompetitor()
+            event_competitor.team = team
+            event_competitor.event = event
+            event_competitor.created_by = current_user._get_current_object()
+            event_competitor.updated_by = current_user._get_current_object()
+            event_competitor.save()
+        else:
+            msg = "Please create a team."
+            return redirect(url_for("events.index", msg=msg))
 
+    msg = "Successfully joined"
     event_role = models.EventRole()
     event_role.event = event
     event_role.user = current_user
