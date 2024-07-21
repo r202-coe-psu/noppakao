@@ -27,4 +27,8 @@ def index():
         "-score", "updated_date"
     )
 
-    return render_template("dashboards/index.html", teams=teams, users=users)
+    return render_template(
+        "dashboards/index.html",
+        teams=teams,
+        users=users,
+    )

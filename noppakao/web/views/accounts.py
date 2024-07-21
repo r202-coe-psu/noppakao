@@ -26,7 +26,15 @@ module = Blueprint("accounts", __name__)
 @module.route("/profile")
 @login_required
 def index():
-    return render_template("accounts/index.html")
+    teams = models.Team.objects(status="active").order_by("-score", "updated_date")
+    users = models.User.objects(status="active", roles__ne="admin").order_by(
+        "-score", "updated_date"
+    )
+    return render_template(
+        "accounts/index.html",
+        teams=teams,
+        users=users,
+    )
 
 
 @module.route("/login", methods=["GET", "POST"])

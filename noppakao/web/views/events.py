@@ -21,11 +21,20 @@ module = Blueprint("events", __name__, url_prefix="/events")
 @module.route("/", methods=["GET", "POST"])
 @login_required
 def index():
+    teams = models.Team.objects(status="active").order_by("-score", "updated_date")
+    users = models.User.objects(status="active", roles__ne="admin").order_by(
+        "-score", "updated_date"
+    )
     events = models.Event.objects()
     event_role = models.EventRole.objects()
     msg = request.args.get("msg")
     return render_template(
-        "events/index.html", events=events, msg=msg, event_role=event_role
+        "events/index.html",
+        events=events,
+        msg=msg,
+        event_role=event_role,
+        teams=teams,
+        users=users,
     )
 
 
@@ -55,6 +64,10 @@ def join(event_id):
 @module.route("/<event_id>/challenge", methods=["GET", "POST"])
 @login_required
 def challenge(event_id):
+    teams = models.Team.objects(status="active").order_by("-score", "updated_date")
+    users = models.User.objects(status="active", roles__ne="admin").order_by(
+        "-score", "updated_date"
+    )
     event = models.Event.objects(id=event_id).first()
     event_challenges = models.EventChallenge.objects(event=event)
     event_categorys = []
@@ -72,4 +85,6 @@ def challenge(event_id):
         event_challenges=event_challenges,
         event=event,
         event_categorys=event_categorys,
+        teams=teams,
+        users=users,
     )
