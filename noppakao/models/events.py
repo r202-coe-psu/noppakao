@@ -69,6 +69,19 @@ class EventChallenge(me.Document):
     updated_date = me.DateField(required=True, default=datetime.datetime.now)
     updated_by = me.ReferenceField("User", dbref=True, required=True)
 
+    def check_answer(self, answer):
+        from noppakao import models
+
+        if self.challenge.answer_type == "flag":
+            flag = self.event.flag_prefix + f"{{self.challenge.answer}}"
+            if answer == flag:
+                return True
+            else:
+                return False
+        if answer == self.challenge.answer:
+            return True
+        return False
+
 
 EVENT_ROLES = ["competitor", "contributor"]
 

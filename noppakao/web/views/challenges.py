@@ -110,27 +110,3 @@ def download(challenge_id):
         mimetype=challenge.upload_file.content_type,
     )
     return res
-
-
-@module.route("<challenge_id>/challenge/<flag>", methods=["GET", "POST"])
-@login_required
-def challenge_challenge(challenge_id, flag):
-
-    try:
-        challenge = models.Challenge.objects.get(id=challenge_id)
-        team = models.Team.objects.get(id=current_user.team.id)
-    except:
-        return redirect(url_for("challenges.index"))
-
-    if check_password_hash(challenge.flag, flag) and not "admin" in current_user.roles:
-        if not current_user.team.name in challenge.problem_solvers:
-            current_user.score += challenge.point
-            team.score += challenge.point
-            challenge.problem_solvers.append(current_user.team.name)
-            team.updated_date = datetime.datetime.now()
-            current_user.updated_date = datetime.datetime.now()
-
-    challenge.save()
-    current_user.save()
-    team.save()
-    return redirect(url_for("challenges.index"))

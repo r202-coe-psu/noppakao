@@ -4,6 +4,7 @@ from .challenges import Challenge
 from .categories import Category
 from .teams import Team
 from .events import Event, EventChallenge, EventRole, EventCompetitor
+from .transactions import Transaction
 
 db = MongoEngine()
 

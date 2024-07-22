@@ -100,3 +100,59 @@ def challenge(event_id):
         teams=teams,
         users=users,
     )
+
+
+@module.route(
+    "/<event_id>/challenges/<challenge_id>/submit_challenge", methods=["GET", "POST"]
+)
+@login_required
+def submit_challenge(event_id, challenge_id):
+    event_challenge = models.EventChallenge.objects(id=challenge_id).first()
+
+    event = models.Event.objects(id=event_id).first()
+    transaction = models.Transaction.objects(event_challenge=event_challenge)
+    now = datetime.datetime.now()
+    answer = request.args.get("answer")
+
+    if now < event.ended_date:
+        return redirect(url_for("events.index"))
+
+    if not transaction and event_challenge.check_answer(answer):
+        transaction = models.Transaction()
+        transaction.type = "answer"
+        transaction.status = "first_blood"
+        transaction.score = event_challenge.success_score
+        transaction.event_challenge = event_challenge
+        transaction.answer = answer
+        transaction.user = current_user
+        if event.type == "team":
+            team = models.Team.objects(members__in=[current_user]).first()
+            transaction.team = team
+        transaction.save()
+        return redirect(url_for("events.challenge", event_id=event.id))
+
+    transaction = models.Transaction()
+
+    if event.type == "team":
+        team = models.Team.objects(members__in=[current_user]).first()
+        transaction.team = team
+
+    if not event_challenge.check_answer(answer):
+        transaction.type = "answer"
+        transaction.status = "fail"
+        transaction.score = event_challenge.fail_score
+        transaction.event_challenge = event_challenge
+        transaction.answer = answer
+        transaction.user = current_user
+        transaction.save()
+        return redirect(url_for("events.challenge", event_id=event.id))
+
+    transaction.type = "answer"
+    transaction.status = "success"
+    transaction.score = event_challenge.success_score
+    transaction.event_challenge = event_challenge
+    transaction.answer = answer
+    transaction.user = current_user
+    transaction.save()
+
+    return redirect(url_for("events.challenge", event_id=event.id))
