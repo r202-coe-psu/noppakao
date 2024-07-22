@@ -16,7 +16,9 @@
 	{% endfor %}
 
 	<div class="right menu">
-		<a class="item" style="color: white;"><i class="tv icon"></i>IP address</a>
+		<div class="item" style="color: white;">
+			<p id="ipaddress"></p>
+		</div>
 		<a id="current-time" class="item" style="color: white;"><i class="compass outline icon"></i><span
 				id="time-display"></span></a>
 		{% if event %}
@@ -141,6 +143,19 @@
 		animation: flash 1s infinite;
 	}
 </style>
+<script type="text/javascript">
+	function updateIP() {
+		fetch('https://api.ipify.org?format=json')
+			.then(response => response.json())
+			.then(data => {
+				document.getElementById('ipaddress').innerHTML = `<i class="tv icon"></i>${data.ip}`;
+			})
+	}
+
+	document.addEventListener('DOMContentLoaded', function () {
+		updateIP();
+	});
+</script>
 
 <script type="text/javascript">
 	function showChallengeDetails(challengeId) {

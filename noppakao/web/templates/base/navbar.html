@@ -13,7 +13,7 @@
     {% endfor %}
 
     <div class="right menu">
-        <a class="item" style="color: white;"><i class="tv icon"></i>IP address</a>
+        <a id="ip-address" class="item" style="color: white;"><i class="tv icon"></i>IP address</a>
         <a id="current-time" class="item" style="color: white;"><i class="compass outline icon"></i><span></span></a>
         <a class="item" style="color: white;" href="{{url_for('accounts.logout')}}"><i class="power off icon"
                 style="color: red;"></i>Logout</a>
@@ -47,4 +47,19 @@
     }
     setInterval(updateTime, 1000);
     updateTime();
+</script>
+
+<script type="text/javascript">
+    function updateIP() {
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('ip-address').innerHTML = `<i class="tv icon"></i>${data.ip}`;
+            })
+            .catch(error => console.error('Error fetching IP:', error));
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        updateIP();
+    });
 </script>
