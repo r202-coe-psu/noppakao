@@ -84,6 +84,7 @@ def challenge(event_id):
     event = models.Event.objects(id=event_id).first()
     event_challenges = models.EventChallenge.objects(event=event)
     event_categorys = []
+    dialog_state = {"status": request.args.get("dialog_state", None)}
 
     if not current_user.check_join_event(event.id):
         msg = "คุณกำลังพยายามเข้าไปใน กิจกรรมที่คุณไม่ได้เข้าร่วม"
@@ -101,6 +102,7 @@ def challenge(event_id):
         teams=teams,
         users=users,
         challenges=challenges,
+        dialog_state=dialog_state,
     )
 
 
@@ -123,7 +125,7 @@ def submit_challenge(event_id, challenge_id):
         transaction = models.Transaction()
         transaction.type = "answer"
         transaction.status = "first_blood"
-        transaction.score = event_challenge.success_score
+        transaction.score = event_challenge.first_blood_score
         transaction.event_challenge = event_challenge
         transaction.answer = answer
         transaction.user = current_user
@@ -131,7 +133,9 @@ def submit_challenge(event_id, challenge_id):
             team = models.Team.objects(members__in=[current_user]).first()
             transaction.team = team
         transaction.save()
-        return redirect(url_for("events.challenge", event_id=event.id))
+        return redirect(
+            url_for("events.challenge", event_id=event.id, dialog_state="first_blood")
+        )
 
     transaction = models.Transaction()
 
@@ -147,7 +151,9 @@ def submit_challenge(event_id, challenge_id):
         transaction.answer = answer
         transaction.user = current_user
         transaction.save()
-        return redirect(url_for("events.challenge", event_id=event.id))
+        return redirect(
+            url_for("events.challenge", event_id=event.id, dialog_state="fail")
+        )
 
     transaction.type = "answer"
     transaction.status = "success"
@@ -157,4 +163,6 @@ def submit_challenge(event_id, challenge_id):
     transaction.user = current_user
     transaction.save()
 
-    return redirect(url_for("events.challenge", event_id=event.id))
+    return redirect(
+        url_for("events.challenge", event_id=event.id, dialog_state="success")
+    )
