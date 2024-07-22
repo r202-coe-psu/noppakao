@@ -2,35 +2,14 @@
 {% import '/base/html-renderer.html' as renderer %}
 
 {% block content %}
-<style>
-  .ui.segment {
-    background-color: rgb(50, 78, 156);
-    border-radius: 5px;
-  }
-
-  .ui.header {
-    color: rgb(255, 255, 255);
-  }
-
-  .blue-button {
-    background-color: rgb(0, 120, 255);
-    color: white;
-  }
-
-</style>
-<div class="ui segment" style="border: 1px solid rgb(255, 255, 255);">
-
-  <h1 class="ui header">
-    Users
-  </h1>
-
+<div class="ui raised segment">
+  <h1 class="ui header">Users</h1>
 </div>
 
-<div class="ui segment" style="border: 1px solid rgb(253, 252, 252);">
-
-  <a class="ui primary labeled icon button blue-button" href="{{url_for('admin.accounts.create_or_edit')}}">
+<div class="ui raised segment">
+  <a class="ui primary labeled icon button" href="{{ url_for('admin.accounts.create_or_edit') }}">
     <i class="add icon"></i>
-    Create user
+    Create User
   </a>
 
   <table class="ui celled table">
@@ -47,57 +26,55 @@
     <tbody>
       {% for user in users %}
       <tr>
-        <td data-label="Name">{{user.display_name}}</td>
-        <td data-label="Name">{{user.first_name}} {{user.last_name}}</td>
-        <td data-label="Email">{{user.email}}</td>
-        <td data-label="Phone">{{user.phone_number}}</td>
-        <td data-label="Status">{{user.status}}</td>
-        <td data-label="Edit">
-            <a href="{{url_for('admin.accounts.create_or_edit', user_id=user.id)}}"><i class="edit icon yellow"></i></a> 
-            <a onclick="showDeleteModal('{{ user.id }}')"><i class="trash icon red"></i></a>
-            <a href="{{ url_for('admin.accounts.recover',user_id=user.id)}}"><i class="redo icon"></i></a>
+        <td>{{ user.display_name }}</td>
+        <td>{{ user.first_name }} {{ user.last_name }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.phone_number }}</td>
+        <td>{{ user.status }}</td>
+        <td>
+          <a class="ui yellow icon button" href="{{ url_for('admin.accounts.create_or_edit', user_id=user.id) }}">
+            <i class="edit icon"></i>
+          </a>
+          <a class="ui red icon button" onclick="showDeleteModal('{{ user.id }}')">
+            <i class="trash icon"></i>
+          </a>
+          <a class="ui blue icon button" href="{{ url_for('admin.accounts.recover', user_id=user.id) }}">
+            <i class="redo icon"></i>
+          </a>
         </td>
       </tr>
-      <div class="ui small modal {{user.id}}"
-        style="background-color: rgb(0, 0, 0); color: white;font-size: 20px; border: 1px solid rgb(0, 255, 35);">
-        <div class="header"
-          style="background-color: black; color: white;font-size: 20px; border: 1px solid rgb(0, 255, 35);">{{ ("Delete
-          User") }}</div>
-        <div class="content" style="background-color: black; color: white;font-size: 20px; ">
-          <h4 class="ui headers">
-            {{ ("Are you sure you want to delete") }} <span class="ui red text">{{ user.first_name }} {{ user.last_name
-              }}</span> {{
-            ("user?") }}
-          </h4>
-          <a class="ui right floated negative button" style="margin-bottom: 1em;"
-            href="{{url_for('admin.accounts.delete', user_id=user.id)}}">
-            {{ ("Delete") }}</i>
+
+      <!-- Delete Modal -->
+      <div class="ui small modal {{ user.id }}">
+        <div class="header">
+          Delete User
+        </div>
+        <div class="content">
+          <p>Are you sure you want to delete <span class="ui red text">{{ user.first_name }} {{ user.last_name
+              }}</span>?</p>
+        </div>
+        <div class="actions">
+          <a class="ui negative button" href="{{ url_for('admin.accounts.delete', user_id=user.id) }}">
+            Delete
           </a>
-          <button class="ui right floated button" onclick="showDeleteModal()">{{ ("Cancel") }}</button>
+          <div class="ui button" onclick="$('.ui.small.modal.{{ user.id }}').modal('hide')">
+            Cancel
+          </div>
         </div>
       </div>
       {% endfor %}
     </tbody>
   </table>
-
 </div>
-
-
 
 {% endblock %}
 
 {% block additional_js %}
-{#
-<script>
-  function showCreateCategory(category_id) {
-    $('.create.' + category_id).modal('show')
-  }
-</script>
-#}
 <script>
   function showDeleteModal(user_id) {
-    user_id ? $('.ui.small.modal.' + user_id).modal('show') : $('.ui.small.modal').modal('hide')
-      ;
+    if (user_id) {
+      $('.ui.small.modal.' + user_id).modal('show');
+    }
   }
 </script>
 {% endblock %}
