@@ -25,7 +25,12 @@ module = Blueprint("teams", __name__, url_prefix="/teams")
 @login_required
 def index():
     teams = models.Team.objects(status="active", members__in=[current_user])
-    return render_template("teams/index.html", teams=teams)
+    users = models.User.objects(status="active")
+    return render_template(
+        "teams/index.html",
+        teams=teams,
+        users=users,
+    )
 
 
 @module.route("/create", methods=["GET", "POST"], defaults={"team_id": None})
