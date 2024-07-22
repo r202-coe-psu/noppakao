@@ -118,7 +118,7 @@ def submit_challenge(event_id, challenge_id):
     now = datetime.datetime.now()
     answer = request.args.get("answer")
 
-    if now < event.ended_date:
+    if now > event.ended_date:
         return redirect(url_for("events.index"))
 
     if not transaction and event_challenge.check_answer(answer):
