@@ -76,6 +76,7 @@ def join(event_id):
 @module.route("/<event_id>/challenge", methods=["GET", "POST"])
 @login_required
 def challenge(event_id):
+    challenges = models.Challenge.objects()
     teams = models.Team.objects(status="active").order_by("-score", "updated_date")
     users = models.User.objects(status="active", roles__ne="admin").order_by(
         "-score", "updated_date"
@@ -99,6 +100,7 @@ def challenge(event_id):
         event_categorys=event_categorys,
         teams=teams,
         users=users,
+        challenges=challenges,
     )
 
 

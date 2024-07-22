@@ -77,22 +77,42 @@
 								{% if event_categorys[i].name == event_challenge.challenge.category.name %}
 								<tr class="clickable-row" data-challenge-id="{{ event_challenge.challenge.id }}">
 									<td><i class="cube icon" style="color: #386CAF;"></i></td>
-									<td class="clickable-name" onclick="showQuestion('{{ event_challenge.id }}')" ><a>{{ event_challenge.challenge.name }}</a></td>
+									<td class="clickable-name" onclick="showQuestion('{{ event_challenge.id }}')"><a>{{
+											event_challenge.challenge.name }}</a></td>
 									<td class="center aligned">{{ event_challenge.success_score }}</td>
 									<td class="center aligned">{{ event_challenge.first_blood_score }}</td>
 									<td class="center aligned">{{ event_challenge.hint_score }}</td>
 									<td class="center aligned">{{ event_challenge.fail_score }}</td>
 								</tr>
+
 								<div class="ui small modal {{ event_challenge.id }}">
-									<div class="content" style="background-color: black; border: 1px solid rgb(77, 89, 250);">
-										<form method="GET" action="{{url_for('events.submit_challenge',event_id=event.id,challenge_id=event_challenge.id)}}">
+									<div class="header">Challenge Details</div>
+									{% for challenge in challenges %}
+									{% if challenge.id == event_challenge.challenge.id %}
+									<div class="content">
+										<div class="ui segment">
+											<p>{{ challenge.description }}</p>
+											{% if challenge.challenge_url %}
+											<p>
+												Link URL: <a href="{{ challenge.challenge_url }}" target="_blank">{{
+													challenge.challenge_url }}</a>
+											</p>
+											{% endif %}
+										</div>
+										<form method="GET"
+											action="{{ url_for('events.submit_challenge', event_id=event.id, challenge_id=event_challenge.id) }}">
 											<div class="ui fluid action input">
-												<input id="answer" name="answer">
+												<input type="text" id="answer" name="answer"
+													placeholder="Enter your answer...">
 												<button type="submit" class="ui big button"
-													style="background-color: rgb(103, 151, 190);color: rgb(255, 255, 255);">Submit</button>
+													style="background-color: rgb(103, 151, 190); color: rgb(255, 255, 255);">
+													Submit
+												</button>
 											</div>
 										</form>
 									</div>
+									{% endif %}
+									{% endfor %}
 								</div>
 								{% endif %}
 								{% endfor %}
@@ -146,9 +166,9 @@
 </script>
 
 <script>
-    function showQuestion(submit_flag) {
-        submit_flag ? $('.ui.small.modal.' + submit_flag).modal('show') : $('.ui.small.modal').modal('hide');
-    }
+	function showQuestion(submit_flag) {
+		submit_flag ? $('.ui.small.modal.' + submit_flag).modal('show') : $('.ui.small.modal').modal('hide');
+	}
 </script>
 
 <script type="text/javascript">
