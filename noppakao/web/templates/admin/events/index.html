@@ -3,11 +3,12 @@
 {% block content %}
 <div class="ui container">
     <h2 class="ui dividing header">Event List</h2>
-    <div class="ui right floated primary button">
-        <a href="{{ url_for('admin.events.create_or_edit') }}" style="color: white;">
-            <i class="plus icon"></i> Create Event
-        </a>
-    </div>
+
+    <a class="ui primary labeled icon right floated button" href="{{ url_for('admin.events.create_or_edit') }}"
+        style="color: white;">
+        <i class="add icon"></i> Create Event
+    </a>
+
 
     <div class="ui stackable cards">
         {% for event in events %}

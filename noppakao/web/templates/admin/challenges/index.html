@@ -1,11 +1,10 @@
 {% extends "base/default-page.html" %}
 
 {% block content %}
-<div class="ui floated primary button">
-	<a href="{{ url_for('admin.challenges.create_or_edit') }}" style="color: white;">
-		<i class="plus icon"></i>create challenge
-	</a>
-</div>
+<a class="ui primary labeled icon button" href="{{ url_for('admin.challenges.create_or_edit') }}" style="color: white;">
+	<i class="add icon"></i>create challenge
+</a>
+
 <div>
 	<div class="ui grid center aligned" style="padding: 1rem;">
 		{% for i in range((event_categorys|length)) %}
