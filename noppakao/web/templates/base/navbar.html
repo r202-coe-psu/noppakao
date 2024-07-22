@@ -22,6 +22,7 @@
 <div class="ui vertical inverted sidebar large menu left" style="height: 100%;">
     {% include "/base/sidebar.html" with context %}
 </div>
+
 <script type="text/javascript">
     $(document).ready(function () {
         $('.left.sidebar.menu')
@@ -32,28 +33,18 @@
         $('.ui.dropdown').dropdown();
     });
 </script>
+
+
 <script type="text/javascript">
     function updateTime() {
-        // Get the current time
         const now = new Date();
-
-        // Format the time as HH:MM
-        let hours = now.getUTCHours() + 7; // Add 7 hours for UTC+7
+        let hours = now.getUTCHours() + 7;
         let minutes = now.getUTCMinutes();
-
-        // Ensure two digits for hours and minutes
+        hours = hours % 24; // Ensure hours don't exceed 24
         hours = hours < 10 ? '0' + hours : hours;
         minutes = minutes < 10 ? '0' + minutes : minutes;
-
-        // Update the time element
-        $('#current-time span').text(`${hours}:${minutes} (UTC+7)`);
+        document.getElementById('current-time').innerHTML = `<i class="compass outline icon"></i>${hours}:${minutes} (UTC+7)`;
     }
-
-    $(document).ready(function () {
-        // Update the time immediately
-        updateTime();
-
-        // Update the time every minute
-        setInterval(updateTime, 60000);
-    });
+    setInterval(updateTime, 1000);
+    updateTime();
 </script>
