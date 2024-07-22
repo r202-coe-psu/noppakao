@@ -1,20 +1,16 @@
 {% extends "base/default-page.html" %}
-{% from '/components/fail_dialog.html' import FailDialog  %}
-{% from '/components/success_dialog.html' import SuccessDialog %}
-{% from '/components/first_blood_dialog.html' import FirstBloodDialog %}
+{% from '/components/dialog_state.html' import FailDialog , SuccessDialog , FirstBloodDialog %}
 
 {% block content %}
 
 {% if dialog_state['status'] == "fail" %}
 	{{ FailDialog() }}
 {% endif %}
-
-{% if dialog_state['status'] == "success" %}
-	{{ SuccessDialog() }}
-{% endif %}
-
 {% if dialog_state['status'] == "first_blood" %}
 	{{ FirstBloodDialog() }}
+{% endif %}
+{% if dialog_state['status'] == "success" %}
+	{{ SuccessDialog() }}
 {% endif %}
 
 <div class="ui large top fixed menu" style="background-color: rgb(50, 78, 156); border-radius: 0 !important;">
