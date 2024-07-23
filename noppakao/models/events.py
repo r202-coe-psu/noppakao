@@ -46,7 +46,7 @@ class Event(me.Document):
     def team_score(self):
         from noppakao import models
 
-        team = models.Team.objects(created_by=current_user).first()
+        team = models.Team.objects(members__in=[current_user]).first()
         transections = models.Transaction.objects(event=self, team=team)
         score = 0
         for transection in transections:
