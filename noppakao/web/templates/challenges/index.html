@@ -47,7 +47,7 @@
 	<div class="item">
 		<h3><i class="star icon"></i> Challenges </h3>
 	</div>
-	{% if event.type ==  "team"%}
+	{% if event.type == "team" %}
 	<div class="item">
 		<i class="user friends icon"></i> Team Rank
 	</div>
@@ -57,15 +57,22 @@
 	</div>
 	{% endif %}
 	<div class="right menu">
+		{% if event.type == "team" %}
 		<div class="item">
-			<i class="user friends icon"></i> Competitor Score : {{ event.competitor_score() }}
+			<i class="user tie icon"></i> Individual Score : {{ event.competitor_score() }}
 		</div>
-		{% if event.type ==  "team"%}
+		<div class="item">
+			<i class="user tie icon"></i> Individual Rank 0
+		</div>
 		<div class="item">
 			<i class="user friends icon"></i> Team Score {{ event.team_score() }}
 		</div>
 		<div class="item">
 			<i class="user friends icon"></i> Team Rank 0
+		</div>
+		{% else %}
+		<div class="item">
+			<i class="user friends icon"></i> Competitor Score : {{ event.competitor_score() }}
 		</div>
 		{% endif %}
 	</div>
@@ -188,6 +195,10 @@
 	.flash-red {
 		color: red;
 		animation: flash 1s infinite;
+	}
+
+	body {
+		overflow: hidden;
 	}
 </style>
 <script type="text/javascript">
