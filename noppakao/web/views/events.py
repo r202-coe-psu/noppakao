@@ -129,6 +129,7 @@ def submit_challenge(event_id, challenge_id):
         transaction.status = "first_blood"
         transaction.score = event_challenge.first_blood_score
         transaction.event_challenge = event_challenge
+        transaction.event = event
         transaction.answer = answer
         transaction.user = current_user
         if event.type == "team":
@@ -150,6 +151,7 @@ def submit_challenge(event_id, challenge_id):
         transaction.status = "fail"
         transaction.score = event_challenge.fail_score
         transaction.event_challenge = event_challenge
+        transaction.event = event
         transaction.answer = answer
         transaction.user = current_user
         transaction.save()
@@ -161,6 +163,7 @@ def submit_challenge(event_id, challenge_id):
     transaction.status = "success"
     transaction.score = event_challenge.success_score
     transaction.event_challenge = event_challenge
+    transaction.event = event
     transaction.answer = answer
     transaction.user = current_user
     transaction.save()

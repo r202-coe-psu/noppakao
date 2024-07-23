@@ -34,6 +34,26 @@ class Event(me.Document):
     )  # เวลาการสร้างหรืออัพเดตล่าสุด
     updated_by = me.ReferenceField("User", dbref=True, required=True)  # คนสุดท้ายที่กดอัพเดต
 
+    def competitor_score(self):
+        from noppakao import models
+
+        transections = models.Transaction.objects(event=self, user=current_user)
+        score = 0
+        for transection in transections:
+            score += transection.score
+        return score
+
+    def team_score(self):
+        from noppakao import models
+
+        team = models.Team.objects(event=self, user=current_user).first()
+        transections = models.Transaction.objects(event=self, team=team)
+
+        score = 0
+        for transection in transections:
+            score += transection.score
+        return score
+
 
 class EventCompetitor(me.Document):
     meta = {"collection": "event_competitor"}
