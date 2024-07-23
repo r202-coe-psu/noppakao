@@ -81,7 +81,11 @@
 									</th>
 									<th class="two wide center aligned"><i class="key icon"
 											style="color: rgb(255, 196, 0);"></i></th>
-									<th class="two wide center aligned">Solves</th>
+									<th class="two wide center aligned"><i class="fire alternate icon" style="color: red;"></i>
+									</th>
+									<th class="two wide center aligned"><i class="user alternate icon"
+										style="color: rgb(0, 0, 0);"></i></th>
+									<th class="two wide center aligned">Solve</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -92,9 +96,16 @@
 									<td class="clickable-name" onclick="showQuestion('{{ event_challenge.id }}')"><a>{{
 											event_challenge.challenge.name }}</a></td>
 									<td class="center aligned">{{ event_challenge.success_score }}</td>
-									<td class="center aligned">{{ event_challenge.first_blood_score }}</td>
-									<td class="center aligned">{{ event_challenge.hint_score }}</td>
 									<td class="center aligned">{{ event_challenge.fail_score }}</td>
+									<td class="center aligned">{{ event_challenge.hint_score }}</td>
+									<td class="center aligned">{{ event_challenge.first_blood_score }}</td>
+									<td class="center aligned">{{ event_challenge.total_solve_challenge() }}</td>
+									{% if event_challenge.solve_challenge() %}
+									<td class="center aligned"><i class="trophy icon"
+										style="color: rgb(255, 196, 0);"></i></td>
+									{% else %}
+									<td class="center aligned"><i class="times circle icon"style="color: red;"></i></td>
+									{% endif %}
 								</tr>
 
 								<div class="ui small modal {{ event_challenge.id }}">
@@ -111,6 +122,7 @@
 											</p>
 											{% endif %}
 										</div>
+										{% if not event_challenge.solve_challenge() %}
 										<form method="GET"
 											action="{{ url_for('events.submit_challenge', event_id=event.id, challenge_id=event_challenge.id) }}">
 											<div class="ui fluid action input">
@@ -122,6 +134,11 @@
 												</button>
 											</div>
 										</form>
+										{% else %}
+										<div class="ui message success text" style="margin-top: auto;">
+											Challenge Success
+										</div>
+										{% endif %}
 									</div>
 									{% endif %}
 									{% endfor %}

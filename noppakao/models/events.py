@@ -1,5 +1,6 @@
 import mongoengine as me
 import datetime
+from flask_login import current_user
 
 STATUS_CHOICES = ["active", "disactive"]
 
@@ -81,6 +82,26 @@ class EventChallenge(me.Document):
         if answer == self.challenge.answer:
             return True
         return False
+
+    def total_solve_challenge(self):
+        from noppakao import models
+
+        solve_challenges = models.Transaction.objects(
+            event_challenge=self, status__in=["success", "first_blood"]
+        )
+
+        return len(solve_challenges)
+
+    def solve_challenge(self):
+        from noppakao import models
+
+        solve_challenges = models.Transaction.objects(
+            event_challenge=self,
+            status__in=["success", "first_blood"],
+            user=current_user,
+        )
+
+        return solve_challenges
 
 
 EVENT_ROLES = ["competitor", "contributor"]
