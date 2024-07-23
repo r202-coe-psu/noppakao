@@ -4,13 +4,13 @@
 {% block content %}
 
 {% if dialog_state['status'] == "fail" %}
-	{{ FailDialog() }}
+{{ FailDialog() }}
 {% endif %}
 {% if dialog_state['status'] == "first_blood" %}
-	{{ FirstBloodDialog() }}
+{{ FirstBloodDialog() }}
 {% endif %}
 {% if dialog_state['status'] == "success" %}
-	{{ SuccessDialog() }}
+{{ SuccessDialog() }}
 {% endif %}
 
 <div class="ui large top fixed menu" style="background-color: rgb(50, 78, 156); border-radius: 0 !important;">
@@ -75,17 +75,15 @@
 							<thead>
 								<tr>
 									<th class="one wide"></th>
-									<th class="six wide">Challenges</th>
-									<th class="two wide center aligned">Point</th>
-									<th class="two wide center aligned"><i class="tint icon" style="color: red;"></i>
+									<th class="eight wide">Challenges</th>
+									<th class="one wide center aligned">Point</th>
+									<th class="one wide center aligned"><i class="tint icon" style="color: red;"></i>
 									</th>
-									<th class="two wide center aligned"><i class="key icon"
+									<th class="one wide center aligned"><i class="key icon"
 											style="color: rgb(255, 196, 0);"></i></th>
-									<th class="two wide center aligned"><i class="fire alternate icon" style="color: red;"></i>
-									</th>
-									<th class="two wide center aligned"><i class="user alternate icon"
-										style="color: rgb(0, 0, 0);"></i></th>
-									<th class="two wide center aligned">Solve</th>
+									<th class="one wide center aligned"><i class="skull crossbones icon"></i></th>
+									<th class="one wide center aligned">Solves</th>
+									<th class="one wide center aligned"><i class="flag checkered icon"></i></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -96,15 +94,16 @@
 									<td class="clickable-name" onclick="showQuestion('{{ event_challenge.id }}')"><a>{{
 											event_challenge.challenge.name }}</a></td>
 									<td class="center aligned">{{ event_challenge.success_score }}</td>
-									<td class="center aligned">{{ event_challenge.fail_score }}</td>
-									<td class="center aligned">{{ event_challenge.hint_score }}</td>
 									<td class="center aligned">{{ event_challenge.first_blood_score }}</td>
+									<td class="center aligned">{{ event_challenge.hint_score }}</td>
+									<td class="center aligned">{{ event_challenge.fail_score }}</td>
 									<td class="center aligned">{{ event_challenge.total_solve_challenge() }}</td>
 									{% if event_challenge.solve_challenge() %}
 									<td class="center aligned"><i class="trophy icon"
-										style="color: rgb(255, 196, 0);"></i></td>
+											style="color: rgb(255, 196, 0);"></i></td>
 									{% else %}
-									<td class="center aligned"><i class="times circle icon"style="color: red;"></i></td>
+									<td class="center aligned"><i class="times circle icon" style="color: red;"></i>
+									</td>
 									{% endif %}
 								</tr>
 
