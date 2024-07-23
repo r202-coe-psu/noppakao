@@ -1,29 +1,52 @@
 {% macro FirstBloodDialog() %}
-<div class="ui modal">
-    <div class="header">First Blood</div>
+<div class="ui modal" style="max-width: 300px; text-align: center; border-radius: 1rem; overflow: hidden;">
+    <div class="content" style="padding: 2rem; border-radius: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <div style="font-size: 8rem; color: #e08428;">
+            <i class="fire alternate icon"></i>
+        </div>
+        <h2 style="margin-top: 1rem; font-size: 2rem; color: #e08428;">First Blood</h2>
+        <p style="font-size: 1rem; color: #333;">Congratulations! You are the first to solve this challenge!</p>
+        <button class="ui orange button" style="margin-top: 1rem; border-radius: 2rem;"
+            onclick="$('.ui.modal').modal('hide');">OKAY</button>
+    </div>
 </div>
 <script>
-    $('.ui.modal')
-    .modal('show');
+    $('.ui.modal').modal('show');
 </script>
 {% endmacro %}
+
 
 {% macro FailDialog() %}
-<div class="ui modal">
-    <div class="header">Fail</div>
+<div class="ui modal" style="max-width: 300px; text-align: center; border-radius: 1rem; overflow: hidden;">
+    <div class="content" style="padding: 2rem; border-radius: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <div style="font-size: 8rem; color: #e53e3e;">
+            <i class="times circle icon"></i>
+        </div>
+        <h2 style="margin-top: 1rem; font-size: 2rem; color: red;">Sorry :(</h2>
+        <p style="font-size: 1rem; color: #333;">Something went wrong, please try again!</p>
+        <button class="ui red button" style="margin-top: 1rem; border-radius: 2rem;"
+            onclick="$('.ui.modal').modal('hide');">TRY AGAIN</button>
+    </div>
 </div>
 <script>
-    $('.ui.modal')
-    .modal('show');
+    $('.ui.modal').modal('show');
 </script>
 {% endmacro %}
 
+
 {% macro SuccessDialog() %}
-<div class="ui modal">
-    <div class="header">Success</div>
+<div class="ui modal" style="max-width: 300px; text-align: center; border-radius: 1rem; overflow: hidden;">
+    <div class="content" style="padding: 2rem; border-radius: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <div style="font-size: 8rem; color: #38a169;">
+            <i class="check circle icon"></i>
+        </div>
+        <h2 style="margin-top: 1rem; font-size: 2rem; color: #38a169;">Success!</h2>
+        <p style="font-size: 1rem; color: #333;">You have successfully completed the challenge!</p>
+        <button class="ui green button" style="margin-top: 1rem; border-radius: 2rem;"
+            onclick="$('.ui.modal').modal('hide');">OKAY</button>
+    </div>
 </div>
 <script>
-    $('.ui.modal')
-    .modal('show');
+    $('.ui.modal').modal('show');
 </script>
 {% endmacro %}
