@@ -74,7 +74,7 @@ class EventChallenge(me.Document):
         from noppakao import models
 
         if self.challenge.answer_type == "flag":
-            flag = self.event.flag_prefix + f"{{self.challenge.answer}}"
+            flag = self.event.flag_prefix + "{" + self.challenge.answer + "}"
             if answer == flag:
                 return True
             else:

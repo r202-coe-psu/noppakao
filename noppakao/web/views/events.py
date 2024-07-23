@@ -114,12 +114,14 @@ def submit_challenge(event_id, challenge_id):
     event_challenge = models.EventChallenge.objects(id=challenge_id).first()
 
     event = models.Event.objects(id=event_id).first()
-    transaction = models.Transaction.objects(event_challenge=event_challenge)
+    transaction = models.Transaction.objects(
+        event_challenge=event_challenge, status__in=["success", "first_blood"]
+    )
     now = datetime.datetime.now()
     answer = request.args.get("answer")
 
     if now > event.ended_date:
-        return redirect(url_for("events.index"))
+        return redirect(url_for("events.index", msg="Event Time Out"))
 
     if not transaction and event_challenge.check_answer(answer):
         transaction = models.Transaction()
