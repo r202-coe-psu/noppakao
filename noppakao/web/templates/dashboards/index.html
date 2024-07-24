@@ -3,59 +3,100 @@
 {% block content %}
 <style>
     .dashboard-box {
-        color: rgb(0, 255, 35);
-        width: 200px;
+        color: rgb(255, 255, 255);
         height: 50px;
-        background-color: #2a2a2a;
+        background-color:rgb(50, 78, 156);
         border: 1px solid rgb(123, 123, 123);
         border-radius: 5px;
         text-align: center;
         line-height: 50px;
         font-family: monospace;
         font-size: 20px;
-        margin-bottom: 20px;
+        margin-bottom: 30px;
     }
 
     .table-container {
         margin-bottom: 20px;
     }
 
-    /* Add a custom class for left-aligning score */
     .left-aligned {
         text-align: left;
+    }
+
+    .no-margin .row {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    .countdown-finished {
+        color: red; 
     }
 </style>
 
 <div class="dashboard-box">
-    DASHBOARD
+    Leaderboard
 </div>
-<div class="ui grid">
+
+{#NEW#}
+<div class="ui grid no-margin">
+    <div class="two column row">
+        <div class="column">
+                <table class="ui inverted table">
+                    <thead style="background-color:rgb(50, 78, 156)">
+                        <tr>
+                            <th scope="col" style="color: rgb(255, 255, 255);">Team Rank</th>
+                            <th scope="col" style="color: rgb(255, 255, 255); text-align: right;">Updated every 1 minutes</th>
+                        </tr>
+                    </thead>
+                </table>
+        </div>
+        <div class="column">
+                <table class="ui inverted table">
+                    <thead style="background-color:rgb(50, 78, 156)">
+                        <tr>
+                            <th scope="col" style="color: rgb(255, 255, 255);">Individual Rank</th>
+                            <th scope="col"  style="color: rgb(255, 255, 255); text-align: right;">
+                                <span class="transparent-bg">Countdown timer : <span id="countdown-timer">00:01:30</span></span>
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+        </div>
+    </div>
+    
+    {#SCORE BOARD#}
     <div class="two column row">
         <div class="column">
             <div class="table-container">
-                <table class="ui inverted table">
-                    <thead>
-                        <tr>
-                            <th scope="col" style="color: rgb(0, 255, 35);">Rating</th>
+                <table class="ui inverted table" >
+                    <thead style="background-color:rgb(50, 78, 156);">
+                        <tr >
+                            <th scope="col" style="color: rgb(255, 255, 255);">Raking</th>
                             <th></th>
-                            <th scope="col" style="color: rgb(0, 255, 35);">Team</th>
-                            <th scope="col" class="left-aligned" style="color: rgb(0, 255, 35);">Score</th>
+                            <th scope="col" style="color: rgb(255, 255, 255);">Team</th>
+                            <th scope="col" class="left-aligned" style="color: rgb(255, 255, 255);">Score</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for team in teams %}
-                        <tr>
+                            {% if loop.index % 2 != 0 %}
+                            <tr style="color: rgb(0, 0, 0); background-color: rgb(200, 200, 200)">
+                            {% else %}
+                            <tr style="color: rgb(0, 0, 0); background-color: rgb(180, 180, 180)">
+                            {% endif %}
                             <td>{{ loop.index }}</td>
                             <td>
                                 {% if team.picture %}
-                                <h3 class="ui picture header">
-                                    <img src="{{team.get_picture()}}" class="ui mini rounded picture">
+                                <h3 class="ui picture header" >
+                                    <img src="{{team.get_picture()}}" style="width: 20px; height: 20px;">
                                 </h3>
+                                {% else %}
+                                <div>
+                                    No Picture
+                                </div>
                                 {% endif %}
                             </td>
                             <td>{{ team.name }}</td>
-                            <!-- Add the left-aligned class to align score data to the left -->
-                            {% if team.score == none %}
+                            {% if not team.score %}
                             <td class="left-aligned">0</td>
                             {% else %}
                             <td class="left-aligned">{{ team.score }}</td>
@@ -69,25 +110,30 @@
         <div class="column">
             <div class="table-container">
                 <table class="ui inverted table">
-                    <thead>
+                    <thead style="background-color:rgb(50, 78, 156);">
                         <tr>
-                            <th scope="col" style="color: rgb(0, 255, 35);">Rating</th>
+                            <th scope="col" style="color: rgb(255, 255, 255);">Raking</th>
                             <th></th>
-                            <th scope="col" style="color: rgb(0, 255, 35);">Name</th>
-                            <th scope="col" style="color: rgb(0, 255, 35);">Team</th>
-                            <th scope="col" class="left-aligned" style="color: rgb(0, 255, 35);">Score</th>
+                            <th scope="col" style="color: rgb(255, 255, 255);">Name</th>
+                            <th scope="col" style="color: rgb(255, 255, 255);">Team</th>
+                            <th scope="col" class="left-aligned" style="color: rgb(255, 255, 255);">Score</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for user in users %}
-                        <tr>
-                            <td>{{ loop.index }}</td>
-                            <td>{{ user.get_fullname() }}</td>
-                            <!-- Add the left-aligned class to align score data to the left -->
-                            {% if user.score == none %}
-                            <td class="left-aligned">0</td>
+                            {% if loop.index % 2 != 0 %}
+                                <tr style="color: rgb(0, 0, 0); background-color: rgb(200, 200, 200)">
                             {% else %}
-                            <td class="left-aligned">{{ user.score }}</td>
+                                <tr style="color: rgb(0, 0, 0); background-color: rgb(180, 180, 180)">
+                            {% endif %}
+                            <td>{{ loop.index }}</td>
+                            <td>No Picture</td>
+                            <td>{{ user.display_name }}</td>
+                            <td>{{ user.get_fullname() }}</td>
+                            {% if not user.score %}
+                                <td class="left-aligned">0</td>
+                            {% else %}
+                                <td class="left-aligned">{{ user.score }}</td>
                             {% endif %}
                         </tr>
                         {% endfor %}
@@ -98,3 +144,41 @@
     </div>
 </div>
 {% endblock %}
+
+
+{% block additional_js %}
+<script type="text/javascript">
+    setInterval(function(){
+        window.location.reload();
+    }, 120000);
+
+
+    function startCountdown() {
+        var timer = document.getElementById('countdown-timer');
+        var totalSeconds = 1 * 60 + 30; 
+
+        var interval = setInterval(function() {
+            var hours = Math.floor(totalSeconds / 3600);
+            var minutes = Math.floor((totalSeconds % 3600) / 60);
+            var seconds = totalSeconds % 60;
+
+            hours = hours < 10 ? '0' + hours : hours;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+
+            timer.textContent = hours + ':' + minutes + ':' + seconds;
+
+            if (totalSeconds <= 0) {
+                clearInterval(interval);
+                timer.textContent = 'FINISHED';
+                timer.classList.add('countdown-finished'); 
+            } else {
+                totalSeconds--;
+            }
+        }, 1000);
+    }
+
+    window.onload = startCountdown;
+
+</script>
+{% endblock additional_js %}
