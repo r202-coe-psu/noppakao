@@ -95,14 +95,22 @@ def challenge(event_id):
     )
 
 
-@module.route("/<event_id>/add_challenge", methods=["GET", "POST"])
-@acl.roles_required("admin")
-def add_challenge(event_id):
+@module.route(
+    "/<event_id>/create_challenge",
+    methods=["GET", "POST"],
+    defaults={"challenge_id": None},
+)
+@module.route("/<event_id>/challenges/<challenge_id>/edit", methods=["GET", "POST"])
+def create_or_edit_challenge(event_id, challenge_id):
 
     event = models.Event.objects(id=event_id).first()
     challenges = models.Challenge.objects()
 
     form = forms.events.EventChallengeForm()
+
+    if challenge_id:
+        event_challenge = models.EventChallenge.objects(id=challenge_id).first()
+        form = forms.events.EventChallengeForm(obj=event_challenge)
 
     form.challenge.choices = [
         (str(challenge.id), challenge.name) for challenge in challenges
@@ -113,9 +121,10 @@ def add_challenge(event_id):
         return render_template(
             "/admin/events/create_event_challenge.html", event=event, form=form
         )
+    if not challenge_id:
+        event_challenge = models.EventChallenge()
 
     challenge = models.Challenge.objects(id=form.challenge.data).first()
-    event_challenge = models.EventChallenge()
 
     form.populate_obj(event_challenge)
 
