@@ -96,7 +96,7 @@ def challenge(event_id):
 
 
 @module.route(
-    "/<event_id>/create_challenge",
+    "/<event_id>/create",
     methods=["GET", "POST"],
     defaults={"challenge_id": None},
 )
