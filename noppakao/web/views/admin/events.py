@@ -80,7 +80,7 @@ def event_role(event_id):
 def challenge(event_id):
 
     event = models.Event.objects(id=event_id).first()
-    event_challenges = models.EventChallenge.objects(event=event)
+    event_challenges = models.EventChallenge.objects(event=event, status="active")
     event_categorys = []
 
     for event_challenge in event_challenges:
@@ -98,18 +98,20 @@ def challenge(event_id):
 @module.route(
     "/<event_id>/create",
     methods=["GET", "POST"],
-    defaults={"challenge_id": None},
+    defaults={"event_challenge_id": None},
 )
-@module.route("/<event_id>/challenges/<challenge_id>/edit", methods=["GET", "POST"])
-def create_or_edit_challenge(event_id, challenge_id):
+@module.route(
+    "/<event_id>/challenges/<event_challenge_id>/edit", methods=["GET", "POST"]
+)
+def create_or_edit_challenge(event_id, event_challenge_id):
 
     event = models.Event.objects(id=event_id).first()
     challenges = models.Challenge.objects()
 
     form = forms.events.EventChallengeForm()
 
-    if challenge_id:
-        event_challenge = models.EventChallenge.objects(id=challenge_id).first()
+    if event_challenge_id:
+        event_challenge = models.EventChallenge.objects(id=event_challenge_id).first()
         form = forms.events.EventChallengeForm(obj=event_challenge)
 
     form.challenge.choices = [
@@ -121,7 +123,7 @@ def create_or_edit_challenge(event_id, challenge_id):
         return render_template(
             "/admin/events/create_event_challenge.html", event=event, form=form
         )
-    if not challenge_id:
+    if not event_challenge_id:
         event_challenge = models.EventChallenge()
 
     challenge = models.Challenge.objects(id=form.challenge.data).first()
@@ -162,3 +164,14 @@ def create_or_edit(event_id):
     event.save()
 
     return redirect(url_for("admin.events.index"))
+
+
+@module.route("/<event_challenge_id>/delete", methods=["GET", "POST"])
+@acl.roles_required("admin")
+def delete_event_challenge(event_challenge_id):
+    event_challenge = models.EventChallenge.objects.get(id=event_challenge_id)
+    event_challenge.status = "disactive"
+    event_challenge.save()
+    return redirect(
+        url_for("admin.events.challenge", event_id=event_challenge.event.id),
+    )

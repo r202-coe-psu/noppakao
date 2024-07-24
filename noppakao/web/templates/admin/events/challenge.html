@@ -45,7 +45,10 @@
 									<td class="center aligned">{{ event_challenge.first_blood_score }} </td>
 									<td class="center aligned">{{ event_challenge.hint_score }}</td>
 									<td class="center aligned">{{ event_challenge.fail_score }} </td>
-									<td><a href="{{ url_for('admin.events.create_or_edit_challenge', event_id=event.id ,challenge_id=event_challenge.id ) }}"><i class="edit icon"></i></a></td>
+									<td>
+										<a href="{{ url_for('admin.events.create_or_edit_challenge', event_id=event.id ,event_challenge_id=event_challenge.id ) }}"><i class="edit icon"></i></a>
+										<a href="{{ url_for('admin.events.delete_event_challenge',event_challenge_id=event_challenge.id ) }}"><i class="trash icon"></i></a>
+									</td>
 								</tr>
 								{% endif %}
 								{% endfor %}

@@ -82,7 +82,7 @@ def challenge(event_id):
         "-score", "updated_date"
     )
     event = models.Event.objects(id=event_id).first()
-    event_challenges = models.EventChallenge.objects(event=event)
+    event_challenges = models.EventChallenge.objects(event=event, status="active")
     event_categorys = []
     dialog_state = {"status": request.args.get("dialog_state", None)}
 
