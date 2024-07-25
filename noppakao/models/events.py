@@ -114,11 +114,19 @@ class EventChallenge(me.Document):
     def solve_challenge(self):
         from noppakao import models
 
-        solve_challenges = models.Transaction.objects(
-            event_challenge=self,
-            status__in=["success", "first_blood"],
-            user=current_user,
-        )
+        if self.event.type == "team":
+            team = models.Team.objects(members__in=[current_user]).first()
+            solve_challenges = models.Transaction.objects(
+                event_challenge=self,
+                status__in=["success", "first_blood"],
+                team=team,
+            )
+        else:
+            solve_challenges = models.Transaction.objects(
+                event_challenge=self,
+                status__in=["success", "first_blood"],
+                user=current_user,
+            )
 
         return solve_challenges
 
