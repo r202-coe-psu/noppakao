@@ -1,14 +1,14 @@
 {% extends "base/default-page.html" %}
 
 {% block content %}
-{% for transection in transections %}
-    {{ transection.user.type }}
-    {{ transection.answer }}
-    {% if transection.team %}
-        {{ transection.team.name }}
+{% for transaction in transactions %}
+    {{ transaction.user.type }}
+    {{ transaction.answer }}
+    {% if transaction.team %}
+        {{ transaction.team.name }}
     {% endif %}
-    {{ transection.user.get_fullname() }}
-    {{ transection.score }}
-    {{ transection.created_date }}
+    {{ transaction.user.get_fullname() }}
+    {{ transaction.score }}
+    {{ transaction.created_date }}
 {% endfor %}
 {% endblock %}

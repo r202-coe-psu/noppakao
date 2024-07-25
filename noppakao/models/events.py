@@ -37,20 +37,20 @@ class Event(me.Document):
     def competitor_score(self):
         from noppakao import models
 
-        transections = models.Transaction.objects(event=self, user=current_user)
+        transactions = models.Transaction.objects(event=self, user=current_user)
         score = 0
-        for transection in transections:
-            score += transection.score
+        for transaction in transactions:
+            score += transaction.score
         return score
 
     def team_score(self):
         from noppakao import models
 
         team = models.Team.objects(members__in=[current_user]).first()
-        transections = models.Transaction.objects(event=self, team=team)
+        transactions = models.Transaction.objects(event=self, team=team)
         score = 0
-        for transection in transections:
-            score += transection.score
+        for transaction in transactions:
+            score += transaction.score
         return score
 
 

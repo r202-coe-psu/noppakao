@@ -48,7 +48,7 @@
 									<td>
 										<a href="{{ url_for('admin.events.create_or_edit_challenge', event_id=event.id ,event_challenge_id=event_challenge.id ) }}"><i class="edit icon"></i></a>
 										<a href="{{ url_for('admin.events.delete_event_challenge',event_challenge_id=event_challenge.id ) }}"><i class="trash icon"></i></a>
-										<a href="{{ url_for('admin.events.view_transections',event_id=event.id ,event_challenge_id=event_challenge.id ) }}"><i class="clipboard list icon"></i></a>
+										<a href="{{ url_for('admin.events.view_transactions',event_id=event.id ,event_challenge_id=event_challenge.id ) }}"><i class="clipboard list icon"></i></a>
 									</td>
 								</tr>
 								{% endif %}

@@ -178,13 +178,13 @@ def delete_event_challenge(event_challenge_id):
 
 
 @module.route(
-    "/<event_id>/event_challenges/<event_challenge_id>/transections",
+    "/<event_id>/event_challenges/<event_challenge_id>/transactions",
     methods=["GET", "POST"],
 )
 @acl.roles_required("admin")
-def view_transections(event_id, event_challenge_id):
+def view_transactions(event_id, event_challenge_id):
     event_challenge = models.EventChallenge.objects(id=event_challenge_id).first()
-    transections = models.Transaction.objects(event_challenge=event_challenge).order_by(
+    transactions = models.Transaction.objects(event_challenge=event_challenge).order_by(
         "-created_date"
     )
-    return render_template("/admin/events/transections.html", transections=transections)
+    return render_template("/admin/events/transactions.html", transactions=transactions)
