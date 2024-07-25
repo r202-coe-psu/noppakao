@@ -145,6 +145,13 @@ def submit_challenge(event_id, challenge_id):
     if event.type == "team":
         team = models.Team.objects(members__in=[current_user]).first()
         transaction.team = team
+        if event_challenge.solve_challenge():
+            return redirect(
+                url_for(
+                    "events.challenge",
+                    event_id=event.id,
+                )
+            )
 
     if not event_challenge.check_answer(answer):
         transaction.type = "answer"
