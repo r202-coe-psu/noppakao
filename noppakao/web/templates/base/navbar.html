@@ -1,7 +1,11 @@
 <div class="ui large top fixed menu" style="background-color: rgb(50, 78, 156); border-radius: 0 !important;">
     <a class="item" style="color: white;">R202 logo</a>
     <a class="launch icon item" style="gap: 10px; color: white;"><i class="content icon"></i></a>
+    {% if current_user.display_name %}
     <a class="item" style="color: white;"><i class="user tie icon"></i>{{ current_user.display_name }}</a>
+    {% else %}
+    <a class="item" style="color: white;"><i class="user tie icon"></i>{{ current_user.username }}</a>
+    {% endif %}
     {% for team in teams %}
     {% for member in team.members %}
     {% if current_user.id == member.id %}

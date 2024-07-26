@@ -2,12 +2,12 @@
 {% import '/base/html-renderer.html' as renderer %}
 
 {% block content %}
-<div class="ui segment">
+<div class="ui segment" style="margin-top: 2rem;">
     <h1 class="ui header">
         {% if 'create' in request.path %}
-        Create TEAM
+        <i class="plus icon"></i> Create Team
         {% else %}
-        Edit TEAM
+        <i class="edit icon"></i> Edit Team
         {% endif %}
     </h1>
 </div>

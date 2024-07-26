@@ -3,7 +3,15 @@
 
 {% block content %}
 <div class="ui container">
-    <h2 class="ui dividing header">Create or Edit Event</h2>
+    <div class="ui segment">
+        <h2 class="ui header">
+            {% if 'create' in request.path %}
+            Create Event
+            {% else %}
+            Edit Event
+            {% endif %}
+        </h2>
+    </div>
     <form class="ui form" enctype="multipart/form-data" method="post">
         {{ form.csrf_token }}
 

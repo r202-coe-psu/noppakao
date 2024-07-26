@@ -3,10 +3,18 @@
 
 {% block content %}
 <div class="ui container" style="padding: 2rem;">
+    <div class="ui segment">
+        <h2 class="ui header">
+            {% if 'create' in request.path %}
+            Create Score Challenge
+            {% else %}
+            Edit Score Challenge
+            {% endif %}
+        </h2>
+    </div>
     <div class="ui grid">
         <div class="four wide column" id="empty-column"></div> <!-- Empty column for centering -->
         <div class="eight wide column">
-            <h2 class="ui dividing header">Challenge Form</h2>
             <form class="ui form" enctype="multipart/form-data" method="post">
                 {{ form.csrf_token }}
                 <div class="field">

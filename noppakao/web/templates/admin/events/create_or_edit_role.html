@@ -1,22 +1,33 @@
 {% extends "base/default-page.html" %}
 
 {% block content %}
-<div class="ui form">
-    <form enctype="multipart/form-data" method="post">
-        {% for field in form %}
-        <div class="field">
-            {{ field.label }}
-            {{ field }}
-            {% if field.errors %}
-            <div class="ui pointing red basic label">
-                {% for error in field.errors %}
-                {{ error }}
-                {% endfor %}
-            </div>
+<div class="ui container" style="margin-top: 2rem;">
+    <div class="ui segment">
+        <h2 class="ui header">
+            {% if 'create' in request.path %}
+            Create Role
+            {% else %}
+            Edit Role
             {% endif %}
-        </div>
-        {% endfor %}
-        <button class="ui primary button" type="submit">Save</button>
-    </form>
+        </h2>
+    </div>
+    <div class="ui form">
+        <form enctype="multipart/form-data" method="post" class="ui form">
+            <div class="field">
+                {{ form.csrf_token }}
+                <div class="field">
+                    {{ form.user.label(class="ui label") }}
+                    {{ form.user(class="ui input") }}
+                </div>
+                <div class="field">
+                    {{ form.role.label(class="ui label") }}
+                    {{ form.role(class="ui input") }}
+                </div>
+            </div>
+            <button class="ui primary button" type="submit">
+                <i class="save icon"></i> Save
+            </button>
+        </form>
+    </div>
 </div>
 {% endblock %}

@@ -135,6 +135,8 @@
 									<div class="content">
 										<div class="ui segment">
 											<p>{{ challenge.description }}</p>
+											<p>Submit format: <span class="ui blue text">{{ event.flag_prefix
+													}}</span><span class="ui success text">{Answer}</span></p>
 											{% if challenge.challenge_url %}
 											<p>
 												Link URL: <a href="{{ challenge.challenge_url }}" target="_blank">{{

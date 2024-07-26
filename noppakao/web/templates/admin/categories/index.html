@@ -1,4 +1,4 @@
-{% extends "base/default-page.html" %}
+{% extends "/base/default-page.html" %}
 {% import '/base/html-renderer.html' as renderer %}
 
 {% block content %}
@@ -7,7 +7,7 @@
 </div>
 
 <div class="ui raised segment">
-    <a class="ui primary labeled icon button" href="{{ url_for('categories.create_or_edit') }}">
+    <a class="ui primary labeled icon button" href="{{ url_for('admin.categories.create_or_edit') }}">
         <i class="add icon"></i>
         Create Category
     </a>

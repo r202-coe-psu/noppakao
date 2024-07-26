@@ -1,17 +1,16 @@
-{% extends "admin/base/default-page.html" %}
+{% extends "/base/default-page.html" %}
 
 {% block content %}
 <div class="ui segment">
-    <h1 class="ui header">
-        {% if 'create' in request.path %}
-        Create Category
-        {% else %}
-        Edit Category
-        {% endif %}
-    </h1>
-</div>
-
-<div class="ui segment">
+    <div class="ui segment">
+        <h2 class="ui header">
+            {% if 'create' in request.path %}
+            Create Category
+            {% else %}
+            Edit Category
+            {% endif %}
+        </h2>
+    </div>
     <form method="POST" class="ui form" enctype="multipart/form-data">
         {{ form.csrf_token }}
 

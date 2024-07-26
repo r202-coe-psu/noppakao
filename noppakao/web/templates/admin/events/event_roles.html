@@ -1,10 +1,55 @@
 {% extends "base/default-page.html" %}
 
 {% block content %}
-<div><a class="ui primary button" href="{{ url_for('admin.events.create_or_edit_event_role',event_id=event.id) }}"> Create Challenge </a></div>
-{% for event_role in event_roles %}
-{{ event_role.user.get_fullname() }}
-{{ event_role.role }}
-<div><a class="ui primary button" href="{{ url_for('admin.events.create_or_edit_event_role',event_id=event.id,event_role_id=event_role.id) }}"> Edit Challenge </a></div>
-{% endfor %}
+<div class="ui container" style="margin-top: 2rem;">
+    <div style="display: flex; justify-content: center; margin-bottom: 2rem;">
+        <a class="ui primary button" href="{{ url_for('admin.events.create_or_edit_event_role', event_id=event.id) }}">
+            <i class="plus icon"></i> Create Challenger
+        </a>
+    </div>
+
+    <h2 class="ui header">Contributors</h2>
+    <div class="ui grid">
+        {% for event_role in event_roles %}
+        {% if event_role.role == 'contributor' %}
+        <div class="four wide column">
+            <div class="ui card">
+                <div class="content">
+                    <div class="header">{{ event_role.user.get_fullname() }}</div>
+                    <div class="meta">{{ event_role.role }}</div>
+                </div>
+                <div class="extra content">
+                    <a class="ui primary button"
+                        href="{{ url_for('admin.events.create_or_edit_event_role', event_id=event.id, event_role_id=event_role.id) }}">
+                        <i class="edit icon"></i> Edit Role Challenger
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+
+    <h2 class="ui header" style="margin-top: 3rem;">Competitors</h2>
+    <div class="ui grid">
+        {% for event_role in event_roles %}
+        {% if event_role.role == 'competitor' %}
+        <div class="four wide column">
+            <div class="ui card">
+                <div class="content">
+                    <div class="header">{{ event_role.user.get_fullname() }}</div>
+                    <div class="meta">{{ event_role.role }}</div>
+                </div>
+                <div class="extra content">
+                    <a class="ui primary button"
+                        href="{{ url_for('admin.events.create_or_edit_event_role', event_id=event.id, event_role_id=event_role.id) }}">
+                        <i class="edit icon"></i> Edit Role Challenger
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}
