@@ -27,7 +27,7 @@
                 <td>{{ category.status }}</td>
                 <td>
                     <a class="ui yellow icon button"
-                        href="{{ url_for('categories.create_or_edit', category_id=category.id) }}">
+                        href="{{ url_for('admin.categories.create_or_edit', category_id=category.id) }}">
                         <i class="edit icon"></i>
                     </a>
                     <a class="ui red icon button" onclick="showDeleteModal('{{ category.id }}')">
@@ -43,7 +43,8 @@
                     <p>Are you sure you want to delete <span class="ui red text">{{ category.name }}</span>?</p>
                 </div>
                 <div class="actions">
-                    <a class="ui negative button" href="{{ url_for('categories.delete', category_id=category.id) }}">
+                    <a class="ui negative button"
+                        href="{{ url_for('admin.categories.delete', category_id=category.id) }}">
                         Delete
                     </a>
                     <div class="ui button" onclick="$('.ui.small.modal.{{ category.id }}').modal('hide')">Cancel</div>
