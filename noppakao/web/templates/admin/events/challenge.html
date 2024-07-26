@@ -47,18 +47,28 @@
 									<td class="center aligned">{{ event_challenge.hint_score }}</td>
 									<td class="center aligned">{{ event_challenge.fail_score }} </td>
 									<td class="mini ui buttons" style="padding: 0.5rem;">
+										<!-- Edit Button -->
 										<a class="ui icon yellow button"
-											href="{{ url_for('admin.events.create_or_edit_challenge', event_id=event.id, event_challenge_id=event_challenge.id) }}">
+											href="{{ url_for('admin.events.create_or_edit_challenge', event_id=event.id, event_challenge_id=event_challenge.id) }}"
+											aria-label="Edit Challenge">
 											<i class="edit icon"></i>
 										</a>
-										<a class="ui icon red button">
-											<i class="trash icon"
-												onclick="showDeleteModal('{{ event_challenge.id }}')"></i>
+
+										<!-- Delete Button -->
+										<a class="ui icon red button"
+											onclick="showDeleteModal('{{ event_challenge.id }}')"
+											aria-label="Delete Challenge">
+											<i class="trash icon"></i>
 										</a>
+
+										<!-- View Transactions Button -->
 										<a class="ui icon blue button"
-											href="{{ url_for('admin.events.view_transactions', event_id=event.id, event_challenge_id=event_challenge.id) }}">
+											href="{{ url_for('admin.events.view_transactions', event_id=event.id, event_challenge_id=event_challenge.id) }}"
+											aria-label="View Transactions">
 											<i class="clipboard list icon"></i>
 										</a>
+									</td>
+
 									</td>
 								</tr>
 								<div class="ui small modal {{ event_challenge.id }}">
