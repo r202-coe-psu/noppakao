@@ -10,47 +10,74 @@
 	</a>
 </div>
 
-<div class="ui grid center aligned" style="margin-top: 2rem;">
+<div class="doubling stackable three column ui grid container"
+	style="width: calc(120rem + 12rem); height: 60vh; padding: 1rem;">
 	{% for i in range((event_categorys|length)) %}
-	<div class="five wide column card-trigger" id="card-template">
+	<div class="column card-trigger" id="card-template">
 		<div class="ui cards">
 			<div class="ui fluid card">
 				<div class="content">
 					<div class="header">
-						<i class="chess queen icon" style="visibility: visible;"></i>
-						Question Category {{ event_categorys[i].name }}
+						<i class="cubes icon" style="color: #386CAF; font-size: 1.7rem;"></i>
+						{{ event_categorys[i].name }}
 					</div>
 					<div class="content" style="margin-top: 1rem;">
 						<table class="ui table" style="border: none !important;">
 							<thead>
 								<tr>
 									<th class="one wide"></th>
-									<th class="six wide">Challenges</th>
-									<th class="two wide center aligned">Point</th>
-									<th class="two wide center aligned"><i class="tint icon" style="color: red;"></i>
+									<th class="eight wide">Challenges</th>
+									<th class="one wide center aligned">Point</th>
+									<th class="one wide center aligned"><i class="tint icon" style="color: red;"></i>
 									</th>
-									<th class="two wide center aligned"><i class="key icon"
+									<th class="one wide center aligned"><i class="key icon"
 											style="color: rgb(255, 196, 0);"></i></th>
-									<th class="two wide center aligned"><i class="skull crossbones icon"></i></th>
-									<th class="one wide">action</th>
+									<th class="one wide center aligned"><i class="skull crossbones icon"></i></th>
+									<th class="one wide center aligned">Action</th>
 								</tr>
 							</thead>
 							<tbody>
 								{% for event_challenge in event_challenges %}
 								{% if event_categorys[i].name == event_challenge.challenge.category.name %}
-								<tr>
+								<tr class="clickable-row">
 									<td><i class="cube icon" style="color: #386CAF;"></i></td>
 									<td>{{ event_challenge.challenge.name }}</td>
 									<td class="center aligned">{{ event_challenge.success_score }}</td>
 									<td class="center aligned">{{ event_challenge.first_blood_score }} </td>
 									<td class="center aligned">{{ event_challenge.hint_score }}</td>
 									<td class="center aligned">{{ event_challenge.fail_score }} </td>
-									<td>
-										<a href="{{ url_for('admin.events.create_or_edit_challenge', event_id=event.id ,event_challenge_id=event_challenge.id ) }}"><i class="edit icon"></i></a>
-										<a href="{{ url_for('admin.events.delete_event_challenge',event_challenge_id=event_challenge.id ) }}"><i class="trash icon"></i></a>
-										<a href="{{ url_for('admin.events.view_transactions',event_id=event.id ,event_challenge_id=event_challenge.id ) }}"><i class="clipboard list icon"></i></a>
+									<td class="mini ui buttons" style="padding: 0.5rem;">
+										<a class="ui icon yellow button"
+											href="{{ url_for('admin.events.create_or_edit_challenge', event_id=event.id, event_challenge_id=event_challenge.id) }}">
+											<i class="edit icon"></i>
+										</a>
+										<a class="ui icon red button">
+											<i class="trash icon"
+												onclick="showDeleteModal('{{ event_challenge.id }}')"></i>
+										</a>
+										<a class="ui icon blue button"
+											href="{{ url_for('admin.events.view_transactions', event_id=event.id, event_challenge_id=event_challenge.id) }}">
+											<i class="clipboard list icon"></i>
+										</a>
 									</td>
 								</tr>
+								<div class="ui small modal {{ event_challenge.id }}">
+									<div class="header">Delete Challenge</div>
+									<div class="content">
+										<p>Are you sure you want to delete <span class="ui red text">{{
+												event_challenge.challenge.name
+												}}</span>?</p>
+									</div>
+									<div class="actions">
+										<a class="ui negative button"
+											href="{{ url_for('admin.events.delete_event_challenge', event_challenge_id=event_challenge.id) }}">
+											Delete
+										</a>
+										<div class="ui button"
+											onclick="$('.ui.small.modal.{{ event_challenge.id }}').modal('hide')">Cancel
+										</div>
+									</div>
+								</div>
 								{% endif %}
 								{% endfor %}
 							</tbody>
@@ -62,4 +89,14 @@
 	</div>
 	{% endfor %}
 </div>
+{% endblock %}
+
+{% block additional_js %}
+<script>
+	function showDeleteModal(event_challenge_id) {
+		if (event_challenge_id) {
+			$('.ui.small.modal.' + event_challenge_id).modal('show');
+		}
+	}
+</script>
 {% endblock %}
