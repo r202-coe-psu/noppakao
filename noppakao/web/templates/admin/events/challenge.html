@@ -94,9 +94,7 @@
 {% block additional_js %}
 <script>
 	function showDeleteModal(event_challenge_id) {
-		if (event_challenge_id) {
-			$('.ui.small.modal.' + event_challenge_id).modal('show');
-		}
+		event_challenge_id ? $('.ui.small.modal.' + event_challenge_id).modal('show') : $('.ui.small.modal').modal('hide');
 	}
 </script>
 {% endblock %}
