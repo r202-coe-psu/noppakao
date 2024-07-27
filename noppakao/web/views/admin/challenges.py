@@ -92,7 +92,69 @@ def create_or_edit(challenge_id):
     return redirect(url_for("admin.challenges.index"))
 
 
-@module.route("<challenge_id>/download_file", methods=["GET", "POST"])
+@module.route("/<challenge_id>/view_file_challenge", methods=["GET", "POST"])
+@acl.roles_required("admin")
+def view_file_challenge(challenge_id):
+    challenge = models.Challenge.objects.get(id=challenge_id)
+    challenge_resources = models.ChallengeResource.objects(
+        challenge=challenge, status="active"
+    )
+    form = forms.challenges.UploadChallengeFileForm()
+
+    if not form.validate_on_submit():
+        print(form.errors)
+        return render_template(
+            "/admin/challenges/view_file_challenge.html",
+            challenge_resources=challenge_resources,
+            form=form,
+            challenge=challenge,
+        )
+    print(form.uploaded_file.data)
+
+    if form.uploaded_file.data:
+        for file in form.uploaded_file.data:
+            challenge_resource = models.ChallengeResource()
+            if form.uploaded_file.data:
+                challenge_resource.file.put(
+                    file,
+                    filename=file.filename,
+                    content_type=file.content_type,
+                )
+                challenge_resource.challenge = challenge
+            challenge_resource.created_by = current_user
+            challenge_resource.updated_by = current_user
+            challenge_resource.save()
+
+    return render_template(
+        "/admin/challenges/view_file_challenge.html",
+        challenge_resources=challenge_resources,
+        form=form,
+        challenge=challenge,
+    )
+
+
+@module.route(
+    "/<challenge_id>/challenge_resource/<challenge_resource_id>/delete",
+    methods=["GET", "POST"],
+)
+@acl.roles_required("admin")
+def delete(challenge_id, challenge_resource_id):
+    challenge = models.Challenge.objects.get(id=challenge_id)
+    challenge_resource = models.ChallengeResource.objects.get(
+        id=challenge_resource_id, status="active"
+    )
+    challenge_resource.status = "disactive"
+    challenge_resource.save()
+    return redirect(
+        url_for(
+            "admin.challenges.view_file_challenge",
+            challenge_id=challenge.id,
+            challenge=challenge,
+        )
+    )
+
+
+@module.route("/<challenge_id>/download_file", methods=["GET", "POST"])
 @acl.roles_required("admin")
 def download(challenge_id):
     challenge = models.Challenge.objects(id=challenge_id)

@@ -37,6 +37,11 @@
 											aria-label="Edit Challenge">
 											<i class="edit icon"></i>
 											</a>
+											<a class="ui icon yellow button"
+											href="{{ url_for('admin.challenges.view_file_challenge',challenge_id=challenge.id ) }}"
+											aria-label="File Challenge">
+											<i class="file icon"></i>
+											</a>
 										</td>
 									</tr>
 									{% endif %}

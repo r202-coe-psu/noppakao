@@ -58,3 +58,10 @@ class ChallengeForm(BaseChallengeForm):
         validators=[],
     )
     category = fields.SelectField("Category", validators=[validators.InputRequired()])
+
+
+class UploadChallengeFileForm(FlaskForm):
+    uploaded_file = file.MultipleFileField(
+        "File type (.zip)",
+        validators=[],
+    )
