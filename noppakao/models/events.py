@@ -46,7 +46,7 @@ class Event(me.Document):
     def team_score(self):
         from noppakao import models
 
-        team = models.Team.objects(members__in=[current_user]).first()
+        team = models.Team.objects(members__in=[current_user], status="active").first()
         transactions = models.Transaction.objects(event=self, team=team)
         score = 0
         for transaction in transactions:
