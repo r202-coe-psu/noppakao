@@ -115,12 +115,16 @@ class EventChallenge(me.Document):
         from noppakao import models
 
         if self.event.type == "team":
-            team = models.Team.objects(members__in=[current_user]).first()
+            team = models.Team.objects(
+                members__in=[current_user], status="active"
+            ).first()
+
             solve_challenges = models.Transaction.objects(
                 event_challenge=self,
                 status__in=["success", "first_blood"],
                 team=team,
             )
+            print(solve_challenges, "<<<<<<<<<<<<<<<<<,dd,")
         else:
             solve_challenges = models.Transaction.objects(
                 event_challenge=self,
@@ -135,7 +139,9 @@ class EventChallenge(me.Document):
 
         event = models.Event.objects(id=event_id).first()
         if event.type == "team":
-            team = models.Team.objects(members__in=[current_user]).first()
+            team = models.Team.objects(
+                members__in=[current_user], status="active"
+            ).first()
             trasaction = models.Transaction.objects(
                 event_challenge=self, type="hint", team=team
             ).first()

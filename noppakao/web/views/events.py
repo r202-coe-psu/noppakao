@@ -50,7 +50,7 @@ def join(event_id):
         return redirect(url_for("events.index", msg=msg))
 
     if event.type == "team":
-        team = models.Team.objects(members__in=[current_user]).first()
+        team = models.Team.objects(members__in=[current_user], status="active").first()
         if team:
             event_competitor = models.EventCompetitor()
             event_competitor.team = team
@@ -85,6 +85,11 @@ def challenge(event_id):
     event_challenges = models.EventChallenge.objects(event=event, status="active")
     event_categorys = []
     dialog_state = {"status": request.args.get("dialog_state", None)}
+    team = models.Team.objects(members__in=[current_user], status="active").first()
+
+    if not team:
+        msg = "Please create a team."
+        return redirect(url_for("events.index", msg=msg))
 
     if not current_user.check_join_event(event.id):
         msg = "คุณกำลังพยายามเข้าไปใน กิจกรรมที่คุณไม่ได้เข้าร่วม"
@@ -133,7 +138,9 @@ def submit_challenge(event_id, challenge_id):
         transaction.answer = answer
         transaction.user = current_user
         if event.type == "team":
-            team = models.Team.objects(members__in=[current_user]).first()
+            team = models.Team.objects(
+                members__in=[current_user], status="active"
+            ).first()
             transaction.team = team
         transaction.save()
         return redirect(
@@ -143,7 +150,7 @@ def submit_challenge(event_id, challenge_id):
     transaction = models.Transaction()
 
     if event.type == "team":
-        team = models.Team.objects(members__in=[current_user]).first()
+        team = models.Team.objects(members__in=[current_user], status="active").first()
         transaction.team = team
         if event_challenge.solve_challenge():
             return redirect(

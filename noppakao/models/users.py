@@ -1,6 +1,6 @@
 import mongoengine as me
 import datetime
-from flask_login import UserMixin
+from flask_login import UserMixin, current_user
 
 
 class Organization(me.Document):
@@ -35,9 +35,22 @@ class User(me.Document, UserMixin):
         from noppakao import models
 
         event = models.Event.objects(id=event_id).first()
-        event_role = models.EventRole.objects(user=self, event=event).first()
-        if event_role:
-            return event_role
+
+        if event.type == "team":
+            team = models.Team.objects(
+                members__in=[current_user], status="active"
+            ).first()
+            event_competitor = models.EventCompetitor.objects(
+                event=event, team=team
+            ).first()
+            if event_competitor:
+                return True
+
+        elif event.type == "solo":
+            event_role = models.EventRole.objects(user=self, event=event).first()
+            if event_role:
+                return True
+
         return None
 
     def set_password(self, password):
