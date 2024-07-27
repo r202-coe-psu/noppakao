@@ -124,7 +124,6 @@ class EventChallenge(me.Document):
                 status__in=["success", "first_blood"],
                 team=team,
             )
-            print(solve_challenges, "<<<<<<<<<<<<<<<<<,dd,")
         else:
             solve_challenges = models.Transaction.objects(
                 event_challenge=self,
