@@ -66,27 +66,29 @@ def create_or_edit(challenge_id):
         return render_template(
             "admin/challenges/create_or_edit.html", form=form, challenge=challenge
         )
+
     if not challenge_id:
         challenge = models.Challenge()
         challenge.created_by = current_user
     form.populate_obj(challenge)
-    if not challenge_id:
-        if form.uploaded_file.data:
-            challenge.challenge_file.put(
-                form.uploaded_file.data,
-                filename=form.uploaded_file.data.filename,
-                content_type=form.uploaded_file.data.content_type,
-            )
-    else:
-        if form.uploaded_file.data:
-            challenge.challenge_file.replace(
-                form.uploaded_file.data,
-                filename=form.uploaded_file.data.filename,
-                content_type=form.uploaded_file.data.content_type,
-            )
     challenge.category = models.Category.objects(id=form.category.data).first()
     challenge.updated_by = current_user
     challenge.save()
+
+    if form.uploaded_file.data:
+        for file in form.uploaded_file.data:
+            challenge_resource = models.ChallengeResource()
+            if form.uploaded_file.data:
+                challenge_resource.file.put(
+                    file,
+                    filename=file.filename,
+                    content_type=file.content_type,
+                )
+                challenge_resource.challenge = challenge
+            challenge_resource.created_by = current_user
+            challenge_resource.updated_by = current_user
+            challenge_resource.save()
+
     return redirect(url_for("admin.challenges.index"))
 
 

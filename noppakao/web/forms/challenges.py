@@ -53,7 +53,7 @@ BaseChallengeForm = model_form(
 
 
 class ChallengeForm(BaseChallengeForm):
-    uploaded_file = file.FileField(
+    uploaded_file = file.MultipleFileField(
         "File type (.zip)",
         validators=[],
     )

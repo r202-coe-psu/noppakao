@@ -1,6 +1,6 @@
 from flask_mongoengine import MongoEngine
 from .users import User
-from .challenges import Challenge
+from .challenges import Challenge, ChallengeResource
 from .categories import Category
 from .teams import Team
 from .events import Event, EventChallenge, EventRole, EventCompetitor

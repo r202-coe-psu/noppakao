@@ -22,6 +22,7 @@
 									<tr>
 										<th class="one wide"></th>
 										<th class="eleven wide">Challenges</th>
+										<th> action </th>
 									</tr>
 								</thead>
 								<tbody>
@@ -30,6 +31,13 @@
 									<tr>
 										<td><i class="cube icon" style="color: #386CAF;"></i></td>
 										<td>{{ challenge.name }}</td>
+										<td>
+											<a class="ui icon yellow button"
+											href="{{ url_for('admin.challenges.create_or_edit',challenge_id=challenge.id ) }}"
+											aria-label="Edit Challenge">
+											<i class="edit icon"></i>
+											</a>
+										</td>
 									</tr>
 									{% endif %}
 									{% endfor %}
