@@ -80,7 +80,9 @@
 		{% endif %}
 	</div>
 </div>
-
+<div id="loader" class="ui active inverted dimmer" style="display: none;">
+	<l-quantum size="80" speed="1.75" color="#165fd4"></l-quantum>
+</div>
 <div class="doubling stackable three column ui grid container" style="width: calc(120rem + 12rem); height: 60vh;">
 	{% for i in range((event_categorys|length)) %}
 	<div class="column card-trigger" id="card-template">
@@ -129,6 +131,7 @@
 								</tr>
 
 								<div class="ui small modal {{ event_challenge.id }}">
+									
 									<div class="header">Challenge Details</div>
 									{% for challenge in challenges %}
 									{% if challenge.id == event_challenge.challenge.id %}
@@ -144,6 +147,15 @@
 											</p>
 											{% endif %}
 										</div>
+										<div id="loader-{{ event_challenge.id }}" class="ui active inverted dimmer" style="display: none;">
+											<l-quantum size="80" speed="1.75" color="#165fd4"></l-quantum>
+										</div>
+										{% if event_challenge.check_transaction_hint(event.id) %}
+										<div > {{ event_challenge.challenge.hint }}</div>
+										{% else %}
+										<a onclick="ClickHint('{{event.id}}','{{ event_challenge.id }}')">ClickHint</a>
+										<div class="response"></div>
+										{% endif %}
 										{% if not event_challenge.solve_challenge() %}
 										<form method="GET"
 											action="{{ url_for('events.submit_challenge', event_id=event.id, challenge_id=event_challenge.id) }}">
@@ -179,6 +191,7 @@
 {% endblock %}
 
 {% block additional_js %}
+<script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/quantum.js"></script>
 <style>
 	@keyframes flash {
 		0% {
@@ -214,8 +227,36 @@
 </script>
 
 <script>
-	function showQuestion(submit_flag) {
-		submit_flag ? $('.ui.small.modal.' + submit_flag).modal('show') : $('.ui.small.modal').modal('hide');
+	function ClickHint(event_id, event_challenge_id) {
+		if (event_id) {
+			var loader = document.getElementById("loader-" + event_challenge_id);
+			loader.style.display = "block";
+			$("#loader").show();
+			$('.response').hide().empty();
+			setTimeout(function () {
+				$.ajax({
+					url: '/api/events/' + event_id + '/event_challenges/' + event_challenge_id,
+					type: 'get',
+					success: function (response) {
+						$('.response').html(`
+							<p><strong>Hist :</strong> ${response.hint}</p>
+						`).show();
+					},
+					complete: function () {
+						$('.response').fadeIn();
+						$("#loader").hide();
+						loader.style.display = "none";
+					}
+				});
+			}, 1000);
+		} else {
+			$('.response').hide().empty();
+		}
+	}
+
+	function showQuestion(event_challenge_id) {
+		event_challenge_id ? $('.ui.small.modal.' + event_challenge_id).modal('show') : $('.ui.small.modal').modal('hide');
+		$('.response').hide().empty();
 	}
 </script>
 

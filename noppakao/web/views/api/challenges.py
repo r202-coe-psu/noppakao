@@ -10,6 +10,7 @@ module = Blueprint("challenge", __name__, url_prefix="/challenge")
 
 
 @module.route("/<challenge_id>")
+@acl.roles_required("admin")
 def get_all_data(challenge_id):
     challenge = models.Challenge.objects(id=challenge_id).first()
     data = {

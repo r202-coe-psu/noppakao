@@ -130,6 +130,22 @@ class EventChallenge(me.Document):
 
         return solve_challenges
 
+    def check_transaction_hint(self, event_id):
+        from noppakao import models
+
+        event = models.Event.objects(id=event_id).first()
+        if event.type == "team":
+            team = models.Team.objects(members__in=[current_user]).first()
+            trasaction = models.Transaction.objects(
+                event_challenge=self, type="hint", team=team
+            ).first()
+        else:
+            trasaction = models.Transaction.objects(
+                event_challenge=self, type="hint", user=current_user
+            ).first()
+
+        return trasaction
+
 
 EVENT_ROLES = ["competitor", "contributor"]
 
