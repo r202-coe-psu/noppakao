@@ -178,7 +178,7 @@ def delete_event_challenge(event_challenge_id):
 
 
 @module.route(
-    "/<event_id>/event_challenges/<event_challenge_id>/transactions",
+    "/<event_id>/event_challenges/<event_challenge_id>/view_transactions",
     methods=["GET", "POST"],
 )
 @acl.roles_required("admin")
