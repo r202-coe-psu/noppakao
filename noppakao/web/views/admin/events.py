@@ -13,6 +13,7 @@ from flask import (
 )
 
 from flask_login import login_user, logout_user, login_required, current_user
+from .. import paginations
 
 from noppakao.web import oauth, forms, models, acl
 
@@ -183,10 +184,20 @@ def delete_event_challenge(event_challenge_id):
 )
 @acl.roles_required("admin")
 def view_transactions(event_id, event_challenge_id):
+    event = models.Event.objects(id=event_id).first()
     event_challenge = models.EventChallenge.objects(id=event_challenge_id).first()
     transactions = models.Transaction.objects(event_challenge=event_challenge).order_by(
         "-created_date"
     )
+
+    pagination_event_history = paginations.get_paginate(
+        data=transactions, items_per_page=4
+    )
+    print(pagination_event_history)
     return render_template(
-        "/admin/events/view_transactions.html", transactions=transactions
+        "/admin/events/view_transactions.html",
+        event=event,
+        event_challenge=event_challenge,
+        transactions=pagination_event_history["data"],
+        pagination=pagination_event_history,
     )

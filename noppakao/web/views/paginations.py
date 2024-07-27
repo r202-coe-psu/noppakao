@@ -1,6 +1,8 @@
 from flask import request
 
 import math
+
+
 def manage_pagination(datalen, items_per_page, current_page):
     pages = []
     max_page = math.ceil(datalen / items_per_page)
@@ -20,12 +22,13 @@ def manage_pagination(datalen, items_per_page, current_page):
         pages.extend(["...", max_page])
     return pages
 
+
 # @caches.cache.memoize(timeout=600)
 def get_paginate(data, items_per_page=20):
     page = int(request.args.get("page", default=1))
     offset = (page - 1) * items_per_page
     datalen = len(data)  # หาจำนวน list ที่ต้องการมาแบ่ง
-    data = data[offset: offset + items_per_page]
+    data = data[offset : offset + items_per_page]
     paginate = manage_pagination(
         datalen, items_per_page, page
     )  # ทำการแบ่ง list ออกเป็นหน้า ๆ

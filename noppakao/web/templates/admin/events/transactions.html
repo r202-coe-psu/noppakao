@@ -30,13 +30,12 @@
         </div>
         {% endfor %}
 
-    </div>
-    <div>
-        {% with redirect=url_for("admin.events.view_transactions", event_challenge_id=event_challenge.id,
-        event_id=event.id) %}
-        {% include "base/pagination.html" %}
-        {% endwith %}
+        <div>
+            {% with redirect=url_for("admin.events.transactions") %}
+            {% include "base/pagination.html" %}
+            {% endwith %}
 
+        </div>
     </div>
 </div>
 {% endblock %}
