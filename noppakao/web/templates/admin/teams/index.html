@@ -30,7 +30,26 @@
                             {% endfor %}
                             {% endfor %}
                         </ul>
+                        <a class="ui yellow icon button"
+                            href="{{ url_for('admin.teams.create_or_edit', team_id=team.id) }}">
+                            <i class="edit icon"></i>
+                        </a>
+                        <a class="ui red icon button" onclick="showDeleteModal('{{ team.id }}')">
+                            <i class="trash icon"></i>
+                        </a>
                     </div>
+                </div>
+            </div>
+            <div class="ui small modal {{ team.id }}">
+                <div class="header">Delete Team</div>
+                <div class="content">
+                    <p>Are you sure you want to delete <span class="ui red text">{{ team.name }}</span>?</p>
+                </div>
+                <div class="actions">
+                    <a class="ui negative button" href="{{ url_for('admin.teams.delete', team_id=team.id) }}">
+                        Delete
+                    </a>
+                    <div class="ui button" onclick="$('.ui.small.modal.{{ team.id }}').modal('hide')">Cancel</div>
                 </div>
             </div>
             {% else %}
@@ -45,5 +64,11 @@
 {% endblock %}
 
 {% block additional_js %}
-<!-- Add any additional JS here if needed -->
+<script>
+    function showDeleteModal(team_id) {
+        if (team_id) {
+            $('.ui.small.modal.' + team_id).modal('show');
+        }
+    }
+</script>
 {% endblock %}

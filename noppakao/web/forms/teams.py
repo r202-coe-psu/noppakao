@@ -16,13 +16,13 @@ BaseTeamsForm = model_form(
         "score",
         "status",
     ],
-    field_args={"name": {"label": "Name"}},
+    field_args={"name": {"label": "Team name"}},
 )
 
 
 class TeamsForm(BaseTeamsForm):
     picture = file.FileField(
-        "File type (.jpg or .png)",
+        "Upload team image (.jpg or .png)",
         validators=[
             file.FileAllowed(["png", "jpg", "jpeg"], "You can use only jpg , png"),
         ],

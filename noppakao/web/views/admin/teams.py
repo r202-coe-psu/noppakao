@@ -56,6 +56,7 @@ def create_or_edit(team_id):
             )
         teams.name = form.name.data
     else:
+        teams.name = form.name.data
         if form.picture.data:
             teams.picture.replace(
                 form.picture.data,

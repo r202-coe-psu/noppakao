@@ -50,7 +50,6 @@ def create_or_edit(team_id):
     if not form.validate_on_submit():
         if team:
             form.members.data = [str(member.id) for member in team.members]
-        print(form.errors)
         return render_template("/teams/create_or_edit.html", form=form, team=team)
 
     if not team_id:
@@ -63,14 +62,15 @@ def create_or_edit(team_id):
             models.User.objects(id=user_id).first() for user_id in form.members.data
         ]
     if not team_id:
+        team.name = form.name.data
         if form.picture.data:
             team.picture.put(
                 form.picture.data,
                 filename=form.picture.data.filename,
                 content_type=form.picture.data.content_type,
             )
-        team.name = form.name.data
     else:
+        team.name = form.name.data
         if form.picture.data:
             team.picture.replace(
                 form.picture.data,
