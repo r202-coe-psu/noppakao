@@ -187,4 +187,6 @@ def view_transactions(event_id, event_challenge_id):
     transactions = models.Transaction.objects(event_challenge=event_challenge).order_by(
         "-created_date"
     )
-    return render_template("/admin/events/transactions.html", transactions=transactions)
+    return render_template(
+        "/admin/events/view_transactions.html", transactions=transactions
+    )
