@@ -131,15 +131,17 @@
 								</tr>
 
 								<div class="ui small modal {{ event_challenge.id }}">
-									
+
 									<div class="header">Challenge Details</div>
 									{% for challenge in challenges %}
 									{% if challenge.id == event_challenge.challenge.id %}
 									<div class="content">
 										<div class="ui segment">
 											<p>{{ challenge.description }}</p>
-											<p>Submit format: <span class="ui blue text">{{ event.flag_prefix
-													}}</span><span class="ui success text">{Answer}</span></p>
+											<p>Example Submit <span
+													style="color: #808080; line-height: 1.5; font-style: italic; margin-bottom: 10px;">{{
+													event.flag_prefix
+													}}{Answer}</span></p>
 											{% if challenge.challenge_url %}
 											<p>
 												Link URL: <a href="{{ challenge.challenge_url }}" target="_blank">{{
@@ -147,19 +149,35 @@
 											</p>
 											{% endif %}
 										</div>
-										<div id="loader-{{ event_challenge.id }}" class="ui active inverted dimmer" style="display: none;">
-											<l-quantum size="80" speed="1.75" color="#165fd4"></l-quantum>
-										</div>
 										{% if event_challenge.check_transaction_hint(event.id) %}
-										<div > {{ event_challenge.challenge.hint }}</div>
+										<div id="response-{{ event_challenge.id }}" class="ui blue segment">
+											{{ event_challenge.challenge.hint }}
+										</div>
+										{% elif not event_challenge.solve_challenge() %}
+										<div class="ui vertical animated fluid blue small button" tabindex="0"
+											onclick="ClickHint('{{event.id}}','{{ event_challenge.id }}')">
+											<div class="visible content">
+												<i class="eye icon"></i>
+											</div>
+											<div class="hidden content">
+												Show hint
+											</div>
+										</div>
 										{% else %}
-										<a onclick="ClickHint('{{event.id}}','{{ event_challenge.id }}')">ClickHint</a>
-										<div class="response"></div>
+										<div id="response-{{ event_challenge.id }}" class="response"></div>
 										{% endif %}
+
+										<div id="loader-{{ event_challenge.id }}" class="ui active inverted dimmer"
+											style="display: none;">
+											<div class="ui large text loader" style="color: #165fd4;">
+												Loading...
+											</div>
+										</div>
+
 										{% if not event_challenge.solve_challenge() %}
 										<form method="GET"
 											action="{{ url_for('events.submit_challenge', event_id=event.id, challenge_id=event_challenge.id) }}">
-											<div class="ui fluid action input">
+											<div class="ui fluid action input" style="margin-top: 1rem;">
 												<input type="text" id="answer" name="answer"
 													placeholder="Enter your answer...">
 												<button type="submit" class="ui big button"
@@ -230,27 +248,25 @@
 	function ClickHint(event_id, event_challenge_id) {
 		if (event_id) {
 			var loader = document.getElementById("loader-" + event_challenge_id);
+			var response = document.getElementById("response-" + event_challenge_id);
 			loader.style.display = "block";
-			$("#loader").show();
-			$('.response').hide().empty();
+			$(response).hide().empty();
 			setTimeout(function () {
 				$.ajax({
 					url: '/api/events/' + event_id + '/event_challenges/' + event_challenge_id,
-					type: 'get',
+					type: 'GET',
 					success: function (response) {
-						$('.response').html(`
-							<p><strong>Hist :</strong> ${response.hint}</p>
+						$(response).html(`
+							<div class="ui blue segment">${response.hint}</div>
 						`).show();
 					},
 					complete: function () {
-						$('.response').fadeIn();
-						$("#loader").hide();
 						loader.style.display = "none";
 					}
 				});
 			}, 1000);
 		} else {
-			$('.response').hide().empty();
+			$(response).hide().empty();
 		}
 	}
 
