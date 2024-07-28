@@ -5,7 +5,15 @@
     <div>
       <div class="sidebar-heading header" style="padding: 1rem 0; text-align: center;">
         <a href="{{ url_for('accounts.index') }}" style="color: white; font-weight: bold; font-size: 1.5rem;">
-          TEAM :
+          {% for team in teams %}
+          {% for member in team.members %}
+          {% if current_user.id == member.id %}
+          <div>
+            TEAM : <span class="ui info text">{{ team.name }}</span>
+          </div>
+          {% endif %}
+          {% endfor %}
+          {% endfor %}
         </a>
       </div>
       <div class="ui divider" style="margin: 0; background-color: #fff;"></div>
