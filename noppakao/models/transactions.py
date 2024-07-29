@@ -7,11 +7,7 @@ TRANSACTION_TYPE = [
     "answer",
 ]
 
-TRANSACTION_STATUS = [
-    "first_blood",
-    "success",
-    "fail",
-]
+TRANSACTION_STATUS = ["first_blood", "success", "fail", "hint"]
 
 
 class Transaction(me.Document):

@@ -1,5 +1,7 @@
 import mongoengine as me
 import datetime
+from bson import ObjectId
+
 from flask_login import current_user
 
 STATUS_CHOICES = ["active", "disactive"]
@@ -24,6 +26,11 @@ class Event(me.Document):
         required=True, default=datetime.datetime.now, auto_now=True
     )
 
+    # register_started_date = me.DateTimeField(required=True, default=datetime.date)  #
+    # register_ended_date = me.DateTimeField(required=True, default=datetime.date)  #
+
+    # publish_date = me.StringField(required=True, default=datetime.datetime.now)
+
     status = me.StringField(default="active", choices=STATUS_CHOICES)  # บอกถึงสถานะ
     created_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
@@ -37,21 +44,99 @@ class Event(me.Document):
     def competitor_score(self):
         from noppakao import models
 
-        transactions = models.Transaction.objects(event=self, user=current_user)
-        score = 0
-        for transaction in transactions:
-            score += transaction.score
-        return score
+        pipline = [
+            {"$match": {"event": ObjectId(self.id), "user": ObjectId(current_user.id)}},
+            {
+                "$group": {
+                    "_id": {
+                        "event_challenge": "$event_challenge",
+                        "status": "$status",
+                    },
+                    "score": {"$sum": "$score"},
+                }
+            },
+            {"$group": {"_id": None, "total_score": {"$sum": "$score"}}},
+            {
+                "$project": {
+                    "_id": 0,
+                    "total_score": 1,
+                }
+            },
+        ]
+        result = list(models.Transaction.objects.aggregate(pipline))
+        if result:
+            return result[0].get("total_score", 0)
+
+        return 0
 
     def team_score(self):
         from noppakao import models
 
         team = models.Team.objects(members__in=[current_user], status="active").first()
-        transactions = models.Transaction.objects(event=self, team=team)
-        score = 0
-        for transaction in transactions:
-            score += transaction.score
-        return score
+
+        pipeline = [
+            {
+                "$match": {
+                    "event": ObjectId(self.id),
+                    "team": ObjectId(team.id),
+                    "status": {"$ne": "fail"},
+                }
+            },
+            {
+                "$group": {
+                    "_id": {
+                        "event_challenge": "$event_challenge",
+                        "status": "$status",
+                        "type": "$type",
+                    },
+                    "score": {"$max": "$score"},
+                }
+            },
+            {"$group": {"_id": None, "total_score": {"$sum": "$score"}}},
+            {
+                "$project": {
+                    "_id": 0,
+                    "total_score": 1,
+                }
+            },
+        ]
+
+        pipeline_fail = [
+            {
+                "$match": {
+                    "event": ObjectId(self.id),
+                    "team": ObjectId(team.id),
+                    "status": "fail",
+                }
+            },
+            {
+                "$group": {
+                    "_id": {
+                        "event_challenge": "$event_challenge",
+                        "status": "$status",
+                        "type": "$type",
+                    },
+                    "score": {"$min": "$score"},
+                }
+            },
+            {"$group": {"_id": None, "total_score": {"$sum": "$score"}}},
+            {
+                "$project": {
+                    "_id": 0,
+                    "total_score": 1,
+                }
+            },
+        ]
+        result = list(models.Transaction.objects.aggregate(pipeline))
+        result_fail = list(models.Transaction.objects.aggregate(pipeline_fail))
+        if result and result_fail:
+            return result[0].get("total_score", 0) + result_fail[0].get(
+                "total_score", 0
+            )
+        if result:
+            return result[0].get("total_score", 0)
+
+        return 0
 
 
 class EventCompetitor(me.Document):
