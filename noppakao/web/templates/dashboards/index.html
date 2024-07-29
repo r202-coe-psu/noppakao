@@ -27,8 +27,25 @@
         margin: 0 !important;
         padding: 0 !important;
     }
-    .countdown-finished {
-        color: red; 
+
+
+    @keyframes flash {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .flash-red {
+        color: red;
+        animation: flash 1s infinite;
     }
 </style>
 
@@ -55,7 +72,11 @@
                         <tr>
                             <th scope="col" style="color: rgb(255, 255, 255);">Individual Rank</th>
                             <th scope="col"  style="color: rgb(255, 255, 255); text-align: right;">
-                                <span class="transparent-bg">Countdown timer : <span id="countdown-timer">00:01:30</span></span>
+                                <span class="transparent-bg">Countdown timer :		
+                                    <a class="item" style="color: white;">
+                                        <span id="countdown"></span>
+                                    </a>
+                                </span>
                             </th>
                         </tr>
                     </thead>
@@ -147,38 +168,48 @@
 
 
 {% block additional_js %}
+
 <script type="text/javascript">
-    setInterval(function(){
-        window.location.reload();
-    }, 120000);
+	function countdown(ended_date) {
+		const countDownDate = new Date(ended_date).getTime();
 
+		const x = setInterval(function () {
+			const now = new Date().getTime();
+			const distance = countDownDate - now;
 
-    function startCountdown() {
-        var timer = document.getElementById('countdown-timer');
-        var totalSeconds = 1 * 60 + 30; 
+			const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+			const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+			const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+			const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-        var interval = setInterval(function() {
-            var hours = Math.floor(totalSeconds / 3600);
-            var minutes = Math.floor((totalSeconds % 3600) / 60);
-            var seconds = totalSeconds % 60;
+			document.getElementById("countdown").innerHTML = '<i class="clock outline icon"></i>' + days + "d " + hours + "h "
+				+ minutes + "m " + seconds + "s ";
 
-            hours = hours < 10 ? '0' + hours : hours;
-            minutes = minutes < 10 ? '0' + minutes : minutes;
-            seconds = seconds < 10 ? '0' + seconds : seconds;
+			if (distance < 0) {
+				clearInterval(x);
+				document.getElementById("countdown").innerHTML = '<i class="clock outline icon"></i> Out Of Time';
+				document.getElementById("countdown").classList.add("flash-red");
+			}
+		}, 1000);
+	}
 
-            timer.textContent = hours + ':' + minutes + ':' + seconds;
+	window.onload = function () {
+		const ended_date = "{{ event.ended_date }}";
+		console.log("Initial Ended Date:", ended_date);
+		countdown(ended_date);
+	}
+</script>
 
-            if (totalSeconds <= 0) {
-                clearInterval(interval);
-                timer.textContent = 'FINISHED';
-                timer.classList.add('countdown-finished'); 
-            } else {
-                totalSeconds--;
-            }
-        }, 1000);
-    }
-
-    window.onload = startCountdown;
-
+<script type="text/javascript">
+	function updateTime() {
+		const now = new Date();
+		let hours = (now.getUTCHours() + 7) % 24; 
+		let minutes = now.getUTCMinutes();
+		hours = hours < 10 ? '0' + hours : hours;
+		minutes = minutes < 10 ? '0' + minutes : minutes;
+		document.getElementById('time-display').innerHTML = `${hours}:${minutes} (UTC+7)`;
+	}
+	setInterval(updateTime, 1000);
+	updateTime();
 </script>
 {% endblock additional_js %}
