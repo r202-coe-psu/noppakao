@@ -28,6 +28,11 @@
 	{% endfor %}
 
 	<div class="right menu">
+		
+		{% if "events" in request.url %} 
+		<a class="item" style="color: white;" href="{{ url_for('dashboards.index', event_id=event.id) }}"><i class="sort amount down icon"
+			style="color: rgb(255, 255, 255);"></i>Dashboard</a>
+		{% endif %} 
 		<div class="item" style="color: white;">
 			<p id="ipaddress"></p>
 		</div>
