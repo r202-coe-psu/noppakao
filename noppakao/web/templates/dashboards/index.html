@@ -55,6 +55,10 @@
 
 {#NEW#}
 <div class="ui grid no-margin">
+ 
+    
+    {#SCORE BOARD#}
+    {% if event.type == "team" %}
     <div class="two column row">
         <div class="column">
                 <table class="ui inverted table">
@@ -84,7 +88,6 @@
         </div>
     </div>
     
-    {#SCORE BOARD#}
     <div class="two column row">
         <div class="column">
             <div class="table-container">
@@ -98,7 +101,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for team in teams %}
+                        {% for team in teams_transaction %}
                             {% if loop.index % 2 != 0 %}
                             <tr style="color: rgb(0, 0, 0); background-color: rgb(200, 200, 200)">
                             {% else %}
@@ -108,7 +111,7 @@
                             <td>
                                 {% if team.picture %}
                                 <h3 class="ui picture header" >
-                                    <img src="{{team.get_picture()}}" style="width: 20px; height: 20px;">
+                                    {# <img src="{{team.get_picture()}}" style="width: 20px; height: 20px;"> #}
                                 </h3>
                                 {% else %}
                                 <div>
@@ -117,10 +120,10 @@
                                 {% endif %}
                             </td>
                             <td>{{ team.name }}</td>
-                            {% if not team.score %}
+                            {% if not team.total_score %}
                             <td class="left-aligned">0</td>
                             {% else %}
-                            <td class="left-aligned">{{ team.score }}</td>
+                            <td class="left-aligned">{{ team.total_score }}</td>
                             {% endif %}
                         </tr>
                         {% endfor %}
@@ -141,7 +144,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for user in users %}
+                        {% for user in users_transaction %}
                             {% if loop.index % 2 != 0 %}
                                 <tr style="color: rgb(0, 0, 0); background-color: rgb(200, 200, 200)">
                             {% else %}
@@ -150,11 +153,11 @@
                             <td>{{ loop.index }}</td>
                             <td>No Picture</td>
                             <td>{{ user.display_name }}</td>
-                            <td>{{ user.get_fullname() }}</td>
-                            {% if not user.score %}
+                            <td>{{ user.team }}</td>
+                            {% if user.total_score == 0 %}
                                 <td class="left-aligned">0</td>
                             {% else %}
-                                <td class="left-aligned">{{ user.score }}</td>
+                                <td class="left-aligned">{{ user.total_score }}</td>
                             {% endif %}
                         </tr>
                         {% endfor %}
@@ -163,6 +166,62 @@
             </div>
         </div>
     </div>
+    {% else %}
+    <div class="one column row">
+        <div class="column">
+                <table class="ui inverted table">
+                    <thead style="background-color:rgb(50, 78, 156)">
+                        <tr>
+                            <th scope="col" style="color: rgb(255, 255, 255);">Individual Rank Updated (Updated every 1 minutes)</th>
+                            <th scope="col"  style="color: rgb(255, 255, 255); text-align: right;">
+                                <span class="transparent-bg">Countdown timer :		
+                                    <a class="item" style="color: white;">
+                                        <span id="countdown"></span>
+                                    </a>
+                                </span>
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+        </div>
+    </div>
+    <div class="one column row">
+        <div class="column">
+            <div class="table-container">
+                <table class="ui inverted table">
+                    <thead style="background-color:rgb(50, 78, 156);">
+                        <tr>
+                            <th scope="col" style="color: rgb(255, 255, 255);">Raking</th>
+                            <th></th>
+                            <th scope="col" style="color: rgb(255, 255, 255);">Name</th>
+                            <th scope="col" style="color: rgb(255, 255, 255);">Team</th>
+                            <th scope="col" class="left-aligned" style="color: rgb(255, 255, 255);">Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users_transaction %}
+                            {% if loop.index % 2 != 0 %}
+                                <tr style="color: rgb(0, 0, 0); background-color: rgb(200, 200, 200)">
+                            {% else %}
+                                <tr style="color: rgb(0, 0, 0); background-color: rgb(180, 180, 180)">
+                            {% endif %}
+                            <td>{{ loop.index }}</td>
+                            <td>No Picture</td>
+                            <td>{{ user.display_name }}</td>
+                            <td>{{ user.team }}</td>
+                            {% if not user.total_score %}
+                                <td class="left-aligned">0</td>
+                            {% else %}
+                                <td class="left-aligned">{{ user.total_score }}</td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
 
