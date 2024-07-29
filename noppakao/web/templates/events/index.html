@@ -47,6 +47,12 @@
                             <i class="trophy icon"></i> Challenge
                         </a>
                     </div>
+                    <div class="extra content">
+                        <a href="{{ url_for('dashboards.index', event_id=event.id) }}" class="ui button"
+                            style="background-color: #222B68; color: white;">
+                            <i class="circle icon"></i> Dashboard
+                        </a>
+                    </div>
                 </div>
                 {% endif %}
                 {% endfor %}
