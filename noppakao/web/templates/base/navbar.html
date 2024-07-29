@@ -1,23 +1,10 @@
 <div class="ui large top fixed menu" style="background-color: rgb(50, 78, 156); border-radius: 0 !important;">
     <a class="item" style="color: white;">R202 logo</a>
     <a class="launch icon item" style="gap: 10px; color: white;"><i class="content icon"></i></a>
-    {% if current_user.display_name %}
-    <a class="item" style="color: white;"><i class="user tie icon"></i>{{ current_user.display_name }}</a>
-    {% else %}
-    <a class="item" style="color: white;"><i class="user tie icon"></i>{{ current_user.username }}</a>
-    {% endif %}
-    {% for team in teams %}
-    {% for member in team.members %}
-    {% if current_user.id == member.id %}
-    <a class="item" style="color: white;">
-        <i class="users icon"></i>{{ team.name }}
-    </a>
-    {% endif %}
-    {% endfor %}
-    {% endfor %}
-
     <div class="right menu">
-        <a id="ip-address" class="item" style="color: white;"><i class="tv icon"></i>IP address</a>
+      <a id="ip-address" class="item" style="color: white;"><i class="tv icon"></i>
+        {{ request.headers.get("X-Forwarded-For", request.remote_addr) }}
+      </a>
         <a id="current-time" class="item" style="color: white;"><i class="compass outline icon"></i><span></span></a>
         <a class="item" style="color: white;" href="{{url_for('accounts.logout')}}"><i class="power off icon"
                 style="color: red;"></i>Logout</a>
@@ -53,17 +40,3 @@
     updateTime();
 </script>
 
-<script type="text/javascript">
-    function updateIP() {
-        fetch('https://api.ipify.org?format=json')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('ip-address').innerHTML = `<i class="tv icon"></i>${data.ip}`;
-            })
-            .catch(error => console.error('Error fetching IP:', error));
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        updateIP();
-    });
-</script>
