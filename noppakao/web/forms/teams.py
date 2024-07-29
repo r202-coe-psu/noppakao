@@ -22,7 +22,7 @@ BaseTeamsForm = model_form(
 
 class TeamsForm(BaseTeamsForm):
     picture = file.FileField(
-        "Upload team image (.jpg or .png)",
+        "Upload team image (png or jpg) , Recommended image size: 250(px) x 230(px)",
         validators=[
             file.FileAllowed(["png", "jpg", "jpeg"], "You can use only jpg , png"),
         ],
