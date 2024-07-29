@@ -154,8 +154,9 @@
 											{{ event_challenge.challenge.hint }}
 										</div>
 										{% elif not event_challenge.solve_challenge() %}
-										<div class="ui vertical animated fluid blue small button" tabindex="0"
-											onclick="ClickHint('{{event.id}}','{{ event_challenge.id }}')">
+										<div id="hintbtn-{{ event_challenge.id }}"
+											class="ui vertical animated fluid blue small button" style="display: block;"
+											tabindex="0" onclick="ClickHint('{{event.id}}','{{ event_challenge.id }}')">
 											<div class="visible content">
 												<i class="eye icon"></i>
 											</div>
@@ -163,6 +164,7 @@
 												Show hint
 											</div>
 										</div>
+										<div id="response-{{ event_challenge.id }}" class="response"></div>
 										{% else %}
 										<div id="response-{{ event_challenge.id }}" class="response"></div>
 										{% endif %}
@@ -248,20 +250,26 @@
 	function ClickHint(event_id, event_challenge_id) {
 		if (event_id) {
 			var loader = document.getElementById("loader-" + event_challenge_id);
-			var response = document.getElementById("response-" + event_challenge_id);
+			var hintbtn = document.getElementById("hintbtn-" + event_challenge_id);
+			// var response = document.getElementById("response-" + event_challenge_id);
 			loader.style.display = "block";
-			$(response).hide().empty();
+
+			$('.response').hide().empty();
+			// $("#loader").show();
 			setTimeout(function () {
 				$.ajax({
 					url: '/api/events/' + event_id + '/event_challenges/' + event_challenge_id,
 					type: 'GET',
 					success: function (response) {
-						$(response).html(`
+						console.log(response.hint);
+						$('.response').html(`
 							<div class="ui blue segment">${response.hint}</div>
 						`).show();
 					},
 					complete: function () {
+						$('.response').fadeIn();
 						loader.style.display = "none";
+						hintbtn.style.display = "none";
 					}
 				});
 			}, 1000);
