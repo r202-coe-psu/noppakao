@@ -40,13 +40,14 @@ def index():
 @module.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for("dashboards.index"))
+        return redirect(url_for("events.index"))
 
     form = forms.accounts.LoginForm()
 
     if form.validate_on_submit():
         username = form.username.data
         user = models.User.objects(username=username).first()
+        events = models.Event.objects()
         if user:
             if user.status == "unregistered" and oauth.handle_authorized_user(form):
                 return redirect(url_for("accounts.setup_password", user_id=user.id))
@@ -56,7 +57,9 @@ def login():
                     "/accounts/login.html", form=form, messages=messages
                 )
             elif user and oauth.handle_authorized_user(form):
-                return redirect(url_for("dashboards.index"))
+                if "admin" in current_user.roles:
+                    return render_template("/admin/events/index.html", events=events)
+                return redirect(url_for("events.index"))
 
             else:
                 messages = ["Username หรือ Passwords ไม่ถูกต้องกรุณากรอกใหม่"]

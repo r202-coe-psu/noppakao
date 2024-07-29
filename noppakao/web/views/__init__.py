@@ -66,7 +66,7 @@ def register_blueprint(app):
 
     @app.route("/")
     def index():
-        return redirect(url_for("dashboards.index"))
+        return redirect(url_for("events.index"))
 
     for blueprint in blueprints:
         app.register_blueprint(blueprint)
