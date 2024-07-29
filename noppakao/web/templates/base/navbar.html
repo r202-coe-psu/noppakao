@@ -1,7 +1,13 @@
 <div class="ui large top fixed menu" style="background-color: rgb(50, 78, 156); border-radius: 0 !important;">
-    <a class="item" style="color: white;">R202 logo</a>
+    <a class="item" style="color: white;">R202 logo </a>
     <a class="launch icon item" style="gap: 10px; color: white;"><i class="content icon"></i></a>
     <div class="right menu">
+    
+
+    {% if "dashboard" in request.url %} 
+    <a class="item" style="color: white;" href="{{ url_for('events.challenge', event_id=event.id) }}"><i class="arrow left icon"
+        style="color: rgb(255, 255, 255);"></i>Back to Events</a>
+    {% endif %} 
       <a id="ip-address" class="item" style="color: white;"><i class="tv icon"></i>
         {{ request.headers.get("X-Forwarded-For", request.remote_addr) }}
       </a>
