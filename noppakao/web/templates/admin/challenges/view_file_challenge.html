@@ -2,17 +2,20 @@
 {% import '/base/html-renderer.html' as renderer %}
 
 {% block content %}
-<form class="ui form" enctype="multipart/form-data" method="post">
-    {{ form.csrf_token }}
-    <div class="field">
-        {{ form.uploaded_file.label }}
-        {{ form.uploaded_file(class="ui input") }}
-    </div>
-    <button class="ui primary button" type="submit">Save</button>
-</form>
-{% for challenge_resource in challenge_resources%}
-{{ challenge_resource.challenge.name }}
-{{ challenge_resource.file.filename }}
-<a href="{{ url_for('admin.challenges.delete',challenge_resource_id=challenge_resource.id,challenge_id=challenge.id) }}">delete</a>
-{% endfor %}
+<div class="ui container">
+    <form class="ui form" enctype="multipart/form-data" method="post">
+        {{ form.csrf_token }}
+        <div class="field">
+            {{ form.uploaded_file.label }}
+            {{ form.uploaded_file(class="ui input") }}
+        </div>
+        <button class="ui primary button" type="submit">Save</button>
+        <a class="ui button" href="{{ url_for('admin.challenges.index') }}">Cancel</a>
+    </form>
+    {% for challenge_resource in challenge_resources%}
+    {{ challenge_resource.challenge.name }}
+    {{ challenge_resource.file.filename }}
+    <a href="{{ url_for('admin.challenges.delete',challenge_resource_id=challenge_resource.id,challenge_id=challenge.id) }}">delete</a>
+    {% endfor %}
+</div>
 {% endblock %}
