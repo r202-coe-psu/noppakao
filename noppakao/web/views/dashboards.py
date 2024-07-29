@@ -98,7 +98,7 @@ def index(event_id):
                     "total_score": 1,
                     "display_name": "$user_info.display_name",
                     "team": "$team_info.name",
-                    "picture": "$team_info.picture",
+                    "team_id": "$_id.team",
                 }
             },
             {"$sort": {"total_score": -1}},
@@ -130,7 +130,9 @@ def index(event_id):
                     "total_score": 1,
                     "event": "$_id.event",
                     "name": "$team_info.name",
-                    "picture": "$team_info.picture",
+                    "team_id": "$_id.team",
+                    
+
                 }
             },
             {"$sort": {"total_score": -1}},
@@ -174,22 +176,11 @@ def index(event_id):
             },
             {"$unwind": "$user_info"},
             {
-                "$lookup": {
-                    "from": "teams",
-                    "localField": "_id.team",
-                    "foreignField": "_id",
-                    "as": "team_info",
-                }
-            },
-            {"$unwind": "$team_info"},
-            {
                 "$project": {
                     "_id": 0,
                     "event": "$_id.event",
                     "total_score": 1,
                     "display_name": "$user_info.display_name",
-                    "team": "$team_info.name",
-                    "picture": "$team_info.picture",
                 }
             },
             {"$sort": {"total_score": -1}},
@@ -197,14 +188,15 @@ def index(event_id):
 
         users_transaction = list(models.Transaction.objects.aggregate(pipeline_user))
 
-    return render_template(
-        "/dashboards/index.html",
-        event_challenges=event_challenges,
-        event=event,
-        event_categorys=event_categorys,
-        teams=teams,
-        users=users,
-        challenges=challenges,
-        dialog_state=dialog_state,
-        users_transaction=users_transaction,
-    )
+
+        return render_template(
+            "/dashboards/index.html",
+            event_challenges=event_challenges,
+            event=event,
+            event_categorys=event_categorys,
+            teams=teams,
+            users=users,
+            challenges=challenges,
+            dialog_state=dialog_state,
+            users_transaction=users_transaction,
+        )
