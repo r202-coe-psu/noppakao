@@ -9,6 +9,7 @@
     </div>
 
     <h2 class="ui header">Contributors</h2>
+    <div class="ui divider"></div>
     <div class="ui grid">
         {% for event_role in event_roles %}
         {% if event_role.role == 'contributor' %}
@@ -31,6 +32,7 @@
     </div>
 
     <h2 class="ui header" style="margin-top: 3rem;">Competitors</h2>
+    <div class="ui divider"></div>
     <div class="ui grid">
         {% for event_role in event_roles %}
         {% if event_role.role == 'competitor' %}

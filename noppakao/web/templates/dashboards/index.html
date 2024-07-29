@@ -109,9 +109,9 @@
                             {% endif %}
                             <td>{{ loop.index }}</td>
                             <td>
-                                {% if team.picture %}
+                                {% if team.team_id %}
                                 <h3 class="ui picture header" >
-                                    {# <img src="{{team.get_picture()}}" style="width: 20px; height: 20px;"> #}
+                                    <img src="{{url_for('teams.get_image',team_id=team.team_id)}}" style="width: 20px; height: 20px;"> 
                                 </h3>
                                 {% else %}
                                 <div>
@@ -151,7 +151,17 @@
                                 <tr style="color: rgb(0, 0, 0); background-color: rgb(180, 180, 180)">
                             {% endif %}
                             <td>{{ loop.index }}</td>
-                            <td>No Picture</td>
+                            <td>
+                                {% if user.team_id %}
+                                <h3 class="ui picture header" >
+                                    <img src="{{url_for('teams.get_image',team_id=user.team_id)}}" style="width: 20px; height: 20px;"> 
+                                </h3>
+                                {% else %}
+                                <div>
+                                    No Picture
+                                </div>
+                                {% endif %}
+                            </td>
                             <td>{{ user.display_name }}</td>
                             <td>{{ user.team }}</td>
                             {% if user.total_score == 0 %}
@@ -192,9 +202,7 @@
                     <thead style="background-color:rgb(50, 78, 156);">
                         <tr>
                             <th scope="col" style="color: rgb(255, 255, 255);">Raking</th>
-                            <th></th>
                             <th scope="col" style="color: rgb(255, 255, 255);">Name</th>
-                            <th scope="col" style="color: rgb(255, 255, 255);">Team</th>
                             <th scope="col" class="left-aligned" style="color: rgb(255, 255, 255);">Score</th>
                         </tr>
                     </thead>
@@ -206,9 +214,7 @@
                                 <tr style="color: rgb(0, 0, 0); background-color: rgb(180, 180, 180)">
                             {% endif %}
                             <td>{{ loop.index }}</td>
-                            <td>No Picture</td>
                             <td>{{ user.display_name }}</td>
-                            <td>{{ user.team }}</td>
                             {% if not user.total_score %}
                                 <td class="left-aligned">0</td>
                             {% else %}

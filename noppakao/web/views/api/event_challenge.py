@@ -35,7 +35,7 @@ def show_hint(event_id, event_challege_id):
 
     trasaction.type = "hint"
     trasaction.answer = ""
-    trasaction.status = "fail"
+    trasaction.status = "hint"
     trasaction.score = event_challenge.hint_score
     trasaction.event = event
     trasaction.event_challenge = event_challenge

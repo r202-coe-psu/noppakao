@@ -16,12 +16,12 @@
             <div class="field">
                 {{ form.csrf_token }}
                 <div class="field">
-                    {{ form.user.label(class="ui label") }}
-                    {{ form.user(class="ui input") }}
+                    {{ form.user.label() }}
+                    {{ form.user(class="ui dropdown") }}
                 </div>
                 <div class="field">
-                    {{ form.role.label(class="ui label") }}
-                    {{ form.role(class="ui input") }}
+                    {{ form.role.label() }}
+                    {{ form.role(class="ui dropdown") }}
                 </div>
             </div>
             <button class="ui primary button" type="submit">
@@ -30,4 +30,11 @@
         </form>
     </div>
 </div>
-{% endblock %}
+{% endblock content %}
+
+{% block additional_js %}
+<script type="text/javascript">
+    $('.ui.dropdown')
+    .dropdown()
+</script>
+{% endblock additional_js %}
