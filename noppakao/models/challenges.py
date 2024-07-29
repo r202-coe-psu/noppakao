@@ -56,3 +56,6 @@ class Challenge(me.Document):
     def get_problem_solvers(self):
         value = len(self.problem_solvers)
         return value
+
+    def get_challenge_resources(self):
+        return ChallengeResource.objects(challenge=self, status="active")

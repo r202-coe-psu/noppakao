@@ -89,14 +89,14 @@
 	<l-quantum size="80" speed="1.75" color="#165fd4"></l-quantum>
 </div>
 <div class="doubling stackable three column ui grid container" style="width: calc(120rem + 12rem); height: 60vh;">
-	{% for i in range((event_categorys|length)) %}
+	{% for challenge_category in event.get_challenge_categories() %}
 	<div class="column card-trigger" id="card-template">
 		<div class="ui cards">
 			<div class="ui fluid card">
 				<div class="content">
 					<div class="header">
 						<i class="cubes icon" style="color: #386CAF; font-size: 1.7rem;"></i>
-						{{ event_categorys[i].name }}
+						{{ challenge_category.name }}
 					</div>
 					<div class="content" style="margin-top: 1rem;">
 						<table class="ui table" style="border: none !important;">
@@ -115,8 +115,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								{% for event_challenge in event_challenges %}
-								{% if event_categorys[i].name == event_challenge.challenge.category.name %}
+								{% for event_challenge in event.get_event_challenges(challenge_category) %}
 								<tr class="clickable-row" data-challenge-id="{{ event_challenge.challenge.id }}">
 									<td><i class="cube icon" style="color: #386CAF;"></i></td>
 									<td class="clickable-name" onclick="showQuestion('{{ event_challenge.id }}')"><a>{{
@@ -138,8 +137,7 @@
 								<div class="ui small modal {{ event_challenge.id }}">
 
 									<div class="header">Challenge Details</div>
-									{% for challenge in challenges %}
-									{% if challenge.id == event_challenge.challenge.id %}
+									{% set challenge = event_challenge.challenge %}
 									<div class="content">
 										<div class="ui segment">
 											<p>{{ challenge.description }}</p>
@@ -153,6 +151,14 @@
 													challenge.challenge_url }}</a>
 											</p>
 											{% endif %}
+											{% for challenge_resource in challenge.get_challenge_resources() %}
+
+											<p>
+												test: <a
+													href="{{ url_for('challenges.download', challenge_resource_id=challenge_resource.id) }}"
+													target="_blank">{{ challenge_resource.file.filename }}</a>
+											</p>
+											{% endfor %}
 										</div>
 										{% if event_challenge.check_transaction_hint(event.id) %}
 										<div id="response-{{ event_challenge.id }}" class="ui blue segment">
@@ -199,10 +205,8 @@
 										</div>
 										{% endif %}
 									</div>
-									{% endif %}
-									{% endfor %}
 								</div>
-								{% endif %}
+
 								{% endfor %}
 							</tbody>
 						</table>

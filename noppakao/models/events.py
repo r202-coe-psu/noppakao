@@ -41,6 +41,28 @@ class Event(me.Document):
     )  # เวลาการสร้างหรืออัพเดตล่าสุด
     updated_by = me.ReferenceField("User", dbref=True, required=True)  # คนสุดท้ายที่กดอัพเดต
 
+    def get_challenge_categories(self):
+        from . import categories
+
+        event_challenges = EventChallenge.objects(event=self, status="active")
+        event_categories = []
+        for event_challenge in event_challenges:
+            if event_challenge.challenge.category not in event_categories:
+                event_categories.append(event_challenge.challenge.category)
+
+        return event_categories
+
+    def get_event_challenges(self, category):
+        from . import challenges
+
+        challenges_in_category = challenges.Challenge.objects(category=category)
+
+        event_challenges = EventChallenge.objects(
+            event=self, status="active", challenge__in=challenges_in_category
+        )
+
+        return event_challenges
+
     def competitor_score(self):
         from noppakao import models
 

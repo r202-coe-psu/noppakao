@@ -95,18 +95,20 @@ def create_or_edit(challenge_id):
     return redirect(url_for("challenges.index"))
 
 
-@module.route("<challenge_id>/download_file", methods=["GET", "POST"])
+@module.route("<challenge_resource_id>/download_file", methods=["GET", "POST"])
 @login_required
-def download(challenge_id):
-    challenge = models.Challenge.objects(id=challenge_id)
+def download(challenge_resource_id):
+    challenge_resource = models.ChallengeResource.objects(id=challenge_resource_id)
     try:
-        challenge = models.Challenge.objects(id=challenge_id).first()
+        challenge_resource = models.ChallengeResource.objects(
+            id=challenge_resource_id
+        ).first()
     except:
         return abort(404)
 
     res = send_file(
-        challenge.upload_file,
-        download_name=challenge.upload_file.filename,
-        mimetype=challenge.upload_file.content_type,
+        challenge_resource.file,
+        download_name=challenge_resource.file.filename,
+        mimetype=challenge_resource.file.content_type,
     )
     return res
