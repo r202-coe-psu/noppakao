@@ -1,3 +1,17 @@
 #!/bin/sh
 
+
+BRYTHON_ID=$(pgrep -f $(pwd)/scripts/auto-build-brython);
+
+if [ ! -z "$BRYTHON_ID" ]
+then
+	echo "brython allready run kill!!"
+	kill -KILL $BRYTHON_ID
+fi
+
+$(pwd)/scripts/auto-build-brython &
+
+
+
+
 FLASK_DEBUG=true NOPPHAKAO_SETTINGS=$(pwd)/noppakao-development.cfg noppakao-web -H 0.0.0.0 -d

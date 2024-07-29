@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "brython": "^3.12.4",
     "fomantic-ui-css": "^2.9.3"
   }
 }
