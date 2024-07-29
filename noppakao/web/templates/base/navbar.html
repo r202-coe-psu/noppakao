@@ -5,8 +5,8 @@
     
 
     {% if "dashboard" in request.url %} 
-    <a class="item" style="color: white;" href="{{ url_for('events.challenge', event_id=event.id) }}"><i class="arrow left icon"
-        style="color: rgb(255, 255, 255);"></i>Back to Events</a>
+    <a class="item" style="color: white;" href="{{ url_for('events.challenge', event_id=event.id) }}"><i class="trophy icon"
+        style="color: rgb(255, 255, 255);"></i>Challenge</a>
     {% endif %} 
       <a id="ip-address" class="item" style="color: white;"><i class="tv icon"></i>
         {{ request.headers.get("X-Forwarded-For", request.remote_addr) }}
