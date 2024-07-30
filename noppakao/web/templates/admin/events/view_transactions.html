@@ -23,45 +23,28 @@
                             </div>
                         </div>
                         <div class="right floated content">
-                            {% if transaction.status == 'hint' %}
-                            <button class="ui blue button" style="border-radius: 2rem;">
-                                Hint
-                            </button>
-                            {% else %}
-                            <button class="ui disabled button" style="border-radius: 2rem;">
-                                Hint
-                            </button>
-                            {% endif %}
+                            {% set button_classes = {
+                            'hint': 'blue',
+                            'first_blood': 'orange',
+                            'success': 'green',
+                            'fail': 'red'
+                            } %}
 
-                            {% if transaction.status == 'first_blood' %}
-                            <button class="ui orange button" style="border-radius: 2rem;">
-                                FirstBlood
-                            </button>
-                            {% else %}
-                            <button class="ui disabled button" style="border-radius: 2rem;">
-                                FirstBlood
-                            </button>
-                            {% endif %}
+                            {% set button_labels = {
+                            'hint': 'Hint',
+                            'first_blood': 'FirstBlood',
+                            'success': 'Success',
+                            'fail': 'Fail'
+                            } %}
 
-                            {% if transaction.status == 'success' %}
-                            <button class="ui green button" style="border-radius: 2rem;">
-                                Success
+                            {% for status, color in button_classes.items() %}
+                            <button
+                                class="ui {% if transaction.status == status %}{{ color }}{% else %}disabled{% endif %} button"
+                                style="border-radius: 2rem;">
+                                {{ button_labels[status] }}
                             </button>
-                            {% else %}
-                            <button class="ui disabled button" style="border-radius: 2rem;">
-                                Success
-                            </button>
-                            {% endif %}
+                            {% endfor %}
 
-                            {% if transaction.status == 'fail' %}
-                            <button class="ui red button" style="border-radius: 2rem;">
-                                Fail
-                            </button>
-                            {% else %}
-                            <button class="ui disabled button" style="border-radius: 2rem;">
-                                Fail
-                            </button>
-                            {% endif %}
                         </div>
                     </div>
                 </div>
