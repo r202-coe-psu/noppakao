@@ -50,7 +50,7 @@ def index(event_id):
     team = models.Team.objects(members__in=[current_user], status="active").first()
     now = datetime.now()
 
-    if not team:
+    if not team and event.type == "team":
         msg = "Please create a team."
         return redirect(url_for("events.index", msg=msg))
 
@@ -133,8 +133,6 @@ def index(event_id):
                     "event": "$_id.event",
                     "name": "$team_info.name",
                     "team_id": "$_id.team",
-                    
-
                 }
             },
             {"$sort": {"total_score": -1}},
@@ -189,7 +187,6 @@ def index(event_id):
         ]
 
         users_transaction = list(models.Transaction.objects.aggregate(pipeline_user))
-
 
         return render_template(
             "/dashboards/index.html",

@@ -98,7 +98,7 @@ def challenge(event_id):
     dialog_state = {"status": request.args.get("dialog_state", None)}
     team = models.Team.objects(members__in=[current_user], status="active").first()
 
-    if not team:
+    if not team and event.type == "team":
         msg = "Please create a team."
         return redirect(url_for("events.index", msg=msg))
 
