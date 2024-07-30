@@ -15,7 +15,8 @@
             </h2>
             <div class="ui stackable cards">
                 {% for event in events %}
-                {% if event.status == "active" and current_user.check_join_event(event.id) and event.publish_date > now  %}
+                {% if event.status == "active" and current_user.check_join_event(event.id) and event.publish_date > now
+                %}
                 <div class="ui card">
                     <div class="content">
                         <div class="header">
@@ -41,11 +42,10 @@
                             {% endif %}
                         </div>
                     </div>
-                    {% if event.ended_date < now  %}
-                    <div class="extra content">
+                    {% if event.ended_date < now %} <div class="extra content">
                         <div> Event time out. </div>
-                    </div>
-                    {% elif event.started_date < now and event.ended_date > now  %}
+                </div>
+                {% elif event.started_date < now and event.ended_date> now %}
                     <div class="extra content">
                         <a href="{{ url_for('events.challenge', event_id=event.id) }}" class="ui button"
                             style="background-color: #222B68; color: white;">
@@ -63,68 +63,68 @@
                             <i class="sort amount down icon"></i> Dashboard
                         </a>
                     </div>
-                </div>
-                {% endif %}
-                {% endfor %}
             </div>
-        </div>
-        <div class="sixteen wide column">
-            <h2 class="ui dividing header">
-                <i class="list alternate icon"></i> Available Events
-            </h2>
-            <div class="ui stackable cards">
-                {% for event in events %}
-                {% if event.status == "active" and not current_user.check_join_event(event.id) and event.publish_date > now %}
-                <div class="ui card">
-                    <div class="content">
-                        <div class="header">
-                            <i class="tag icon"></i> {{ event.name }}
-                        </div>
-                        <div class="meta" style="margin-top: 0.5rem;">
-                            {% if event.started_date == event.ended_date %}
-                            <span class="left floated">
-                                <i class="calendar alternate outline icon"></i>
-                                {{ event.started_date.strftime("%d %b %Y") }}
-                            </span>
-                            {% else %}
-                            <span class="left floated">
-                                <i class="calendar alternate outline icon"></i>
-                                {% if event.started_date.strftime("%m") == event.ended_date.strftime("%m") %}
-                                {{ event.started_date.strftime("%d") }} - {{ event.ended_date.strftime("%d %b
-                                %Y") }}
-                                {% else %}
-                                {{ event.started_date.strftime("%d %b %Y") }} - {{
-                                event.ended_date.strftime("%d %b %Y") }}
-                                {% endif %}
-                            </span>
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% if event.register_ended_date < now  %}
-                    <div class="extra content">
-                        <div> Registration time has expired. </div>
-                    </div>
-                    {% elif event.register_started_date < now and event.register_ended_date > now  %}
-                    <div class="extra content">
-                        <form action="{{ url_for('events.join', event_id=event.id) }}" class="ui form">
-                            <div class="field">
-                                <input type="text" id="code" name="code" placeholder="Enter Code">
-                            </div>
-                            <button type="submit" class="ui button" style="background-color: #CDDFEF;">
-                                <i class="add circle icon"></i> Enroll
-                            </button>
-                        </form>
-                    </div>
-                    {% else %}
-                    <div class="extra content">
-                        <div>It's not time to register yet.</div>
-                    </div>
-                    {% endif %}
-                </div>
-                {% endif %}
-                {% endfor %}
-            </div>
+            {% endif %}
+            {% endfor %}
         </div>
     </div>
+    <div class="sixteen wide column">
+        <h2 class="ui dividing header">
+            <i class="list alternate icon"></i> Available Events
+        </h2>
+        <div class="ui stackable cards">
+            {% for event in events %}
+            {% if event.status == "active" and not current_user.check_join_event(event.id) and event.publish_date > now
+            %}
+            <div class="ui card">
+                <div class="content">
+                    <div class="header">
+                        <i class="tag icon"></i> {{ event.name }}
+                    </div>
+                    <div class="meta" style="margin-top: 0.5rem;">
+                        {% if event.started_date == event.ended_date %}
+                        <span class="left floated">
+                            <i class="calendar alternate outline icon"></i>
+                            {{ event.started_date.strftime("%d %b %Y") }}
+                        </span>
+                        {% else %}
+                        <span class="left floated">
+                            <i class="calendar alternate outline icon"></i>
+                            {% if event.started_date.strftime("%m") == event.ended_date.strftime("%m") %}
+                            {{ event.started_date.strftime("%d") }} - {{ event.ended_date.strftime("%d %b
+                            %Y") }}
+                            {% else %}
+                            {{ event.started_date.strftime("%d %b %Y") }} - {{
+                            event.ended_date.strftime("%d %b %Y") }}
+                            {% endif %}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if event.register_ended_date < now %} <div class="extra content">
+                    <div> Registration time has expired. </div>
+            </div>
+            {% elif event.register_started_date < now and event.register_ended_date> now %}
+                <div class="extra content">
+                    <form action="{{ url_for('events.join', event_id=event.id) }}" class="ui form">
+                        <div class="field">
+                            <input type="text" id="code" name="code" placeholder="Enter Code">
+                        </div>
+                        <button type="submit" class="ui button" style="background-color: #CDDFEF;">
+                            <i class="add circle icon"></i> Enroll
+                        </button>
+                    </form>
+                </div>
+                {% else %}
+                <div class="extra content">
+                    <div>It's not time to register yet.</div>
+                </div>
+                {% endif %}
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+</div>
 </div>
 {% endblock %}

@@ -3,6 +3,7 @@
 
 {% block content %}
 <div class="ui container">
+    <h2 class="ui dividing header">Upload Challenge Resource</h2>
     <form class="ui form" enctype="multipart/form-data" method="post">
         {{ form.csrf_token }}
         <div class="field">
@@ -12,10 +13,25 @@
         <button class="ui primary button" type="submit">Save</button>
         <a class="ui button" href="{{ url_for('admin.challenges.index') }}">Cancel</a>
     </form>
-    {% for challenge_resource in challenge_resources%}
-    {{ challenge_resource.challenge.name }}
-    {{ challenge_resource.file.filename }}
-    <a href="{{ url_for('admin.challenges.delete',challenge_resource_id=challenge_resource.id,challenge_id=challenge.id) }}">delete</a>
-    {% endfor %}
+
+    <h3 class="ui dividing header">Existing Challenge Resources</h3>
+    <div class="ui list">
+        {% for challenge_resource in challenge_resources %}
+        <div class="item" style="margin-top: 0.5rem;">
+            <div class="content">
+                <div class="left floated content">
+                    <div class="header"> <i class="folder yellow icon"></i>{{ challenge_resource.challenge.name }}
+                    </div>
+                    <div class="description" style="margin-top: 0.5rem;">{{ challenge_resource.file.filename }}
+                    </div>
+                </div>
+                <div class="right floated content">
+                    <a class="ui negative button"
+                        href="{{ url_for('admin.challenges.delete', challenge_resource_id=challenge_resource.id, challenge_id=challenge.id) }}">Delete</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}
