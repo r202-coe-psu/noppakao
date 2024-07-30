@@ -26,10 +26,12 @@ class Event(me.Document):
         required=True, default=datetime.datetime.now, auto_now=True
     )
 
-    # register_started_date = me.DateTimeField(required=True, default=datetime.date)  #
-    # register_ended_date = me.DateTimeField(required=True, default=datetime.date)  #
+    register_started_date = me.DateTimeField(
+        required=True, default=datetime.datetime.now
+    )
+    register_ended_date = me.DateTimeField(required=True, default=datetime.datetime.now)
 
-    # publish_date = me.StringField(required=True, default=datetime.datetime.now)
+    publish_date = me.DateTimeField(required=True, default=datetime.datetime.now)
 
     status = me.StringField(default="active", choices=STATUS_CHOICES)  # บอกถึงสถานะ
     created_date = me.DateTimeField(

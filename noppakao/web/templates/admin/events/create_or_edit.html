@@ -34,6 +34,37 @@
             {{ form.flag_prefix.label }}
             {{ form.flag_prefix(class="ui input fluid") }}
         </div>
+        
+        <div class="field">
+            <label>{{ form.publish_date.label}}</label>
+                <div class="ui calendar" id="end_date">
+                    <div class="ui input left icon">
+                        <i class="calendar icon"></i>
+                        {{ form.publish_date }}
+                    </div>
+                </div>
+        </div>
+
+        <div class="two fields">
+            <div class="field">
+                <label>{{ form.register_started_date.label }}</label>
+                <div class="ui calendar" id="start_date">
+                    <div class="ui input left icon">
+                        <i class="calendar icon"></i>
+                        {{ form.register_started_date }}
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <label>{{ form.register_ended_date.label}}</label>
+                <div class="ui calendar" id="end_date">
+                    <div class="ui input left icon">
+                        <i class="calendar icon"></i>
+                        {{ form.register_ended_date }}
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="two fields">
             <div class="field">

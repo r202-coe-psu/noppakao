@@ -27,6 +27,7 @@ def index():
     )
     events = models.Event.objects()
     event_role = models.EventRole.objects()
+    now = datetime.datetime.now()
     msg = request.args.get("msg")
     return render_template(
         "events/index.html",
@@ -35,6 +36,7 @@ def index():
         event_role=event_role,
         teams=teams,
         users=users,
+        now=now,
     )
 
 

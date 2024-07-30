@@ -16,6 +16,9 @@ BaseEventForm = model_form(
         "flag_prefix": {"label": "Flag Prefix"},
         "started_date": {"label": "Start Date"},
         "ended_date": {"label": "End Date"},
+        "register_started_date": {"label": "Register Started Date"},
+        "register_ended_date": {"label": "Register End Date"},
+        "publish_date": {"label": "Publish Date"},
     },
 )
 

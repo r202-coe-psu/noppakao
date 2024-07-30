@@ -145,7 +145,6 @@ def create_or_edit_challenge(event_id, event_challenge_id):
 @acl.roles_required("admin")
 def create_or_edit(event_id):
     form = forms.events.EventForm()
-    event = models.Event()
 
     if event_id:
         event = models.events.Event.objects(id=event_id).first()
@@ -155,6 +154,8 @@ def create_or_edit(event_id):
         print(form.errors)
         return render_template("/admin/events/create_or_edit.html", form=form)
 
+    if not event_id:
+        event = models.Event()
     form.populate_obj(event)
 
     if not event_id:
