@@ -1,6 +1,7 @@
 import datetime
 import mongoengine as me
 from bson import ObjectId
+from datetime import datetime
 
 from flask import (
     Blueprint,
@@ -47,6 +48,7 @@ def index(event_id):
     event_categorys = []
     dialog_state = {"status": request.args.get("dialog_state", None)}
     team = models.Team.objects(members__in=[current_user], status="active").first()
+    now = datetime.now()
 
     if not team:
         msg = "Please create a team."
@@ -199,4 +201,5 @@ def index(event_id):
             challenges=challenges,
             dialog_state=dialog_state,
             users_transaction=users_transaction,
+            now=now,
         )
