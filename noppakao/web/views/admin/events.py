@@ -192,7 +192,7 @@ def view_transactions(event_id, event_challenge_id):
     )
 
     pagination_event_history = paginations.get_paginate(
-        data=transactions, items_per_page=4
+        data=transactions, items_per_page=8
     )
     print(pagination_event_history)
     return render_template(
