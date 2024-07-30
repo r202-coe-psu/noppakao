@@ -10,7 +10,7 @@
   </a>
 
 
-  <div class="ui stackable cards">
+  <div class="ui four stackable cards">
     {% for event in events %}
     <div class="card">
       <div class="content">
@@ -18,17 +18,71 @@
           {{ event.name }}
         </div>
         <div class="meta">
-          {{ event.type }}
+          {% if event.type == 'team' %}
+          <i class="users icon"></i> {{ event.type }}
+          {% else %}
+          <i class="user tie icon"></i> {{ event.type }}
+          {% endif %}
         </div>
         <div class="description">
-          <p><strong>Description:</strong> {{ event.description }}</p>
-          <p><strong>Publish Date:</strong> {{ event.publish_date }}</p>
-          <p><strong>Start Date:</strong> {{ event.started_date }}</p>
-          <p><strong>End Date:</strong> {{ event.ended_date }}</p>
-          <p><strong>Start Registe Date:</strong> {{ event.register_started_date }}</p>
-          <p><strong>End Registe Date:</strong> {{ event.register_ended_date }}</p>
-          <p><strong>Status:</strong> {{ event.status }}</p>
+          <h3 class="ui header">Event Details</h3>
+          <div class="ui list">
+            <div class="item">
+              <i class="file alternate outline icon"></i>
+              <div class="content">
+                <strong>Description:</strong> {{ event.description }}
+              </div>
+            </div>
+            <div class="item">
+              <i class="calendar outline icon"></i>
+              <div class="content">
+                <strong>Publish Date:</strong> <span style="color: #2185d0;">{{ event.publish_date.strftime('%B %d, %Y
+                  %I:%M %p') }}</span>
+              </div>
+            </div>
+            <div class="item">
+              <i class="calendar check outline icon"></i>
+              <div class="content">
+                <strong>Join Date:</strong> <span style="color: #21ba45;"> {% if event.started_date.strftime("%m") ==
+                  event.ended_date.strftime("%m") %}
+                  {{ event.started_date.strftime("%d") }} - {{ event.ended_date.strftime("%d %b %Y") }}
+                  {% else %}
+                  {{ event.started_date.strftime("%d %b %Y") }} - {{ event.ended_date.strftime("%d %b %Y")
+                  }}
+                  {% endif %}</span>
+              </div>
+            </div>
+            <div class="item">
+              <i class="calendar plus outline icon"></i>
+              <div class="content">
+                <strong>Register Event Date:</strong>
+                <span style="color: #fb7d08;">
+                  {% if event.register_started_date.strftime("%d") == event.register_ended_date.strftime("%d") %}
+                  <!-- Single day event, show only time -->
+                  {{ event.register_started_date.strftime("%d %b, %I:%M %p") }} - {{
+                  event.register_ended_date.strftime("%I:%M %p") }}
+                  {% elif event.register_started_date.strftime("%m") == event.register_ended_date.strftime("%m") %}
+                  <!-- Same month, different days -->
+                  {{ event.register_started_date.strftime("%d") }} - {{ event.register_ended_date.strftime("%d %b %Y")
+                  }}
+                  {% else %}
+                  <!-- Different months or years -->
+                  {{ event.register_started_date.strftime("%d %b %Y") }} - {{ event.register_ended_date.strftime("%d %b
+                  %Y") }}
+                  {% endif %}
+                </span>
+              </div>
+
+            </div>
+            <div class="item">
+              <i class="info circle icon"></i>
+              <div class="content">
+                <strong>Status:</strong> {{ event.status }}
+              </div>
+            </div>
+          </div>
         </div>
+
       </div>
       <div class="extra content">
         <div class="ui fluid buttons" style="margin-bottom: 0.5rem;">

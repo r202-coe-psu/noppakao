@@ -69,7 +69,11 @@
                 <div class="ui card">
                     <div class="content">
                         <div class="header">
+                            {% if event.type == 'team' %}
                             <i class="users icon"></i> {{ event.name }}
+                            {% else %}
+                            <i class="user tie icon"></i> {{ event.name }}
+                            {% endif %}
                         </div>
                         <div class="meta" style="margin-top: 0.5rem;">
                             {% if event.started_date == event.ended_date %}
