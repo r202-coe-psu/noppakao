@@ -1,0 +1,23 @@
+{% extends "base/default-page.html" %}
+{% import '/base/html-renderer.html' as renderer %}
+
+{% block content %}
+<div class="ui segment">
+  <h1 class="ui header">
+    Change Organization
+  </h1>
+</div>
+
+<div class="ui segment">
+  <form method="POST" class="ui form" enctype="multipart/form-data">
+    {{ form.csrf_token }}
+
+    <div class="field">
+      {{ form.organization.label }}
+      {{ form.organization(class="ui fluid search dropdown") }}
+    </div>
+
+    <button class="ui primary button" type="submit">Submit</button>
+  </form>
+</div>
+{% endblock %}

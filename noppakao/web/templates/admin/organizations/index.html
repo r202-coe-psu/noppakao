@@ -1,0 +1,44 @@
+{% extends "base/default-page.html" %}
+
+{% block content %}
+<div class="ui container">
+  <h2 class="ui dividing header">Organization List</h2>
+
+  <a class="ui primary labeled icon right floated button" href="{{ url_for('admin.organizations.create_or_edit') }}"
+    style="color: white;">
+    <i class="add icon"></i> Create Organization
+  </a>
+  <div class="ui stackable cards">
+    {% for organization in organizations %}
+    <div class="card">
+      <div class="large ui image">
+        {% if organization.image %}
+        <img
+          src="{{ url_for('admin.organizations.display_image', organization_id=organization.id ,filename=organization.image.filename) }}"
+          alt="{{ organization.image.filename}}">
+        {% else %}
+        <img src="{{ url_for('static', filename='/images/hacker.png')}}">
+        {% endif %}
+      </div>
+      <div class="content">
+        <div class="header">
+          {{ organization.name }}
+        </div>
+        <div class="description">
+          <p><strong>Description:</strong> {{ organization.description }}</p>
+          <p><strong>Status:</strong> {{ organization.status }}</p>
+        </div>
+      </div>
+      <div class="extra content">
+        <div class="ui fluid buttons" style="margin-bottom: 0.5rem;">
+          <a class="ui button primary"
+            href="{{ url_for('admin.organizations.create_or_edit', organization_id=organization.id) }}">
+            <i class="edit icon"></i> Edit Organization
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock content %}

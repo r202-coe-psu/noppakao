@@ -37,20 +37,35 @@ def index():
 @module.route("<team_id>/edit", methods=["GET", "POST"])
 @login_required
 def create_or_edit(team_id):
+    if not current_user.organization:
+        error = "Please, choose your organization before create or enroll team."
+        return redirect(url_for("organizations.information", error=error))
+    team = models.Team.objects(status="active", members__in=[current_user])
+
+    # หากมีทีมแล้วห้ามสร้างทีมใหม่
+    if team and not team_id:
+        return redirect(url_for("teams.index"))
+    error_msg = request.args.get("error_msg")
     team = None
     form = forms.teams.TeamsForm()
 
+    old_members = []
     if team_id:
         team = models.Team.objects.get(id=team_id)
         form = forms.teams.TeamsForm(obj=team)
+        if team.members:
+            old_members = team.members
     form.members.choices = [
         (str(user.id), user.get_fullname())
         for user in models.User.objects(status="active")
+        if user.organization
     ]
     if not form.validate_on_submit():
         if team:
             form.members.data = [str(member.id) for member in team.members]
-        return render_template("/teams/create_or_edit.html", form=form, team=team)
+        return render_template(
+            "/teams/create_or_edit.html", form=form, team=team, error_msg=error_msg
+        )
 
     if not team_id:
         team = models.Team(
@@ -61,23 +76,61 @@ def create_or_edit(team_id):
         team.members = [
             models.User.objects(id=user_id).first() for user_id in form.members.data
         ]
-    if not team_id:
-        team.name = form.name.data
-        if form.picture.data:
+    new_members = team.members
+
+    # เช็คสมาชิกหากแก้ไขในภายภายหลังไม่ให้แก้ไขแล้วนำคนซ้ำเข้าร่สมทีม
+    if team:
+        event_competitor = (
+            models.EventCompetitor.objects(team=team).order_by("-created_date").first()
+        )
+        if event_competitor:
+            event = event_competitor.event
+            if event:
+                all_team = models.EventCompetitor.objects(event=event).distinct(
+                    field="team"
+                )
+                all_team_competitor = [
+                    team.members for team in all_team if team.status == "active"
+                ]
+                for member in new_members:
+                    if member not in old_members:
+                        for team_competitor in all_team_competitor:
+                            if member in team_competitor:
+                                error_msg = "Only one user can be member in one team."
+                                return redirect(
+                                    url_for(
+                                        "teams.create_or_edit",
+                                        error_msg=error_msg,
+                                        team_id=team_id,
+                                    )
+                                )
+
+    if form.uploaded_picture.data:
+        if not team.picture:
             team.picture.put(
-                form.picture.data,
-                filename=form.picture.data.filename,
-                content_type=form.picture.data.content_type,
+                form.uploaded_picture.data,
+                filename=form.uploaded_picture.data.filename,
+                content_type=form.uploaded_picture.data.content_type,
             )
-    else:
-        team.name = form.name.data
-        if form.picture.data:
+        else:
             team.picture.replace(
-                form.picture.data,
-                filename=form.picture.data.filename,
-                content_type=form.picture.data.content_type,
+                form.uploaded_picture.data,
+                filename=form.uploaded_picture.data.filename,
+                content_type=form.uploaded_picture.data.content_type,
             )
+    team.name = form.name.data
     team.updated_by = current_user
+    # เช็คสมาชิกให้น้อยกว่า 3
+    if len(team.members) > 3:
+        error_msg = "Member must lower than 3 persons"
+        return redirect(
+            url_for(
+                "teams.create_or_edit",
+                error_msg=error_msg,
+                team_id=team_id,
+            )
+        )
+
     team.save()
     return redirect(url_for("teams.index"))
 

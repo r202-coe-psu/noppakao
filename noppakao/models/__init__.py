@@ -5,6 +5,7 @@ from .categories import Category
 from .teams import Team
 from .events import Event, EventChallenge, EventRole, EventCompetitor
 from .transactions import Transaction
+from .organizations import Organization
 
 db = MongoEngine()
 

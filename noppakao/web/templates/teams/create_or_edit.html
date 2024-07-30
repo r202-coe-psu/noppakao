@@ -3,35 +3,40 @@
 
 {% block content %}
 <div class="ui segment">
-    <h1 class="ui header">
-        {% if 'create' in request.path %}
-        Create TEAM
-        {% else %}
-        Edit TEAM
-        {% endif %}
-    </h1>
+  <h1 class="ui header">
+    {% if 'create' in request.path %}
+    Create TEAM
+    {% else %}
+    Edit TEAM
+    {% endif %}
+  </h1>
 </div>
 
+{% if error_msg %}
+<div class="ui red message"> {{ error_msg }}</div>
+{% endif %}
+
+
 <div class="ui segment">
-    <form method="POST" class="ui form" enctype="multipart/form-data">
-        {{ form.csrf_token }}
+  <form method="POST" class="ui form" enctype="multipart/form-data">
+    {{ form.csrf_token }}
 
-        <div class="field">
-            {{ form.name.label }}
-            {{ form.name }}
-        </div>
+    <div class="field">
+      {{ form.name.label }}
+      {{ form.name }}
+    </div>
 
-        <div class="field">
-            {{ form.members.label }}
-            {{ form.members(class="ui fluid search dropdown") }}
-        </div>
+    <div class="field">
+      {{ form.members.label }}
+      {{ form.members(class="ui fluid search dropdown") }}
+    </div>
 
-        <div class="field">
-            {{ form.picture.label }}
-            {{ form.picture }}
-        </div>
+    <div class="field">
+      {{ form.uploaded_picture.label }}
+      {{ form.uploaded_picture }}
+    </div>
 
-        <button class="ui primary button" type="submit">Submit</button>
-    </form>
+    <button class="ui primary button" type="submit">Submit</button>
+  </form>
 </div>
 {% endblock %}

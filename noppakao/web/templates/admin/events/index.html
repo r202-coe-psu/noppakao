@@ -2,46 +2,46 @@
 
 {% block content %}
 <div class="ui container">
-    <h2 class="ui dividing header">Event List</h2>
+  <h2 class="ui dividing header">Event List</h2>
 
-    <a class="ui primary labeled icon right floated button" href="{{ url_for('admin.events.create_or_edit') }}"
-        style="color: white;">
-        <i class="add icon"></i> Create Event
-    </a>
+  <a class="ui primary labeled icon right floated button" href="{{ url_for('admin.events.create_or_edit') }}"
+    style="color: white;">
+    <i class="add icon"></i> Create Event
+  </a>
 
 
-    <div class="ui stackable cards">
-        {% for event in events %}
-        <div class="card">
-            <div class="content">
-                <div class="header">
-                    {{ event.name }}
-                </div>
-                <div class="meta">
-                    {{ event.type }}
-                </div>
-                <div class="description">
-                    <p><strong>Description:</strong> {{ event.description }}</p>
-                    <p><strong>Start Date:</strong> {{ event.started_date }}</p>
-                    <p><strong>End Date:</strong> {{ event.ended_date }}</p>
-                    <p><strong>Status:</strong> {{ event.status }}</p>
-                </div>
-            </div>
-            <div class="extra content">
-                <div class="ui fluid buttons" style="margin-bottom: 0.5rem;">
-                    <a class="ui button primary" href="{{ url_for('admin.events.create_or_edit', event_id=event.id) }}">
-                        <i class="edit icon"></i> Edit Event
-                    </a>
-                </div>
-                <div class="ui fluid buttons">
-                    <a class="ui button" style="background-color: #364989; color: white;"
-                        href="{{ url_for('admin.events.challenge', event_id=event.id) }}">
-                        <i class="trophy icon"></i> Event Challenges
-                    </a>
-                </div>
-            </div>
+  <div class="ui stackable cards">
+    {% for event in events %}
+    <div class="card">
+      <div class="content">
+        <div class="header">
+          {{ event.name }}
         </div>
-        {% endfor %}
+        <div class="meta">
+          {{ event.type }}
+        </div>
+        <div class="description">
+          <p><strong>Description:</strong> {{ event.description }}</p>
+          <p><strong>Start Date:</strong> {{ event.started_date }}</p>
+          <p><strong>End Date:</strong> {{ event.ended_date }}</p>
+          <p><strong>Status:</strong> {{ event.status }}</p>
+        </div>
+      </div>
+      <div class="extra content">
+        <div class="ui fluid buttons" style="margin-bottom: 0.5rem;">
+          <a class="ui button primary" href="{{ url_for('admin.events.create_or_edit', event_id=event.id) }}">
+            <i class="edit icon"></i> Edit Event
+          </a>
+        </div>
+        <div class="ui fluid buttons">
+          <a class="ui button" style="background-color: #364989; color: white;"
+            href="{{ url_for('admin.events.challenge', event_id=event.id) }}">
+            <i class="trophy icon"></i> Event Challenges
+          </a>
+        </div>
+      </div>
     </div>
+    {% endfor %}
+  </div>
 </div>
 {% endblock %}

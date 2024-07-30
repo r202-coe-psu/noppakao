@@ -42,6 +42,9 @@ def index():
 @login_required
 def join(event_id):
     event = models.Event.objects(id=event_id).first()
+    all_team = models.EventCompetitor.objects(event=event).distinct(field="team")
+    all_team_competitor = [team.members for team in all_team if team.status == "active"]
+    print()
     code = request.args.get("code")
     msg = ""
 
@@ -52,6 +55,11 @@ def join(event_id):
     if event.type == "team":
         team = models.Team.objects(members__in=[current_user], status="active").first()
         if team:
+            for member in team.members:
+                for team_competitor in all_team_competitor:
+                    if member in team_competitor:
+                        error_msg = "Only one user can be member in one team."
+                        return redirect(url_for("events.index", error_msg=error_msg))
             event_competitor = models.EventCompetitor()
             event_competitor.team = team
             event_competitor.event = event
