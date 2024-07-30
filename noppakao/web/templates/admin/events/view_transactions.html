@@ -11,18 +11,57 @@
                     <div class="content">
                         <div class="header">{{ transaction.user.get_fullname() }}</div>
                         <div class="meta">
-                            <span class="user-type"><strong>User Type:</strong> {{ transaction.user.type }}</span>
                             {% if transaction.team %}
                             <span class="team-name"><strong>Team:</strong> {{ transaction.team.name }}</span>
                             {% endif %}
                         </div>
-                        <div class="description">
-                            <p><strong>Answer:</strong> {{ transaction.answer }}</p>
-                            <p><strong>Status:</strong> {{ transaction.status }}</p>
-                            <p><strong>Score:</strong> {{ transaction.score }}</p>
+                        <div class="left floated content">
+                            <div class="header"> <i class="folder yellow icon"></i>
+                                <strong>Answer:</strong><span style="color: rgb(0, 123, 255);"> {{transaction.answer }}
+                                </span>
+                                <i class="star yellow icon"></i><strong>Score:</strong> {{ transaction.score }}
+                            </div>
                         </div>
-                        <div class="extra">
-                            <span class="created-date"><strong>Date:</strong> {{ transaction.created_date }}</span>
+                        <div class="right floated content">
+                            {% if transaction.status == 'hint' %}
+                            <button class="ui blue button" style="border-radius: 2rem;">
+                                Hint
+                            </button>
+                            {% else %}
+                            <button class="ui disabled button" style="border-radius: 2rem;">
+                                Hint
+                            </button>
+                            {% endif %}
+
+                            {% if transaction.status == 'first_blood' %}
+                            <button class="ui orange button" style="border-radius: 2rem;">
+                                FirstBlood
+                            </button>
+                            {% else %}
+                            <button class="ui disabled button" style="border-radius: 2rem;">
+                                FirstBlood
+                            </button>
+                            {% endif %}
+
+                            {% if transaction.status == 'success' %}
+                            <button class="ui green button" style="border-radius: 2rem;">
+                                Success
+                            </button>
+                            {% else %}
+                            <button class="ui disabled button" style="border-radius: 2rem;">
+                                Success
+                            </button>
+                            {% endif %}
+
+                            {% if transaction.status == 'fail' %}
+                            <button class="ui red button" style="border-radius: 2rem;">
+                                Fail
+                            </button>
+                            {% else %}
+                            <button class="ui disabled button" style="border-radius: 2rem;">
+                                Fail
+                            </button>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
