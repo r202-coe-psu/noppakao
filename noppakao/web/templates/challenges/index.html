@@ -4,13 +4,13 @@
 {% block content %}
 
 {% if dialog_state['status'] == "fail" %}
-{{ FailDialog() }}
+{{ FailDialog(url_for('events.challenge', event_id=event.id))  }}
 {% endif %}
 {% if dialog_state['status'] == "first_blood" %}
-{{ FirstBloodDialog() }}
+{{ FirstBloodDialog(url_for('events.challenge', event_id=event.id)) }}
 {% endif %}
 {% if dialog_state['status'] == "success" %}
-{{ SuccessDialog() }}
+{{ SuccessDialog(url_for('events.challenge', event_id=event.id)) }}
 {% endif %}
 
 <div class="ui large top fixed menu" style="background-color: rgb(50, 78, 156); border-radius: 0 !important;">
