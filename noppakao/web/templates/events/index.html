@@ -87,25 +87,27 @@
                                 {% if event.started_date.strftime("%m") == event.ended_date.strftime("%m") %}
                                 {{ event.started_date.strftime("%d") }} - {{ event.ended_date.strftime("%d %b %Y") }}
                                 {% else %}
-                                {{ event.started_date.strftime("%d %b %Y") }} - {{ event.ended_date.strftime("%d %b %Y")
-                                }}
+                                {{ event.started_date.strftime("%d %b %Y") }} - {{ event.ended_date.strftime("%d %b %Y")}}
                                 {% endif %}
                             </span>
                             {% endif %}
                         </div>
                     </div>
+
                     <div class="extra content">
-                        <a href="{{ url_for('events.challenge', event_id=event.id) }}" class="ui button"
-                            style="background-color: #222B68; color: white;">
-                            <i class="trophy icon"></i> Challenge
-                        </a>
+                        <div class="ui fluid buttons" style="margin-bottom: 0.5rem;">
+                            <a class="ui button primary" href="{{ url_for('events.challenge', event_id=event.id) }}">
+                                <i class="trophy icon"></i> Challenge
+                            </a>
+                        </div>
+                        <div class="ui fluid buttons">
+                            <a class="ui button" style="background-color: #364989; color: white;"
+                            href="{{ url_for('dashboards.index', event_id=event.id) }}">
+                                <i class="sort amount down icon"></i> Dashboard
+                            </a>
+                        </div>
                     </div>
-                    <div class="extra content">
-                        <a href="{{ url_for('dashboards.index', event_id=event.id) }}" class="ui button"
-                            style="background-color: #222B68; color: white;">
-                            <i class="sort amount down icon"></i> Dashboard
-                        </a>
-                    </div>
+
                 </div>
                 {% endif %}
                 {% endfor %}
