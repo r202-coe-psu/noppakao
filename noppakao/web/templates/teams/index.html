@@ -2,16 +2,17 @@
 {% import '/base/html-renderer.html' as renderer %}
 
 {% block content %}
-<div class="ui container">
+<div class="ui fluid     container">
     <div style="margin-top: 2rem;">
-        <a class="ui primary labeled icon button" href="{{ url_for('teams.create_or_edit') }}"> 
+        <a class="ui primary labeled icon button" href="{{ url_for('teams.create_or_edit') }}">
             <i class="add icon"></i>Create Team</a>
     </div>
 
     <div class="ui segment">
         <h2 class="ui header">
             <i class="users icon"></i>
-            Teams</h2>
+            Teams
+        </h2>
         <div class="ui divided items">
             {% for team in teams %}
             <div class="item">
@@ -25,7 +26,8 @@
                         </div>
                         {% else %}
                         <div class="four wide column">
-                            <img class="ui medium circular image" src="{{ url_for('static', filename='/images/hacker.png')}}">
+                            <img class="ui medium circular image"
+                                src="{{ url_for('static', filename='/images/hacker.png')}}">
                         </div>
                         {% endif %}
                         <div class="twelve wide wide column">
@@ -33,7 +35,7 @@
                             <div class="meta">
                                 <span class="organization">{{ team.organization }}</span>
                             </div>
-                        
+
                             <div class="description" style="margin-top: 1rem;">
                                 <p>Members:</p>
                                 <ul>
@@ -47,11 +49,12 @@
                                     {% endfor %}
                                 </ul>
                             </div>
-                            
+
                             <a class="ui red icon button right floated" onclick="showDeleteModal('{{ team.id }}')">
                                 <i class="trash icon"></i>
                             </a>
-                            <a class="ui yellow icon button right floated" href="{{ url_for('teams.create_or_edit', team_id=team.id) }}">
+                            <a class="ui yellow icon button right floated"
+                                href="{{ url_for('teams.create_or_edit', team_id=team.id) }}">
                                 <i class="edit icon"></i>
                             </a>
                         </div>
