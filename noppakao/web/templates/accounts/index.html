@@ -1,7 +1,7 @@
 {% extends "/base/default-page.html" %}
 {% block content %}
 
-<div class="ui middle aligned center aligned grid" style="height: 50vh;">
+<div class="ui middle aligned center aligned grid" style="min-height: 65vh;">
     <div class="column"
         style="max-width: 550px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); border-radius: 10px; padding: 20px;">
         <div style="text-align: left;">
@@ -13,27 +13,19 @@
         <div class="ui one column grid" style="font-size: 1.5rem;">
             <div class="column">
                 <div class="item" style="text-align: left;">
-                    <div class="header"><i class="user tie icon"></i>Name : 
+                    <div class="header"><i class="user tie icon"></i>Name :
                         {{ current_user.first_name }} {{ current_user.last_name }}
                     </div>
                 </div>
             </div>
             <div class="column">
                 <div class="item" style="text-align: left;">
-                    <div class="header"><i class="envelope icon"></i>Email : 
+                    <div class="header"><i class="envelope icon"></i>Email :
                         {{ current_user.email }}</div>
                 </div>
             </div>
-            {#}<div class="column">
-                <div class="item" style="text-align: left;">
-                    <div class="header"><i class="phone alternate icon"></i>Phone Number: 
-                        {{ current_user.phone_number }}
-                    </div>
-                </div>
-            </div>{#}
         </div>
     </div>
-</div>
 </div>
 
 {% endblock %}

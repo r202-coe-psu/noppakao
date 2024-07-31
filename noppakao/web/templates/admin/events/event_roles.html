@@ -1,7 +1,7 @@
 {% extends "base/default-page.html" %}
 
 {% block content %}
-<div class="ui container" style="margin-top: 2rem;">
+<div class="ui fluid container" style="margin-top: 2rem;">
     <div style="display: flex; justify-content: center; margin-bottom: 2rem;">
         <a class="ui primary button" href="{{ url_for('admin.events.create_or_edit_event_role', event_id=event.id) }}">
             <i class="plus icon"></i> Create Challenger

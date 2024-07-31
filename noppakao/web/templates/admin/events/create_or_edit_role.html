@@ -1,7 +1,7 @@
 {% extends "base/default-page.html" %}
 
 {% block content %}
-<div class="ui container" style="margin-top: 2rem;">
+<div class="ui fluid container" style="margin-top: 2rem;">
     <div class="ui segment">
         <h2 class="ui header">
             {% if 'create' in request.path %}
@@ -35,6 +35,6 @@
 {% block additional_js %}
 <script type="text/javascript">
     $('.ui.dropdown')
-    .dropdown()
+        .dropdown()
 </script>
 {% endblock additional_js %}
