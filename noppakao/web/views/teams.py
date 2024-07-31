@@ -79,7 +79,7 @@ def create_or_edit(team_id):
     new_members = team.members
 
     # เช็คสมาชิกหากแก้ไขในภายภายหลังไม่ให้แก้ไขแล้วนำคนซ้ำเข้าร่สมทีม
-    if team:
+    if team and models.Team.objects().first():
         event_competitor = (
             models.EventCompetitor.objects(team=team).order_by("-created_date").first()
         )
