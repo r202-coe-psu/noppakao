@@ -3,7 +3,7 @@
 
 {% block content %}
 <form method="POST">
-  <div class="ui middle aligned center aligned grid" style="height: 100vh;">
+  <div class="ui middle aligned center aligned grid" style="min-height: 75vh;">
     <div class="column"
       style="max-width: 550px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); border-radius: 10px; padding: 20px;">
       <h2 class="ui primary header">
@@ -88,4 +88,5 @@
     </div>
   </div>
 </form>
+<div>{% include "/base/footer.html" %}</div>
 {% endblock %}

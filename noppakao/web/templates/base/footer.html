@@ -1,44 +1,27 @@
-<footer class="ui vertical inverted footer segment" style="background-color: rgb(0, 60, 113)">
-  <div class="ui grid" style="padding: 1em 0 0em 0; background-color: rgb(0, 60, 113)">
-    <div class="three column row">
-      <div class="center aligned column">
-        <h4 class="ui inverted icon header">
-          NOPPHAKAO
-        </h4>
-      </div>
-      <div class="center aligned column">
-        <!-- <div class="ui inverted icon small header">
-            <i class="users icon"></i>
-            ผู้จัดทำ
-          </div> -->
-        <div class="column">
-          <div class="ui inverted list">
-          </div>
+<div class="ui vertical footer segment" style="background-color: #eaf4ff; padding: 2em 0;">
+  <div class="ui container">
+    <div class="ui stackable height stackable grid">
+      <div class="five wide column">
+        <div class="ui link list">
+          <img width="100" src="{{ url_for('static', filename='images/r202.png') }}" alt="R202 Logo"
+            style="margin-bottom: 1em;">
+          <p>Developed by R202 research lab</p>
         </div>
       </div>
-      <div class="center aligned column">
-        <!-- <div class="ui inverted icon small header">
-            <i class="cogs icon"></i>
-            จัดทำโดย
-          </div> -->
-        <div class="column">
-          <div class="ui inverted list">
-
-          </div>
+      <div class="five wide column">
+        <h4 class="ui header">Department of Computer Engineering</h4>
+        <div class="ui link list">
+          <p>Faculty of Engineering</p>
+          <p>Prince of Songkla University</p>
+          <p>Hat Yai, Thailand</p>
+        </div>
+      </div>
+      <div class="five wide column">
+        <h4 class="ui header">Connect</h4>
+        <div class="ui link list">
+          <a href="http://coe.psu.ac.th" class="item" style="color: #4183c4;">CoE, Eng, PSU</a>
         </div>
       </div>
     </div>
   </div>
-
-  <style>
-    .mobile-space {
-      display: none;
-    }
-
-    @media (max-width: 460px) {
-      .mobile-space {
-        display: block;
-      }
-    }
-  </style>
-</footer>
+</div>
