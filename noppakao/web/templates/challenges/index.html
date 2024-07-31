@@ -14,7 +14,10 @@
 {% endif %}
 
 <div class="ui large top fixed menu" style="background-color: rgb(50, 78, 156); border-radius: 0 !important;">
-	<a class="item" style="color: white;">R202 logo</a>
+	<div class="item" style="padding: 0.5rem !important;">
+		<img class="ui image" width="40" src="{{ url_for('static', filename='images/coe.png') }}" alt="R202 Logo"
+			style="margin-left: 0.5rem; background-color: white; border-radius: 0.5rem;">
+	</div>
 	<a class="launch icon item" style="gap: 10px; color: white;"><i class="content icon"></i></a>
 	<a class="item" style="color: white;"><i class="user tie icon"></i>{{ current_user.display_name }}</a>
 	{% for team in teams %}
