@@ -22,7 +22,7 @@
                 <div class="left floated content">
                     <div class="header"> <i class="folder yellow icon"></i>{{ challenge_resource.challenge.name }}
                     </div>
-                    <div class="description" style="margin-top: 0.5rem;">{{ challenge_resource.file.filename }}
+                    <div class="description" style="margin-top: 0.5rem;">{{ challenge_resource.file.filename }} <span style="color: blue">({{ '%0.2f'| format(challenge_resource.file.length / 1024) }} KB) </span>
                     </div>
                 </div>
                 <div class="right floated content">

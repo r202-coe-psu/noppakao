@@ -161,7 +161,7 @@
 
 											<p><a href="{{ url_for('challenges.download', challenge_resource_id=challenge_resource.id) }}"
 													target="_blank"><i class="folder yellow icon"></i>{{
-													challenge_resource.file.filename }}</a></p>
+													challenge_resource.file.filename }}  <span style="color: blue">({{ '%0.2f'| format(challenge_resource.file.length / 1024) }} KB)</span></a></p>
 											{% endfor %}
 											{% endif %}
 										</div>
