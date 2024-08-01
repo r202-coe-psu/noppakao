@@ -65,6 +65,81 @@ class Event(me.Document):
 
         return event_challenges
 
+    def team_rank(self):
+        from noppakao import models
+
+        team = models.Team.objects(members__in=[current_user], status="active").first()
+        pipeline = [
+            {"$match": {"event": ObjectId(self.id)}},
+            {
+                "$group": {
+                    "_id": {
+                        "team": "$team",
+                    },
+                    "score": {"$sum": "$score"},
+                    "created_date": {"$max": "$created_date"},
+                }
+            },
+            {"$sort": {"created_date": 1}},
+            {
+                "$setWindowFields": {
+                    "partitionBy": "$team",
+                    "sortBy": {"score": -1},
+                    "output": {"rankScoreForTeam": {"$rank": {}}},
+                }
+            },
+            {"$match": {"_id.team": ObjectId(team.id)}},
+            {
+                "$project": {
+                    "_id": 0,
+                    "rankScoreForTeam": 1,
+                }
+            },
+        ]
+        result = list(models.Transaction.objects.aggregate(pipeline))
+
+        if result:
+            return result[0].get("rankScoreForTeam", 0)
+
+        return 0
+
+    def competitor_rank(self):
+        from noppakao import models
+
+        pipeline = [
+            {"$match": {"event": ObjectId(self.id)}},
+            {
+                "$group": {
+                    "_id": {
+                        "user": "$user",
+                    },
+                    "score": {"$sum": "$score"},
+                    "created_date": {"$max": "$created_date"},
+                }
+            },
+            {"$sort": {"created_date": 1}},
+            {
+                "$setWindowFields": {
+                    "partitionBy": "$user",
+                    "sortBy": {"score": -1},
+                    "output": {"rankScoreForUser": {"$rank": {}}},
+                }
+            },
+            {"$match": {"_id.user": ObjectId(current_user.id)}},
+            {
+                "$project": {
+                    "_id": 0,
+                    "rankScoreForUser": 1,
+                }
+            },
+        ]
+        result = list(models.Transaction.objects.aggregate(pipeline))
+
+        if result:
+            return result[0].get("rankScoreForUser", 0)
+
+        return 0
+
     def competitor_score(self):
         from noppakao import models
 
@@ -164,7 +239,7 @@ class Event(me.Document):
 
 
 class EventCompetitor(me.Document):
-    meta = {"collection": "event_competitor"}
+    meta = {"collection": "event_competitors"}
     event = me.ReferenceField("Event", dbref=True, required=True)
 
     team = me.ReferenceField("Team", dbref=True, required=True)
@@ -181,6 +256,7 @@ class EventCompetitor(me.Document):
 
 
 class EventChallenge(me.Document):
+    meta = {"collection": "event_challenges"}
     event = me.ReferenceField("Event", dbref=True, required=True)
     challenge = me.ReferenceField("Challenge", dbref=True, required=True)
 
@@ -265,6 +341,7 @@ EVENT_ROLES = ["competitor", "contributor"]
 
 
 class EventRole(me.Document):
+    meta = {"collection": "event_roles"}
     role = me.StringField(choices=EVENT_ROLES, default="competitor", required=True)
     event = me.ReferenceField("Event", dbref=True, required=True)
     user = me.ReferenceField("User", dbref=True, required=True)

@@ -57,11 +57,12 @@
 	</div>
 	{% if event.type == "team" %}
 	<div class="item">
-		<i class="user friends icon"></i> Team Rank
+		<i class="user friends icon"></i> 
+		Competition Type : Team
 	</div>
 	{% else %}
 	<div class="item">
-		<i class="user friends icon"></i> Solo Rank
+		<i class="user friends icon"></i>Competition Type : Solo
 	</div>
 	{% endif %}
 	<div class="right menu">
@@ -70,20 +71,20 @@
 			<i class="user tie icon"></i> Individual Score : {{ event.competitor_score() }}
 		</div>
 		<div class="item">
-			<i class="user tie icon"></i> Individual Rank 0
+			<i class="user tie icon"></i> Individual Rank {{ event.competitor_rank() }}
 		</div>
 		<div class="item">
 			<i class="user friends icon"></i> Team Score {{ event.team_score() }}
 		</div>
 		<div class="item">
-			<i class="user friends icon"></i> Team Rank 0
+			<i class="user friends icon"></i> Team Rank {{ event.team_rank() }}
 		</div>
 		{% else %}
 		<div class="item">
 			<i class="user tie icon"></i> Individual Score : {{ event.competitor_score() }}
 		</div>
 		<div class="item">
-			<i class="user tie icon"></i> Individual Rank 0
+			<i class="user tie icon"></i> Individual Rank {{ event.competitor_rank() }}
 		</div>
 		{% endif %}
 	</div>

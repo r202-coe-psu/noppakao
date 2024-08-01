@@ -33,7 +33,8 @@
                         </h2>
                         <div class="ui stackable cards">
                             {% for event in events %}
-                            {% if event.status == "active" and event.ended_date < now %} <div class="ui card">
+                            {% if event.status == "active" and event.ended_date < now %} 
+                            <div class="ui card">
                                 <div class="content">
                                     <div class="header">
                                         <i class="users icon"></i> {{ event.name }}
