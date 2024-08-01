@@ -128,7 +128,7 @@
 								{% for event_challenge in event.get_event_challenges(challenge_category) %}
 								<tr class="clickable-row" data-challenge-id="{{ event_challenge.challenge.id }}">
 									<td><i class="cube icon" style="color: #386CAF;"></i></td>
-									<td class="clickable-name" onclick="showQuestion('{{ event_challenge.id }}')"><a>{{
+									<td class="clickable-name" onclick="showQuestion('{{event.id}}','{{ event_challenge.id }}')"><a>{{
 											event_challenge.challenge.name }}</a></td>
 									<td class="center aligned">{{ event_challenge.success_score }}</td>
 									<td class="center aligned">{{ event_challenge.first_blood_score }}</td>
@@ -274,6 +274,7 @@
 </script>
 
 <script>
+	
 	function ClickHint(event_id, event_challenge_id) {
 		if (event_id) {
 			var loader = document.getElementById("loader-" + event_challenge_id);
@@ -305,9 +306,34 @@
 		}
 	}
 
-	function showQuestion(event_challenge_id) {
+	function showQuestion(event_id , event_challenge_id) {
 		event_challenge_id ? $('.ui.overlay.fullscreen.modal.' + event_challenge_id).modal('show') : $('.ui.overlay.fullscreen.modal.').modal('hide');
+		var loader = document.getElementById("loader-" + event_challenge_id);
+		var hintbtn = document.getElementById("hintbtn-" + event_challenge_id);
 		$('.response').hide().empty();
+		if (event_challenge_id) {
+			setTimeout(function () {
+				$.ajax({
+					url: '/api/events/' + event_id + '/event_challenges/' + event_challenge_id + '/check',
+					type: 'GET',
+					success: function (response) {
+						if (response.hint) {
+							$('.response').html(`
+							<div class="ui blue segment">${response.hint}</div>
+						`).show();
+						}
+					},
+					complete: function () {
+						$('.response').fadeIn();
+						if (response.hint) {
+						loader.style.display = "none";
+						hintbtn.style.display = "none";
+					}
+				}
+				});
+			}, 100);
+		}
+		
 	}
 </script>
 

@@ -42,3 +42,24 @@ def show_hint(event_id, event_challege_id):
     trasaction.user = current_user
     trasaction.save()
     return jsonify({"hint": event_challenge.challenge.hint})
+
+
+@module.route("/<event_id>/event_challenges/<event_challege_id>/check")
+@login_required
+def check_hint(event_id, event_challege_id):
+    event = models.Event.objects(id=event_id).first()
+    event_challenge = models.EventChallenge.objects(id=event_challege_id).first()
+    if event.type == "team":
+        team = models.Team.objects(members__in=[current_user], status="active").first()
+        trasaction = models.Transaction.objects(
+            event_challenge=event_challenge, type="hint", team=team
+        ).first()
+    else:
+        trasaction = models.Transaction.objects(
+            event_challenge=event_challenge, type="hint"
+        ).first()
+
+    if trasaction:
+        return jsonify({"hint": event_challenge.challenge.hint})
+
+    return jsonify({"hint": None})
