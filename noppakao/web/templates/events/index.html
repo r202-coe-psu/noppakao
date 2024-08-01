@@ -110,12 +110,20 @@
                                         {% endif %}
                                     </span>
                                     <span class="left floated">
-                                        <i class="hourglass start icon"></i>
-                                        {% if event.register_started_date.strftime("%m") == event.register_ended_date.strftime("%m") %}
-                                        {{ event.register_started_date.strftime("%d") }} - {{ event.register_ended_date.strftime("%d %b %Y") }}
-                                        {% else %}
-                                        {{ event.register_started_date.strftime("%d %b %Y") }} - {{ event.register_ended_date.strftime("%d %b %Y")}}
-                                        {% endif %}
+                                    <i class="hourglass start icon"></i>
+                                    {% if event.register_started_date.strftime("%d") == event.register_ended_date.strftime("%d") %}
+                                    <!-- Single day event, show only time -->
+                                    {{ event.register_started_date.strftime("%d %b, %I:%M %p") }} - {{
+                                    event.register_ended_date.strftime("%I:%M %p") }}
+                                    {% elif event.register_started_date.strftime("%m") == event.register_ended_date.strftime("%m") %}
+                                    <!-- Same month, different days -->
+                                    {{ event.register_started_date.strftime("%d") }} - {{ event.register_ended_date.strftime("%d %b %Y")
+                                    }}
+                                    {% else %}
+                                    <!-- Different months or years -->
+                                    {{ event.register_started_date.strftime("%d %b %Y") }} - {{ event.register_ended_date.strftime("%d %b
+                                    %Y") }}
+                                    {% endif %}
                                     </span>
                                     {% endif %}
                                 </div>
