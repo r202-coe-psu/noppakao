@@ -296,6 +296,7 @@
 					},
 					complete: function () {
 						$('.response').fadeIn();
+						console.log("complete");
 						loader.style.display = "none";
 						hintbtn.style.display = "none";
 					}
@@ -308,10 +309,10 @@
 
 	function showQuestion(event_id , event_challenge_id) {
 		event_challenge_id ? $('.ui.overlay.fullscreen.modal.' + event_challenge_id).modal('show') : $('.ui.overlay.fullscreen.modal.').modal('hide');
-		var loader = document.getElementById("loader-" + event_challenge_id);
-		var hintbtn = document.getElementById("hintbtn-" + event_challenge_id);
-		$('.response').hide().empty();
-		if (event_challenge_id) {
+		if (event_id,event_challenge_id) {
+			$('.response').hide().empty();
+			var loader = document.getElementById("loader-" + event_challenge_id);
+			var hintbtn = document.getElementById("hintbtn-" + event_challenge_id);
 			setTimeout(function () {
 				$.ajax({
 					url: '/api/events/' + event_id + '/event_challenges/' + event_challenge_id + '/check',
@@ -323,13 +324,13 @@
 						`).show();
 						}
 					},
-					complete: function () {
-						$('.response').fadeIn();
+					complete: function (jqXHR, textStatus) {
+						var response = jqXHR.responseJSON;
 						if (response.hint) {
-						loader.style.display = "none";
-						hintbtn.style.display = "none";
+							loader.style.display = "none";
+							hintbtn.style.display = "none";
+						}
 					}
-				}
 				});
 			}, 100);
 		}
