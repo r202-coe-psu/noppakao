@@ -67,16 +67,9 @@ def create_or_edit(team_id):
             "/teams/create_or_edit.html", form=form, team=team, error_msg=error_msg
         )
 
-    if not team_id:
-        team = models.Team(
-            created_by=current_user._get_current_object(),
-            updated_by=current_user._get_current_object(),
-        )
-    if form.members.data:
-        team.members = [
-            models.User.objects(id=user_id).first() for user_id in form.members.data
-        ]
-    new_members = team.members
+    new_members = [
+        models.User.objects(id=user_id).first() for user_id in form.members.data
+    ]
 
     # เช็คสมาชิกหากแก้ไขในภายภายหลังไม่ให้แก้ไขแล้วนำคนซ้ำเข้าร่สมทีม
     if team and models.Team.objects().first():
@@ -104,7 +97,12 @@ def create_or_edit(team_id):
                                         team_id=team_id,
                                     )
                                 )
-
+    if not team_id:
+        team = models.Team(
+            created_by=current_user._get_current_object(),
+            updated_by=current_user._get_current_object(),
+        )
+    team.members = new_members
     if form.uploaded_picture.data:
         if not team.picture:
             team.picture.put(
