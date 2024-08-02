@@ -70,8 +70,6 @@ def create_or_edit(user_id):
         user = models.User.objects.get(id=user_id)
         form = forms.accounts.AccountForm(obj=user)
         form.username.validators = []
-        form.password.validators = []
-        form.confirm_password.validators = []
 
     if not form.validate_on_submit():
         user.username = form.username.data
@@ -123,8 +121,10 @@ def create_or_edit(user_id):
         )
     else:
         form.populate_obj(user)
+        password = bcrypt.generate_password_hash(form.password.data)
         roles = form.roles.data
         user.roles = [roles]
+        user.password = password
 
     user.save()
     return redirect(
