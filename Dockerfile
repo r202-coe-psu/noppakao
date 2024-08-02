@@ -1,4 +1,4 @@
-FROM debian:bookworm
+FROM debian:sid
 
 RUN apt update --fix-missing && apt dist-upgrade -y
 RUN apt install -y nodejs npm

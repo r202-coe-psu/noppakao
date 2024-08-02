@@ -30,7 +30,7 @@ services:
         environment:
             NOPPHAKAO_SETTINGS: /app/noppakao-development.cfg
         command:
-            /venv/bin/gunicorn --bind 0.0.0.0:9000 "noppakao.web:create_app()" --log-file=- --log-level debug --capture-output
+            /venv/bin/gunicorn --bind 0.0.0.0:7080 "noppakao.web:create_app()" --log-file=- --log-level debug --capture-output
         logging:
             options:
                 max-size: "10m"
