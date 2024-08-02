@@ -152,6 +152,8 @@ def create_or_edit(event_id):
 
     if not form.validate_on_submit():
         print(form.errors)
+        print("-----")
+        print(form.register_started_date.data)
         return render_template("/admin/events/create_or_edit.html", form=form)
 
     if not event_id:

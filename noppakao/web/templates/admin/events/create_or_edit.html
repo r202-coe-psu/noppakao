@@ -37,7 +37,7 @@
 
         <div class="field">
             <label>{{ form.publish_date.label}}</label>
-            <div class="ui calendar" id="end_date">
+            <div class="ui calendar" id="{{ form.publish_date.id }}">
                 <div class="ui input left icon">
                     <i class="calendar icon"></i>
                     {{ form.publish_date }}
@@ -48,7 +48,7 @@
         <div class="two fields">
             <div class="field">
                 <label>{{ form.register_started_date.label }}</label>
-                <div class="ui calendar" id="start_date">
+                <div class="ui calendar" id="{{ form.register_started_date.id}}">
                     <div class="ui input left icon">
                         <i class="calendar icon"></i>
                         {{ form.register_started_date }}
@@ -57,7 +57,7 @@
             </div>
             <div class="field">
                 <label>{{ form.register_ended_date.label}}</label>
-                <div class="ui calendar" id="end_date">
+                <div class="ui calendar" id="{{ form.register_ended_date.id}}">
                     <div class="ui input left icon">
                         <i class="calendar icon"></i>
                         {{ form.register_ended_date }}
@@ -68,8 +68,8 @@
 
         <div class="two fields">
             <div class="field">
-                <label>Start Date</label>
-                <div class="ui calendar" id="start_date">
+                <label>{{ form.started_date.label }}</label>
+                <div class="ui calendar" id="{{ form.started_date.id }}">
                     <div class="ui input left icon">
                         <i class="calendar icon"></i>
                         {{ form.started_date }}
@@ -77,8 +77,8 @@
                 </div>
             </div>
             <div class="field">
-                <label>End Date</label>
-                <div class="ui calendar" id="end_date">
+                <label>{{ form.ended_date.label }}</label>
+                <div class="ui calendar" id="{{ form.ended_date.id }}">
                     <div class="ui input left icon">
                         <i class="calendar icon"></i>
                         {{ form.ended_date }}
@@ -102,4 +102,53 @@
         </button>
     </form>
 </div>
-{% endblock %}
+{% endblock content %}
+
+{% block additional_js %}
+
+<script type="text/javascript">
+
+$('#publish_date').calendar({
+    type: 'datetime',
+    formatter: { datetime: 'YYYY-MM-DD HH:mm:ss' },
+    ampm: false,
+    monthFirst: false,
+});
+
+$('#register_started_date').calendar({
+    type: 'datetime',
+    endCalendar: $('#register_ended_date'),
+    formatter: { datetime: 'YYYY-MM-DD HH:mm:ss' },
+    ampm: false,
+    monthFirst: false,
+});
+
+$('#register_ended_date').calendar({
+    type: 'datetime',
+    ampm: false,
+    monthFirst: false,
+    startCalendar: $('#register_started_date'),
+    formatter: { datetime: "YYYY-MM-DD HH:mm:ss" },  
+});
+
+$('#started_date').calendar({
+    type: 'datetime',
+    endCalendar: $('#ended_date'),
+    formatter: { datetime: 'YYYY-MM-DD HH:mm:ss' },
+    ampm: false,
+    monthFirst: false,
+});
+
+$('#ended_date').calendar({
+    type: 'datetime',
+    ampm: false,
+    monthFirst: false,
+    startCalendar: $('#started_date'),
+    formatter: { datetime: "YYYY-MM-DD HH:mm:ss" },  
+});
+
+</script>
+
+
+
+{% endblock additional_js %}
