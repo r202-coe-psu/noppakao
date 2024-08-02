@@ -82,3 +82,17 @@ class SetupPassword(FlaskForm):
             validators.EqualTo("password", message="รหัสผ่านไม่ตรงกัน"),
         ],
     )
+
+
+class AccountForm(BaseRegistrationForm):
+    password = fields.PasswordField(
+        "Password",
+        validators=[validators.DataRequired(), validators.EqualTo("password")],
+    )
+    confirm_password = fields.PasswordField(
+        validators=[validators.DataRequired(), validators.EqualTo("password")],
+    )
+    email = fields.StringField(
+        "Email", validators=[validators.Email(), validators.DataRequired()]
+    )
+    roles = fields.SelectField("Role", choices=[("user", "User"), ("admin", "Admin")])

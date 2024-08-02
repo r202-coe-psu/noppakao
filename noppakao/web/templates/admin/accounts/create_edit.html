@@ -15,6 +15,10 @@
         {{ form.username.label }}
         {{ form.username }}
       </div>
+      <div class="field">
+        {{ form.roles.label }}
+        {{ form.roles(class="ui dropdown") }}
+      </div>
       {% if "edit" not in request.path %}
       <div class="field">
         {{ form.password.label }}

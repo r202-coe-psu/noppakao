@@ -62,19 +62,20 @@ def recover(user_id):
 @module.route("/<user_id>/edit", methods=["GET", "POST"])
 @acl.roles_required("admin")
 def create_or_edit(user_id):
-    form = forms.accounts.RegistrationForm()
+    form = forms.accounts.AccountForm()
     user = models.User.objects()
     msg_error = ""
 
     if user_id:
         user = models.User.objects.get(id=user_id)
-        form = forms.accounts.UpdateUserForm(obj=user)
+        form = forms.accounts.AccountForm(obj=user)
         form.username.validators = []
         form.password.validators = []
+        form.confirm_password.validators = []
 
     if not form.validate_on_submit():
         user.username = form.username.data
-
+        print(form.errors)
         return render_template(
             "/admin/accounts/create_edit.html",
             form=form,
@@ -107,6 +108,7 @@ def create_or_edit(user_id):
         username = form.username.data
         first_name = form.first_name.data
         last_name = form.last_name.data
+        roles = form.roles.data
         password = bcrypt.generate_password_hash(form.password.data)
         user = models.User(
             display_name=display_name,
@@ -116,10 +118,13 @@ def create_or_edit(user_id):
             last_name=last_name,
             email=form.email.data,
             last_login_date=datetime.datetime.now(),
-            status="unregistered",
+            status="active",
+            roles=[roles],
         )
     else:
         form.populate_obj(user)
+        roles = form.roles.data
+        user.roles = [roles]
 
     user.save()
     return redirect(
