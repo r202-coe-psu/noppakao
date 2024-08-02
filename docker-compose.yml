@@ -28,7 +28,7 @@ services:
             - default
         restart: always
         environment:
-            NOPPHAKAO_SETTINGS: /app/noppakao-development.cfg
+            NOPPHAKAO_SETTINGS: /app/noppakao-production.cfg
         command:
             /venv/bin/gunicorn --bind 0.0.0.0:7080 "noppakao.web:create_app()" --log-file=- --log-level debug --capture-output
         logging:
