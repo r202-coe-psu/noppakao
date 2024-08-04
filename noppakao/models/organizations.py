@@ -11,7 +11,7 @@ class Organization(me.Document):
 
     name = me.StringField(min_length=4, max_length=255, required=True)
     description = me.StringField()
-    image = me.ImageField(thumbnail_size=(970, 250))
+    image = me.ImageField()
 
     status = me.StringField(required=True, default="active")
 

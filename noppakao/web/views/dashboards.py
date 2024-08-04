@@ -154,6 +154,7 @@ def index(event_id):
             dialog_state=dialog_state,
             teams_transaction=teams_transaction,
             users_transaction=users_transaction,
+            now=now,
         )
 
     else:
