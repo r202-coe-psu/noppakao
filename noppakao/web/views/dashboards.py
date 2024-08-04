@@ -119,13 +119,13 @@ def index(event_id):
                     "total_score": 1,
                     "event": "$_id.event",
                     "name": "$team_info.name",
+                    "members": "$team_info.members",
                     "team_id": "$_id.team",
                 }
             },
             {"$sort": {"total_score": -1}},
         ]
 
-        teams_transaction = list(models.Transaction.objects.aggregate(pipeline_team))
         users_transaction = list(models.Transaction.objects.aggregate(pipeline_user))
         users_transaction_list = []
         for user_info in users_transaction:
@@ -139,9 +139,21 @@ def index(event_id):
             user_info['organization_name'] = organization_name
             user_info['organization_image'] = organization_image
             users_transaction_list.append(user_info)
-        
-        users_transaction = users_transaction_list    
-        
+        users_transaction = users_transaction_list 
+
+        teams_transaction = list(models.Transaction.objects.aggregate(pipeline_team))
+        teams_transaction_list = []
+        for team_info in teams_transaction:
+            user_id = ObjectId(team_info["members"][0].id)
+            user = models.User.objects(id=user_id).first()
+            organization_id = user.organization.id
+            organization_name = user.organization.name
+            organization_image = user.organization.image.filename
+            team_info['organization_id'] = organization_id
+            team_info['organization_name'] = organization_name
+            team_info['organization_image'] = organization_image
+            teams_transaction_list.append(team_info)
+        teams_transaction = teams_transaction_list    
 
         return render_template(
             "/dashboards/index.html",

@@ -99,6 +99,7 @@
                             <th scope="col" style="color: rgb(255, 255, 255);">Raking</th>
                             <th></th>
                             <th scope="col" style="color: rgb(255, 255, 255);">Team</th>
+                            <th scope="col" style="color: rgb(255, 255, 255);">Organization</th>
                             <th scope="col" class="left-aligned" style="color: rgb(255, 255, 255);">Score</th>
                         </tr>
                     </thead>
@@ -112,10 +113,12 @@
                             <td>{{ loop.index }}</td>
                             <td>
                                 {% if team.team_id %}
-                                <h3 class="ui picture header">
+                                <span class="ui picture header">
                                     <img src="{{url_for('teams.get_image',team_id=team.team_id)}}"
                                         style="width: 20px; height: 20px;">
-                                </h3>
+                                    <img src="{{ url_for('organizations.display_image', organization_id=team.organization_id ,filename=team.organization_image) }}"
+                                        style="width: 20px; height: 20px;">
+                                </span>
                                 {% else %}
                                 <div>
                                     No Picture
@@ -123,6 +126,7 @@
                                 {% endif %}
                             </td>
                             <td>{{ team.name }}</td>
+                            <td>{{ team.organization_name }}</td>
                             {% if not team.total_score %}
                             <td class="left-aligned">0</td>
                             {% else %}
@@ -157,7 +161,7 @@
                             <td>{{ loop.index }}</td>
                             <td>
                                 {% if user.team_id %}
-                                <span>
+                                <span class="ui picture header">
                                     <img src="{{url_for('teams.get_image',team_id=user.team_id)}}"
                                         style="width: 20px; height: 20px;">
                                     <img src="{{ url_for('organizations.display_image', organization_id=user.organization_id ,filename=user.organization_image) }}"
