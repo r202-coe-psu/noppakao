@@ -2,6 +2,7 @@ import datetime
 import mongoengine as me
 from bson import ObjectId
 from datetime import datetime
+from bson.objectid import ObjectId
 
 from flask import (
     Blueprint,
@@ -19,21 +20,6 @@ from .. import forms
 from .. import oauth
 
 module = Blueprint("dashboards", __name__, url_prefix="/dashboard")
-
-
-# @module.route("/", methods=["GET", "POST"])
-# @login_required
-# def index():
-#     teams = models.Team.objects(status="active").order_by("-score", "updated_date")
-#     users = models.User.objects(status="active", roles__ne="admin").order_by(
-#         "-score", "updated_date"
-#     )
-
-#     return render_template(
-#         "dashboards/index.html",
-#         teams=teams,
-#         users=users,
-#     )
 
 
 @module.route("/<event_id>/", methods=["GET", "POST"])
@@ -98,6 +84,7 @@ def index(event_id):
                     "_id": 0,
                     "event": "$_id.event",
                     "total_score": 1,
+                    "user_id": "$_id.user",
                     "display_name": "$user_info.display_name",
                     "team": "$team_info.name",
                     "team_id": "$_id.team",
@@ -140,6 +127,21 @@ def index(event_id):
 
         teams_transaction = list(models.Transaction.objects.aggregate(pipeline_team))
         users_transaction = list(models.Transaction.objects.aggregate(pipeline_user))
+        users_transaction_list = []
+        for user_info in users_transaction:
+            user_id = ObjectId(user_info["user_id"])
+            user = models.User.objects(id=user_id).first()
+
+            organization_id = user.organization.id
+            organization_name = user.organization.name
+            organization_image = user.organization.image.filename
+            user_info['organization_id'] = organization_id
+            user_info['organization_name'] = organization_name
+            user_info['organization_image'] = organization_image
+            users_transaction_list.append(user_info)
+        
+        users_transaction = users_transaction_list    
+        
 
         return render_template(
             "/dashboards/index.html",
@@ -181,6 +183,7 @@ def index(event_id):
                     "event": "$_id.event",
                     "total_score": 1,
                     "display_name": "$user_info.display_name",
+                    "organization_id":"$user_info.organization"
                 }
             },
             {"$sort": {"total_score": -1}},

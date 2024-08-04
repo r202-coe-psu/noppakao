@@ -59,6 +59,7 @@
 
     {#SCORE BOARD#}
     {% if event.type == "team" %}
+
     <div class="two column row">
         <div class="column">
             <table class="ui inverted table">
@@ -142,6 +143,7 @@
                             <th></th>
                             <th scope="col" style="color: rgb(255, 255, 255);">Name</th>
                             <th scope="col" style="color: rgb(255, 255, 255);">Team</th>
+                            <th scope="col" style="color: rgb(255, 255, 255);">Organization</th>
                             <th scope="col" class="left-aligned" style="color: rgb(255, 255, 255);">Score</th>
                         </tr>
                     </thead>
@@ -155,10 +157,12 @@
                             <td>{{ loop.index }}</td>
                             <td>
                                 {% if user.team_id %}
-                                <h3 class="ui picture header">
+                                <span>
                                     <img src="{{url_for('teams.get_image',team_id=user.team_id)}}"
                                         style="width: 20px; height: 20px;">
-                                </h3>
+                                    <img src="{{ url_for('organizations.display_image', organization_id=user.organization_id ,filename=user.organization_image) }}"
+                                        style="width: 20px; height: 20px;">
+                                </span>
                                 {% else %}
                                 <div>
                                     No Picture
@@ -167,6 +171,7 @@
                             </td>
                             <td>{{ user.display_name }} </td>
                             <td>{{ user.team }}</td>
+                            <td>{{ user.organization_name}}</td>
                             {% if user.total_score == 0 %}
                             <td class="left-aligned">0</td>
                             {% else %}
