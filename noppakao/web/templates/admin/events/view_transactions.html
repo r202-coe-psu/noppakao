@@ -16,6 +16,8 @@
                             {% endif %}
                         </div>
                         <div class="left floated content">
+                            <span><strong>Time: </strong> {{
+                                transaction.created_date.strftime("%Y-%m-%d %H:%M:%S") }}</span>
                             <div class="header"> <i class="folder yellow icon"></i>
                                 <strong>Answer:</strong><span style="color: rgb(0, 123, 255);"> {{transaction.answer }}
                                 </span>
