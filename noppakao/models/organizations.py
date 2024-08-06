@@ -27,8 +27,8 @@ class Organization(me.Document):
         if self.picture:
             return url_for(
                 "organizations.display_image",
-                organization_id=self.if
-                filename=self.picture.filename,
+                organization_id=self.id,
+                filename=self.image.filename,
             )
         else:
-            return url_for("static", filename="images/hacker.png")
+            return url_for("static", filename="images/organization-default.png")
