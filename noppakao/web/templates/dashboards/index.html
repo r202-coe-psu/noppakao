@@ -257,6 +257,7 @@
                             <th scope="col" style="color: rgb(255, 255, 255);">Raking</th>
                             <th scope="col" style="color: rgb(255, 255, 255);">Name</th>
                             <th scope="col" style="color: rgb(255, 255, 255);">Organization</th>
+                            <th></th>
                             <th scope="col" class="left-aligned" style="color: rgb(255, 255, 255);">Score</th>
                         </tr>
                     </thead>
@@ -275,12 +276,14 @@
                                     <img src="{{ user.organization_image }}"
                                         style="width: 35px; height: 35px;">
                                 </span>
-                                <span>{{ user.organization_name }}</span>
                                 {% else %}
                                 <div>
                                     No Organization
                                 </div>
                                 {% endif %}
+                            </td>
+                            <td>
+                                <span>{{ user.organization_name }}</span>
                             </td>
                             {% if not user.total_score %}
                             <td class="left-aligned">0</td>
