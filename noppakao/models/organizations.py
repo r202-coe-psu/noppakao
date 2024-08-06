@@ -31,4 +31,4 @@ class Organization(me.Document):
                 filename=self.image.filename,
             )
         else:
-            return url_for("static", filename="images/organization-default.png")
+            return url_for("static", filename="images/learning.png")
