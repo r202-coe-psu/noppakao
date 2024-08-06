@@ -7,7 +7,8 @@
     <div class="right menu">
 
         {% if now %}
-        {% if "dashboard" in request.url and event.ended_date >= now %}
+        {% if "dashboard" in request.url and now >= event.started_date and event.ended_date >= now %} 
+        
         <a class="item" style="color: white;" href="{{ url_for('events.challenge', event_id=event.id) }}"><i
                 class="trophy icon" style="color: rgb(255, 255, 255);"></i>Challenge</a>
         {% endif %}
