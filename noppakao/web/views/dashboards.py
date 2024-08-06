@@ -23,7 +23,6 @@ module = Blueprint("dashboards", __name__, url_prefix="/dashboard")
 
 
 @module.route("/<event_id>/", methods=["GET", "POST"])
-# @login_required
 def index(event_id):
     challenges = models.Challenge.objects()
     teams = models.Team.objects(status="active")
