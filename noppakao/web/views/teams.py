@@ -70,7 +70,15 @@ def create_or_edit(team_id):
     new_members = [
         models.User.objects(id=user_id).first() for user_id in form.members.data
     ]
-
+    if current_user not in new_members:
+        error_msg = "Please choose yourself in your team"
+        return redirect(
+            url_for(
+                "teams.create_or_edit",
+                error_msg=error_msg,
+                team_id=team_id,
+            )
+        )
     # เช็คสมาชิกหากแก้ไขในภายภายหลังไม่ให้แก้ไขแล้วนำคนซ้ำเข้าร่สมทีม
     if team and models.Team.objects().first():
         event_competitor = (
