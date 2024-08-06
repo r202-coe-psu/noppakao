@@ -53,13 +53,8 @@
     Leaderboard
 </div>
 
-{#NEW#}
 <div class="ui grid no-margin">
-
-
-    {#SCORE BOARD#}
     {% if event.type == "team" %}
-
     <div class="two column row">
         <div class="column">
             <table class="ui inverted table">
@@ -335,6 +330,10 @@
         console.log("Initial Ended Date:", ended_date);
         countdown(ended_date);
     }
+
+    window.setTimeout( function() {
+    window.location.reload();
+    }, 60000);
 </script>
 
 {% endblock additional_js %}
