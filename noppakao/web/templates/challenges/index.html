@@ -152,10 +152,14 @@
 									<div class="content">
 										<div class="ui segment">
 											<p>{{ challenge.description }}</p>
+											{% if challenge.answer_type  == 'plaintext' %}
+											{% else %}
 											<p>Example Submit <span
-													style="color: #808080; line-height: 1.5; font-style: italic; margin-bottom: 10px;">{{
-													event.flag_prefix
-													}}{Answer}</span></p>
+												style="color: #808080; line-height: 1.5; font-style: italic; margin-bottom: 10px;">{{
+												event.flag_prefix
+												}}{Answer}</span></p>
+											{% endif %}
+											
 											{% if challenge.challenge_url %}
 											<p>
 												Link URL: <a href="{{ challenge.challenge_url }}" target="_blank">{{
