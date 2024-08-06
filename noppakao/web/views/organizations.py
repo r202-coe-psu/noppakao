@@ -48,7 +48,6 @@ def change():
 
 
 @module.route("/<organization_id>/logo_image/<filename>", methods=["GET", "POST"])
-@login_required
 def display_image(organization_id, filename):
     organization = models.Organization.objects(id=organization_id).first()
     response = send_file(

@@ -23,7 +23,7 @@ module = Blueprint("dashboards", __name__, url_prefix="/dashboard")
 
 
 @module.route("/<event_id>/", methods=["GET", "POST"])
-@login_required
+# @login_required
 def index(event_id):
     challenges = models.Challenge.objects()
     teams = models.Team.objects(status="active")
@@ -33,7 +33,6 @@ def index(event_id):
     event_challenges = models.EventChallenge.objects(event=event, status="active")
     event_categorys = []
     dialog_state = {"status": request.args.get("dialog_state", None)}
-    team = models.Team.objects(members__in=[current_user], status="active").first()
     now = datetime.now()
 
 

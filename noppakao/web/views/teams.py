@@ -154,7 +154,6 @@ def recover(team_id):
 
 
 @module.route("/<team_id>/picture")
-@login_required
 def get_image(team_id):
     response = Response()
     response.status_code = 404
