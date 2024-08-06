@@ -97,7 +97,6 @@
                     <thead style="background-color:rgb(50, 78, 156);">
                         <tr>
                             <th scope="col" style="color: rgb(255, 255, 255);">Raking</th>
-                            <th></th>
                             <th scope="col" style="color: rgb(255, 255, 255);">Team</th>
                             <th scope="col" style="color: rgb(255, 255, 255);">Organization</th>
                             <th scope="col" class="left-aligned" style="color: rgb(255, 255, 255);">Score</th>
@@ -115,18 +114,28 @@
                                 {% if team.team_id %}
                                 <span class="ui picture header">
                                     <img src="{{url_for('teams.get_image',team_id=team.team_id)}}"
-                                        style="width: 20px; height: 20px;">
-                                    <img src="{{ url_for('organizations.display_image', organization_id=team.organization_id ,filename=team.organization_image) }}"
-                                        style="width: 20px; height: 20px;">
+                                        style="width: 35px; height: 35px;">
                                 </span>
+                                <span>{{ team.name }}</span>
                                 {% else %}
                                 <div>
-                                    No Picture
+                                    No Team
                                 </div>
                                 {% endif %}
                             </td>
-                            <td>{{ team.name }}</td>
-                            <td>{{ team.organization_name }}</td>
+                            <td>
+                                {% if team.organization_id %}
+                                <span class="ui picture header">
+                                    <img src="{{ url_for('organizations.display_image', organization_id=team.organization_id ,filename=team.organization_image) }}"
+                                        style="width: 35px; height: 35px;">
+                                </span>
+                                <span>{{ team.organization_name }}</span>
+                                {% else %}
+                                <div>
+                                    No Organization
+                                </div>
+                                {% endif %}
+                            </td>
                             {% if not team.total_score %}
                             <td class="left-aligned">0</td>
                             {% else %}
@@ -144,7 +153,6 @@
                     <thead style="background-color:rgb(50, 78, 156);">
                         <tr>
                             <th scope="col" style="color: rgb(255, 255, 255);">Raking</th>
-                            <th></th>
                             <th scope="col" style="color: rgb(255, 255, 255);">Name</th>
                             <th scope="col" style="color: rgb(255, 255, 255);">Team</th>
                             <th scope="col" style="color: rgb(255, 255, 255);">Organization</th>
@@ -159,23 +167,33 @@
                         <tr style="color: rgb(0, 0, 0); background-color: rgb(180, 180, 180)">
                             {% endif %}
                             <td>{{ loop.index }}</td>
+                            <td>{{ user.display_name }} </td>
                             <td>
                                 {% if user.team_id %}
                                 <span class="ui picture header">
                                     <img src="{{url_for('teams.get_image',team_id=user.team_id)}}"
-                                        style="width: 20px; height: 20px;">
-                                    <img src="{{ url_for('organizations.display_image', organization_id=user.organization_id ,filename=user.organization_image) }}"
-                                        style="width: 20px; height: 20px;">
+                                        style="width: 35px; height: 35px;">
                                 </span>
+                                <span>{{ user.team }}</span>
                                 {% else %}
                                 <div>
-                                    No Picture
+                                    No Team
                                 </div>
                                 {% endif %}
                             </td>
-                            <td>{{ user.display_name }} </td>
-                            <td>{{ user.team }}</td>
-                            <td>{{ user.organization_name}}</td>
+                            <td>
+                                {% if user.organization_id %}
+                                <span class="ui picture header">
+                                    <img src="{{ url_for('organizations.display_image', organization_id=user.organization_id ,filename=user.organization_image) }}"
+                                        style="width: 35px; height: 35px;">
+                                </span>
+                                <span>{{ user.organization_name }}</span>
+                                {% else %}
+                                <div>
+                                    No Organization
+                                </div>
+                                {% endif %}
+                            </td>
                             {% if user.total_score == 0 %}
                             <td class="left-aligned">0</td>
                             {% else %}
@@ -216,6 +234,7 @@
                         <tr>
                             <th scope="col" style="color: rgb(255, 255, 255);">Raking</th>
                             <th scope="col" style="color: rgb(255, 255, 255);">Name</th>
+                            <th scope="col" style="color: rgb(255, 255, 255);">Organization</th>
                             <th scope="col" class="left-aligned" style="color: rgb(255, 255, 255);">Score</th>
                         </tr>
                     </thead>
@@ -228,6 +247,19 @@
                             {% endif %}
                             <td>{{ loop.index }}</td>
                             <td>{{ user.display_name }}</td>
+                            <td>
+                                {% if user.organization_id %}
+                                <span class="ui picture header">
+                                    <img src="{{ url_for('organizations.display_image', organization_id=user.organization_id ,filename=user.organization_image) }}"
+                                        style="width: 35px; height: 35px;">
+                                </span>
+                                <span>{{ user.organization_name }}</span>
+                                {% else %}
+                                <div>
+                                    No Organization
+                                </div>
+                                {% endif %}
+                            </td>
                             {% if not user.total_score %}
                             <td class="left-aligned">0</td>
                             {% else %}
