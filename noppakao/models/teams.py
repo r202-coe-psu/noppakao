@@ -26,11 +26,11 @@ class Team(me.Document):
     def get_score(self, event):
         return 0
 
-    def get_picture(self):
+    def get_logo_url(self):
         if self.picture:
             return url_for(
                 "teams.get_image",
                 team_id=self.id,
             )
         else:
-            pass
+            return url_for("static", filename="images/hacker.png")
