@@ -22,3 +22,13 @@ class Organization(me.Document):
     updated_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
     )
+
+    def get_logo_url(self):
+        if self.picture:
+            return url_for(
+                "organizations.display_image",
+                organization_id=self.if
+                filename=self.picture.filename,
+            )
+        else:
+            return url_for("static", filename="images/hacker.png")
