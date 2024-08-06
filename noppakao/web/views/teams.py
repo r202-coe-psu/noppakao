@@ -56,7 +56,11 @@ def create_or_edit(team_id):
         if team.members:
             old_members = team.members
     form.members.choices = [
-        (str(user.id), user.get_fullname())
+        (
+            str(user.id),
+            user.get_fullname()
+            + (f" ( {user.organization.name} )" if user.organization else ""),
+        )
         for user in models.User.objects(status="active")
         if user.organization
     ]
