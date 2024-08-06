@@ -36,13 +36,6 @@ def index(event_id):
     team = models.Team.objects(members__in=[current_user], status="active").first()
     now = datetime.now()
 
-    if not team and event.type == "team":
-        msg = "Please create a team."
-        return redirect(url_for("events.index", msg=msg))
-
-    if not current_user.check_join_event(event.id):
-        msg = "คุณกำลังพยายามเข้าไปใน กิจกรรมที่คุณไม่ได้เข้าร่วม"
-        return redirect(url_for("events.index", msg=msg))
 
     for event_challenge in event_challenges:
         if not event_challenge.challenge.category in event_categorys:
