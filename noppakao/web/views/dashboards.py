@@ -176,7 +176,6 @@ def index(event_id):
                 "$group": {
                     "_id": {
                         "user": "$user",
-                        "team": "$team",
                     },
                     "total_score": {"$sum": "$score"},
                 }
@@ -195,14 +194,27 @@ def index(event_id):
                     "_id": 0,
                     "event": "$_id.event",
                     "total_score": 1,
+                    "user_id": "$_id.user",
                     "display_name": "$user_info.display_name",
-                    "organization_id":"$user_info.organization"
                 }
             },
             {"$sort": {"total_score": -1}},
         ]
 
         users_transaction = list(models.Transaction.objects.aggregate(pipeline_user))
+        users_transaction_list = []
+        for user_info in users_transaction:
+            user_id = ObjectId(user_info["user_id"])
+            user = models.User.objects(id=user_id).first()
+
+            organization_id = user.organization.id
+            organization_name = user.organization.name
+            organization_image = user.organization.image.filename
+            user_info['organization_id'] = organization_id
+            user_info['organization_name'] = organization_name
+            user_info['organization_image'] = organization_image
+            users_transaction_list.append(user_info)
+        users_transaction = users_transaction_list 
 
         return render_template(
             "/dashboards/index.html",
