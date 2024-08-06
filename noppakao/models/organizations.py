@@ -24,7 +24,7 @@ class Organization(me.Document):
     )
 
     def get_logo_url(self):
-        if self.picture:
+        if self.image:
             return url_for(
                 "organizations.display_image",
                 organization_id=self.id,
