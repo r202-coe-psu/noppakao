@@ -181,7 +181,7 @@
                             <td>
                                 {% if user.organization_id %}
                                 <span class="ui picture header">
-                                    <img src="{{ url_for('organizations.display_image', organization_id=user.organization_id ,filename=user.organization_image) }}"
+                                    <img src="{{ user.organization_image }}"
                                         style="width: 35px; height: 35px;">
                                 </span>
                                 {% else %}
@@ -263,16 +263,16 @@
                     <tbody>
                         {% for user in users_transaction %}
                         {% if loop.index % 2 != 0 %}
-                        <tr style="color: rgb(0, 0, 0); background-color: rgb(200, 200, 200)">
+                        <tr style="color: rgb(0, 0, 0); background-color: rgb(230, 230, 230)">
                             {% else %}
-                        <tr style="color: rgb(0, 0, 0); background-color: rgb(180, 180, 180)">
+                        <tr style="color: rgb(0, 0, 0); background-color: rgb(210, 210, 210)">
                             {% endif %}
                             <td>{{ loop.index }}</td>
                             <td>{{ user.display_name }}</td>
                             <td>
                                 {% if user.organization_id %}
                                 <span class="ui picture header">
-                                    <img src="{{ url_for('organizations.display_image', organization_id=user.organization_id ,filename=user.organization_image) }}"
+                                    <img src="{{ user.organization_image }}"
                                         style="width: 35px; height: 35px;">
                                 </span>
                                 <span>{{ user.organization_name }}</span>

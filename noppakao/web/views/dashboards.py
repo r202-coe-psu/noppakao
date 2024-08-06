@@ -124,12 +124,9 @@ def index(event_id):
             user_id = ObjectId(user_info["user_id"])
             user = models.User.objects(id=user_id).first()
 
-            organization_id = user.organization.id
-            organization_name = user.organization.name
-            organization_image = user.organization.image.filename
-            user_info["organization_id"] = organization_id
-            user_info["organization_name"] = organization_name
-            user_info["organization_image"] = organization.get_logo_url()
+            user_info["organization_id"] = user.organization.id
+            user_info["organization_name"] = user.organization.name
+            user_info["organization_image"] = user.organization.get_logo_url()
             users_transaction_list.append(user_info)
         users_transaction = users_transaction_list
 
@@ -138,12 +135,10 @@ def index(event_id):
         for team_info in teams_transaction:
             user_id = ObjectId(team_info["members"][0].id)
             user = models.User.objects(id=user_id).first()
-            organization_id = user.organization.id
-            organization_name = user.organization.name
-            organization_image = user.organization.image.filename
-            team_info["organization_id"] = organization_id
-            team_info["organization_name"] = organization_name
-            team_info["organization_image"] = organization_image
+
+            team_info["organization_id"] = user.organization.id
+            team_info["organization_name"] = user.organization.name
+            team_info["organization_image"] = user.organization.get_logo_url()
             teams_transaction_list.append(team_info)
         teams_transaction = teams_transaction_list
 
@@ -199,12 +194,9 @@ def index(event_id):
             user_id = ObjectId(user_info["user_id"])
             user = models.User.objects(id=user_id).first()
 
-            organization_id = user.organization.id
-            organization_name = user.organization.name
-            organization_image = user.organization.image.filename
-            user_info["organization_id"] = organization_id
-            user_info["organization_name"] = organization_name
-            user_info["organization_image"] = organization_image
+            user_info["organization_id"] = user.organization.id
+            user_info["organization_name"] = user.organization.name
+            user_info["organization_image"] = user.organization.get_logo_url()
             users_transaction_list.append(user_info)
         users_transaction = users_transaction_list
 
