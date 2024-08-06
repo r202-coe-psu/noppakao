@@ -114,7 +114,7 @@
                             <td>
                                 {% if team.organization_id %}
                                 <span class="ui picture header">
-                                    <img src="{{ url_for('organizations.display_image', organization_id=team.organization_id ,filename=team.organization_image) }}"
+                                    <img src="{{ team.organization_image }}"
                                         style="width: 35px; height: 35px;">
                                 </span>
                                 <span></span>

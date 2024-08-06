@@ -34,7 +34,6 @@ def index(event_id):
     dialog_state = {"status": request.args.get("dialog_state", None)}
     now = datetime.now()
 
-
     for event_challenge in event_challenges:
         if not event_challenge.challenge.category in event_categorys:
             event_categorys.append(event_challenge.challenge.category)
@@ -126,11 +125,11 @@ def index(event_id):
             organization_id = user.organization.id
             organization_name = user.organization.name
             organization_image = user.organization.image.filename
-            user_info['organization_id'] = organization_id
-            user_info['organization_name'] = organization_name
-            user_info['organization_image'] = organization_image
+            user_info["organization_id"] = organization_id
+            user_info["organization_name"] = organization_name
+            user_info["organization_image"] = organization.get_logo_url()
             users_transaction_list.append(user_info)
-        users_transaction = users_transaction_list 
+        users_transaction = users_transaction_list
 
         teams_transaction = list(models.Transaction.objects.aggregate(pipeline_team))
         teams_transaction_list = []
@@ -140,11 +139,11 @@ def index(event_id):
             organization_id = user.organization.id
             organization_name = user.organization.name
             organization_image = user.organization.image.filename
-            team_info['organization_id'] = organization_id
-            team_info['organization_name'] = organization_name
-            team_info['organization_image'] = organization_image
+            team_info["organization_id"] = organization_id
+            team_info["organization_name"] = organization_name
+            team_info["organization_image"] = organization_image
             teams_transaction_list.append(team_info)
-        teams_transaction = teams_transaction_list    
+        teams_transaction = teams_transaction_list
 
         return render_template(
             "/dashboards/index.html",
@@ -201,11 +200,11 @@ def index(event_id):
             organization_id = user.organization.id
             organization_name = user.organization.name
             organization_image = user.organization.image.filename
-            user_info['organization_id'] = organization_id
-            user_info['organization_name'] = organization_name
-            user_info['organization_image'] = organization_image
+            user_info["organization_id"] = organization_id
+            user_info["organization_name"] = organization_name
+            user_info["organization_image"] = organization_image
             users_transaction_list.append(user_info)
-        users_transaction = users_transaction_list 
+        users_transaction = users_transaction_list
 
         return render_template(
             "/dashboards/index.html",
