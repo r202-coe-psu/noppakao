@@ -18,11 +18,13 @@ from flask_login import login_user, logout_user, login_required, current_user
 from noppakao import models
 from .. import forms
 from .. import oauth
+from .. import caches
 
 module = Blueprint("dashboards", __name__, url_prefix="/dashboard")
 
 
 @module.route("/<event_id>/", methods=["GET", "POST"])
+@caches.cache.cached(timeout=60)
 def index(event_id):
     challenges = models.Challenge.objects()
     teams = models.Team.objects(status="active")
