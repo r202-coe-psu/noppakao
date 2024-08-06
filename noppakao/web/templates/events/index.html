@@ -242,9 +242,15 @@
                             <div class="field">
                                 <input type="text" id="code" name="code" placeholder="Enter Code">
                             </div>
-                            <button type="submit" class="ui button" style="background-color: #CDDFEF;">
-                                <i class="add circle icon"></i> Enroll
-                            </button>
+                            <div class="fluid ui stackable buttons">
+                                <a href="{{ url_for('dashboards.index', event_id=event.id) }}" class="ui button"
+                                    style="background-color: #222B68; color: white;">
+                                    <i class="sort amount down icon"></i> Dashboard
+                                </a>
+                                <button type="submit" class="ui button" style="background-color: #CDDFEF;">
+                                    <i class="add circle icon"></i> Enroll
+                                </button>
+                            </div>
                         </form>
                         {% else %}
                         <div>It's not time to register yet.</div>
