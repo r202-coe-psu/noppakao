@@ -90,12 +90,19 @@
             <i class="edit icon"></i> Edit Event
           </a>
         </div>
-        <div class="ui fluid buttons">
+        <div class="ui fluid buttons" style="margin-bottom: 0.5rem;">
           <a class="ui button" style="background-color: #364989; color: white;"
-            href="{{ url_for('admin.events.challenge', event_id=event.id) }}">
-            <i class="trophy icon"></i> Event Challenges
-          </a>
-        </div>
+          href="{{ url_for('admin.events.challenge', event_id=event.id) }}">
+          <i class="trophy icon"></i> Event Challenges
+        </a>
+      </div>
+      <div class="ui fluid buttons" style="margin-bottom: 0.5rem;">
+        <a class="ui button primary" style="background-color: #364989; color: white;"
+        href="{{ url_for('dashboards.index', event_id=event.id) }}">
+          <i class="sort amount down icon"></i> Dashboard
+        </a>
+      </div>
+      
       </div>
     </div>
     {% endfor %}
