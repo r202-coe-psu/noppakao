@@ -24,11 +24,11 @@ class Organization(me.Document):
     )
 
     def get_logo_url(self):
-        if self.picture:
+        if self.image:
             return url_for(
                 "organizations.display_image",
                 organization_id=self.id,
                 filename=self.image.filename,
             )
         else:
-            return url_for("static", filename="images/organization-default.png")
+            return url_for("static", filename="images/learning.png")
