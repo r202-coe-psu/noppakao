@@ -212,7 +212,10 @@
 											<div class="ui fluid action input" style="margin-top: 1rem;">
 												<input type="text" id="answer" name="answer"
 													placeholder="Enter your answer..."
-													value="{{ event.flag_prefix + '{}' if event.flag_prefix else '' }}">
+													{% if challenge.answer_type  == 'flag' %}
+													value="{{ event.flag_prefix + '{}' if event.flag_prefix else '' }}"
+													{% endif %}
+													>
 												<button type="submit" class="ui big button"
 													style="background-color: rgb(103, 151, 190); color: rgb(255, 255, 255);">
 													Submit
