@@ -13,7 +13,7 @@
         {% endif %}
         {% endif %}
         <a id="ip-address" class="item" style="color: white;"><i class="tv icon"></i>
-            {{ request.headers.get("X-Forwarded-For", request.remote_addr) }}
+            {{ request.headers.get("X-Real-IP", request.remote_addr) }}
         </a>
         <a id="current-time" class="item" style="color: white;"><i class="compass outline icon"></i><span></span></a>
         <a class="item" style="color: white;" href="{{url_for('accounts.logout')}}"><i class="power off icon"
