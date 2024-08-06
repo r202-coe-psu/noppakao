@@ -53,13 +53,8 @@
     Leaderboard
 </div>
 
-{#NEW#}
 <div class="ui grid no-margin">
-
-
-    {#SCORE BOARD#}
     {% if event.type == "team" %}
-
     <div class="two column row">
         <div class="column">
             <table class="ui inverted table">
@@ -94,29 +89,42 @@
         <div class="column">
             <div class="table-container">
                 <table class="ui inverted table">
-                    <thead style="background-color:rgb(50, 78, 156);">
+                    <thead style="background-color:rgb(70, 103, 194);">
                         <tr>
-                            <th scope="col" style="color: rgb(255, 255, 255);">Raking</th>
-                            <th scope="col" style="color: rgb(255, 255, 255);">Team</th>
-                            <th scope="col" style="color: rgb(255, 255, 255);">Organization</th>
+                            <th scope="col" style="color: rgb(255, 255, 255); width: 2rem;">Raking</th>
+                            <th scope="col" style="color: rgb(255, 255, 255); width: 2rem;">Team</th>
+                            <th></th>
+                            <th></th>
                             <th scope="col" class="left-aligned" style="color: rgb(255, 255, 255);">Score</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for team in teams_transaction %}
                         {% if loop.index % 2 != 0 %}
-                        <tr style="color: rgb(0, 0, 0); background-color: rgb(200, 200, 200)">
+                        <tr style="color: rgb(0, 0, 0); background-color: rgb(230, 230, 230)">
                             {% else %}
-                        <tr style="color: rgb(0, 0, 0); background-color: rgb(180, 180, 180)">
+                        <tr style="color: rgb(0, 0, 0); background-color: rgb(210, 210, 210)">
                             {% endif %}
                             <td>{{ loop.index }}</td>
                             <td>
-                                {% if team.team_id %}
+                                {% if team.organization_id %}
+                                <span class="ui picture header">
+                                    <img src="{{ team.organization_image }}"
+                                        style="width: 35px; height: 35px;">
+                                </span>
+                                <span></span>
+                                {% else %}
+                                <div>
+                                    No Organization
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if team.team_id and team.organization_id%}
                                 <span class="ui picture header">
                                     <img src="{{url_for('teams.get_image',team_id=team.team_id)}}"
                                         style="width: 35px; height: 35px;">
                                 </span>
-                                <span>{{ team.name }}</span>
                                 {% else %}
                                 <div>
                                     No Team
@@ -124,18 +132,18 @@
                                 {% endif %}
                             </td>
                             <td>
-                                {% if team.organization_id %}
-                                <span class="ui picture header">
-                                    <img src="{{ url_for('organizations.display_image', organization_id=team.organization_id ,filename=team.organization_image) }}"
-                                        style="width: 35px; height: 35px;">
+                                {% if team.team_id %}
+                                <span>
+                                    <div style="font-weight: bold;">{{ team.name }}</div>
+                                    <div>{{ team.organization_name }}</div>
                                 </span>
-                                <span>{{ team.organization_name }}</span>
                                 {% else %}
                                 <div>
-                                    No Organization
+                                    No Team
                                 </div>
                                 {% endif %}
                             </td>
+                            
                             {% if not team.total_score %}
                             <td class="left-aligned">0</td>
                             {% else %}
@@ -150,50 +158,64 @@
         <div class="column">
             <div class="table-container">
                 <table class="ui inverted table">
-                    <thead style="background-color:rgb(50, 78, 156);">
+                    <thead style="background-color:rgb(70, 103, 194);">
                         <tr>
-                            <th scope="col" style="color: rgb(255, 255, 255);">Raking</th>
-                            <th scope="col" style="color: rgb(255, 255, 255);">Name</th>
-                            <th scope="col" style="color: rgb(255, 255, 255);">Team</th>
-                            <th scope="col" style="color: rgb(255, 255, 255);">Organization</th>
+                            
+                            <th scope="col" style="color: rgb(255, 255, 255); width: 2rem;">Raking</th>
+                            <th scope="col" style="color: rgb(255, 255, 255); width: 2rem;">Name</th>
+                            <th scope="col" style="color: rgb(255, 255, 255); width: 2rem;">Team</th>
+                            <th></th>
+                            <th></th>
                             <th scope="col" class="left-aligned" style="color: rgb(255, 255, 255);">Score</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for user in users_transaction %}
                         {% if loop.index % 2 != 0 %}
-                        <tr style="color: rgb(0, 0, 0); background-color: rgb(200, 200, 200)">
+                        <tr style="color: rgb(0, 0, 0); background-color: rgb(230, 230, 230)">
                             {% else %}
-                        <tr style="color: rgb(0, 0, 0); background-color: rgb(180, 180, 180)">
+                        <tr style="color: rgb(0, 0, 0); background-color: rgb(210, 210, 210)">
                             {% endif %}
                             <td>{{ loop.index }}</td>
                             <td>{{ user.display_name }} </td>
                             <td>
-                                {% if user.team_id %}
-                                <span class="ui picture header">
-                                    <img src="{{url_for('teams.get_image',team_id=user.team_id)}}"
-                                        style="width: 35px; height: 35px;">
-                                </span>
-                                <span>{{ user.team }}</span>
-                                {% else %}
-                                <div>
-                                    No Team
-                                </div>
-                                {% endif %}
-                            </td>
-                            <td>
                                 {% if user.organization_id %}
                                 <span class="ui picture header">
-                                    <img src="{{ url_for('organizations.display_image', organization_id=user.organization_id ,filename=user.organization_image) }}"
+                                    <img src="{{ user.organization_image }}"
                                         style="width: 35px; height: 35px;">
                                 </span>
-                                <span>{{ user.organization_name }}</span>
                                 {% else %}
                                 <div>
                                     No Organization
                                 </div>
                                 {% endif %}
                             </td>
+                            <td>
+                                {% if user.team_id %}
+                                <span class="ui picture header">
+                                    <img src="{{url_for('teams.get_image',team_id=user.team_id)}}"
+                                        style="width: 35px; height: 35px;">
+                                </span>
+                                {% else %}
+                                <div>
+                                    No Team
+                                </div>
+                                {% endif %}
+                            </td>
+                            
+                            <td>
+                                {% if user.team and  user.organization_name %}
+                                <span>
+                                    <div style="font-weight: bold;">{{ user.team }}</div>
+                                    <div>{{ user.organization_name }}</div>
+                                </span>
+                                {% else %}
+                                <div>
+                                    No Team or Organization
+                                </div>
+                                {% endif %}
+                            </td>
+
                             {% if user.total_score == 0 %}
                             <td class="left-aligned">0</td>
                             {% else %}
@@ -230,7 +252,7 @@
         <div class="column">
             <div class="table-container">
                 <table class="ui inverted table">
-                    <thead style="background-color:rgb(50, 78, 156);">
+                    <thead style="background-color:rgb(70, 103, 194);">
                         <tr>
                             <th scope="col" style="color: rgb(255, 255, 255);">Raking</th>
                             <th scope="col" style="color: rgb(255, 255, 255);">Name</th>
@@ -241,16 +263,16 @@
                     <tbody>
                         {% for user in users_transaction %}
                         {% if loop.index % 2 != 0 %}
-                        <tr style="color: rgb(0, 0, 0); background-color: rgb(200, 200, 200)">
+                        <tr style="color: rgb(0, 0, 0); background-color: rgb(230, 230, 230)">
                             {% else %}
-                        <tr style="color: rgb(0, 0, 0); background-color: rgb(180, 180, 180)">
+                        <tr style="color: rgb(0, 0, 0); background-color: rgb(210, 210, 210)">
                             {% endif %}
                             <td>{{ loop.index }}</td>
                             <td>{{ user.display_name }}</td>
                             <td>
                                 {% if user.organization_id %}
                                 <span class="ui picture header">
-                                    <img src="{{ url_for('organizations.display_image', organization_id=user.organization_id ,filename=user.organization_image) }}"
+                                    <img src="{{ user.organization_image }}"
                                         style="width: 35px; height: 35px;">
                                 </span>
                                 <span>{{ user.organization_name }}</span>
@@ -308,18 +330,10 @@
         console.log("Initial Ended Date:", ended_date);
         countdown(ended_date);
     }
+
+    window.setTimeout( function() {
+    window.location.reload();
+    }, 60000);
 </script>
 
-<script type="text/javascript">
-    function updateTime() {
-        const now = new Date();
-        let hours = (now.getUTCHours() + 7) % 24;
-        let minutes = now.getUTCMinutes();
-        hours = hours < 10 ? '0' + hours : hours;
-        minutes = minutes < 10 ? '0' + minutes : minutes;
-        document.getElementById('time-display').innerHTML = `${hours}:${minutes} (UTC+7)`;
-    }
-    setInterval(updateTime, 1000);
-    updateTime();
-</script>
 {% endblock additional_js %}

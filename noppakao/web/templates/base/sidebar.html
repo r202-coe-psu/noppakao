@@ -1,6 +1,6 @@
 {% if current_user.is_authenticated %}
 <div class="ui left inverted vertical menu"
-  style="height: 100%; background-color: #242649; width: 250px; padding: 1rem 0;">
+  style="height: 100%; background-color: #222B68; width: 250px; padding: 1rem 0;">
   <div style="display: flex; flex-direction: column; height: 100%; justify-content: space-between;">
     <div>
       <div class="sidebar-heading header" style="padding: 1rem 0; text-align: center;">
@@ -9,7 +9,7 @@
           {% for member in team.members %}
           {% if current_user.id == member.id %}
           <div>
-            TEAM : <span class="ui info text">{{ team.name }}</span>
+            TEAM : <span class="ui text" style="color: #afdeff;">{{ team.name }}</span>
           </div>
           {% endif %}
           {% endfor %}

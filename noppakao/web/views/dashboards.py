@@ -18,12 +18,13 @@ from flask_login import login_user, logout_user, login_required, current_user
 from noppakao import models
 from .. import forms
 from .. import oauth
+from .. import caches
 
 module = Blueprint("dashboards", __name__, url_prefix="/dashboard")
 
 
 @module.route("/<event_id>/", methods=["GET", "POST"])
-# @login_required
+@caches.cache.cached(timeout=60)
 def index(event_id):
     challenges = models.Challenge.objects()
     teams = models.Team.objects(status="active")
@@ -34,7 +35,6 @@ def index(event_id):
     event_categorys = []
     dialog_state = {"status": request.args.get("dialog_state", None)}
     now = datetime.now()
-
 
     for event_challenge in event_challenges:
         if not event_challenge.challenge.category in event_categorys:
@@ -124,28 +124,23 @@ def index(event_id):
             user_id = ObjectId(user_info["user_id"])
             user = models.User.objects(id=user_id).first()
 
-            organization_id = user.organization.id
-            organization_name = user.organization.name
-            organization_image = user.organization.image.filename
-            user_info['organization_id'] = organization_id
-            user_info['organization_name'] = organization_name
-            user_info['organization_image'] = organization_image
+            user_info["organization_id"] = user.organization.id
+            user_info["organization_name"] = user.organization.name
+            user_info["organization_image"] = user.organization.get_logo_url()
             users_transaction_list.append(user_info)
-        users_transaction = users_transaction_list 
+        users_transaction = users_transaction_list
 
         teams_transaction = list(models.Transaction.objects.aggregate(pipeline_team))
         teams_transaction_list = []
         for team_info in teams_transaction:
             user_id = ObjectId(team_info["members"][0].id)
             user = models.User.objects(id=user_id).first()
-            organization_id = user.organization.id
-            organization_name = user.organization.name
-            organization_image = user.organization.image.filename
-            team_info['organization_id'] = organization_id
-            team_info['organization_name'] = organization_name
-            team_info['organization_image'] = organization_image
+
+            team_info["organization_id"] = user.organization.id
+            team_info["organization_name"] = user.organization.name
+            team_info["organization_image"] = user.organization.get_logo_url()
             teams_transaction_list.append(team_info)
-        teams_transaction = teams_transaction_list    
+        teams_transaction = teams_transaction_list
 
         return render_template(
             "/dashboards/index.html",
@@ -199,14 +194,11 @@ def index(event_id):
             user_id = ObjectId(user_info["user_id"])
             user = models.User.objects(id=user_id).first()
 
-            organization_id = user.organization.id
-            organization_name = user.organization.name
-            organization_image = user.organization.image.filename
-            user_info['organization_id'] = organization_id
-            user_info['organization_name'] = organization_name
-            user_info['organization_image'] = organization_image
+            user_info["organization_id"] = user.organization.id
+            user_info["organization_name"] = user.organization.name
+            user_info["organization_image"] = user.organization.get_logo_url()
             users_transaction_list.append(user_info)
-        users_transaction = users_transaction_list 
+        users_transaction = users_transaction_list
 
         return render_template(
             "/dashboards/index.html",

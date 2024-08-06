@@ -32,39 +32,71 @@ def index():
 def create_or_edit(team_id):
     team = None
     form = forms.teams.TeamsForm()
-
+    error_msg = request.args.get("error_msg")
     if team_id:
         team = models.Team.objects.get(id=team_id)
-        form = forms.teams.TeamsForm(obj=team)
-
+    form.members.choices = [
+        (
+            str(user.id),
+            user.get_fullname()
+            + (f" ( {user.organization.name} )" if user.organization else ""),
+        )
+        for user in models.User.objects(status="active")
+        if user.organization
+    ]
     if not form.validate_on_submit():
+        if team:
+            form.name.data = team.name
+            form.members.data = [str(member.id) for member in team.members]
         print(form.errors)
-        return render_template("/admin/teams/create_or_edit.html", form=form, team=team)
+        return render_template(
+            "/admin/teams/create_or_edit.html",
+            form=form,
+            team=team,
+            error_msg=error_msg,
+        )
 
     if not team_id:
-        teams = models.Team(
+        team = models.Team(
             created_by=current_user._get_current_object(),
-            last_updated_by=current_user._get_current_object(),
+            updated_by=current_user._get_current_object(),
         )
 
     if not team_id:
         if form.uploaded_picture.data:
-            teams.picture.put(
+            team.picture.put(
                 form.picture.data,
                 filename=form.picture.data.filename,
                 content_type=form.picture.data.content_type,
             )
-        teams.name = form.name.data
+        team.name = form.name.data
     else:
-        teams.name = form.name.data
+        team.name = form.name.data
         if form.uploaded_picture.data:
-            teams.picture.replace(
+            team.picture.replace(
                 form.picture.data,
                 filename=form.picture.data.filename,
                 content_type=form.picture.data.content_type,
             )
-    teams.last_updated_by = current_user._get_current_object()
-    teams.save()
+    new_members = [
+        models.User.objects(id=user_id).first() for user_id in form.members.data
+    ]
+
+    # แก้ไขทีม แต่ห้ามลบหัวหน้าทีมออก
+    if team_id and team:
+        creator = team.created_by
+        if creator not in new_members:
+            error_msg = "Don't remove header in team"
+            return redirect(
+                url_for(
+                    "admin.teams.create_or_edit",
+                    error_msg=error_msg,
+                    team_id=team_id,
+                )
+            )
+    team.members = new_members
+    team.updated_by = current_user._get_current_object()
+    team.save()
     return redirect(url_for("admin.teams.index"))
 
 

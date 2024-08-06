@@ -2,17 +2,23 @@
 {% import '/base/html-renderer.html' as renderer %}
 
 {% block content %}
-<div class="ui fluid     container">
-    <div style="margin-top: 2rem;">
-        <a class="ui primary labeled icon button" href="{{ url_for('teams.create_or_edit') }}">
-            <i class="add icon"></i>Create Team</a>
+<div class="ui fluid container" style="justify-content: center;">
+    <div class="ui segment">
+        <div>
+            <a class="ui primary labeled icon button right floated" href="{{ url_for('teams.create_or_edit') }}">
+                <i class="add icon"></i>
+                Create Team
+            </a>
+        </div>
+        <span>
+            <h2>
+                <i class="users icon"></i>
+                Teams
+            </h2>
+        </span>
     </div>
 
     <div class="ui segment">
-        <h2 class="ui header">
-            <i class="users icon"></i>
-            Teams
-        </h2>
         <div class="ui divided items">
             {% for team in teams %}
             <div class="item">
@@ -20,24 +26,36 @@
                     <div class="ui grid">
                         {% if team.picture %}
                         <div class="four wide column">
-                            <div class="ui center aligned" style="justify-content: center !important; display:flex;">
-                                <div class="image" style="width: 300px; height: 300px; overflow: hidden; border-radius: 50%;">
-                                    <img class="ui big circular image" src="{{ url_for('teams.get_image', team_id=team.id) }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                            <div class="ui center aligned" style="justify-content: center; display:flex;">
+                                <div class="image"
+                                    style="width: 300px; height: 300px; overflow: hidden; border-radius: 50%;">
+                                    <img class="ui big circular image"
+                                        src="{{ url_for('teams.get_image', team_id=team.id) }}"
+                                        style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
                                 </div>
-                            </div>    
+                            </div>
                         </div>
                         {% else %}
                         <div class="four wide column">
                             <img class="ui medium circular image"
-                                src="{{ url_for('static', filename='/images/hacker.png')}}">
+                                src="{{ url_for('static', filename='images/hacker.png')}}">
                         </div>
                         {% endif %}
                         <div class="twelve wide wide column">
-                            <h2>{{ team.name }}</h2>
+                            <h2>
+                                <div>
+                                    <a class="ui red icon button right floated" onclick="showDeleteModal('{{ team.id }}')">
+                                        <i class="trash icon"></i>
+                                    </a>
+                                    <a class="ui yellow icon button right floated"
+                                        href="{{ url_for('teams.create_or_edit', team_id=team.id) }}">
+                                        <i class="edit icon"></i>
+                                    </a>
+                                </div>
+                                {{ team.name }}</h2>
                             <div class="meta">
                                 <span class="organization">{{ team.organization }}</span>
                             </div>
-
                             <div class="description" style="margin-top: 1rem;">
                                 <p>Members:</p>
                                 <ul>
@@ -51,14 +69,6 @@
                                     {% endfor %}
                                 </ul>
                             </div>
-
-                            <a class="ui red icon button right floated" onclick="showDeleteModal('{{ team.id }}')">
-                                <i class="trash icon"></i>
-                            </a>
-                            <a class="ui yellow icon button right floated"
-                                href="{{ url_for('teams.create_or_edit', team_id=team.id) }}">
-                                <i class="edit icon"></i>
-                            </a>
                         </div>
                     </div>
                 </div>

@@ -12,13 +12,9 @@
     {% for organization in organizations %}
     <div class="card">
       <div class="large ui image">
-        {% if organization.image %}
-        <img
-          src="{{ url_for('admin.organizations.display_image', organization_id=organization.id ,filename=organization.image.filename) }}"
-          alt="{{ organization.image.filename}}">
-        {% else %}
-        <img src="{{ url_for('static', filename='/images/hacker.png')}}">
-        {% endif %}
+
+        <img src="{{ organization.get_logo_url() }}" alt="{{ organization.image.filename}}">
+
       </div>
       <div class="content">
         <div class="header">

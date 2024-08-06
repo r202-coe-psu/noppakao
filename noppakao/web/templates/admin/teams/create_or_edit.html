@@ -2,6 +2,8 @@
 {% import '/base/html-renderer.html' as renderer %}
 
 {% block content %}
+
+
 <div class="ui segment" style="margin-top: 2rem;">
     <h1 class="ui header">
         {% if 'create' in request.path %}
@@ -11,7 +13,9 @@
         {% endif %}
     </h1>
 </div>
-
+{% if error_msg %}
+<div class="ui red message"> {{ error_msg }}</div>
+{% endif %}
 <div class="ui segment">
     <form method="POST" class="ui form" enctype="multipart/form-data">
         {{ form.csrf_token }}
