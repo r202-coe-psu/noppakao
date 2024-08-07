@@ -57,22 +57,21 @@
     {% if event.type == "team" %}
     <div class="two column row">
         <div class="column">
-            <table class="ui inverted table">
-                <thead style="background-color:rgb(50, 78, 156)">
+            <table class="ui table">
+                <thead>
                     <tr>
-                        <th scope="col" style="color: rgb(255, 255, 255);">Team Rank</th>
-                        <th scope="col" style="color: rgb(255, 255, 255); text-align: right;">Updated every 1 minutes
-                        </th>
+                        <th scope="col" style="background: rgb(50, 78, 156); color: rgb(255, 255, 255);">Team Rank</th>
+                        <th scope="col" style="background: rgb(50, 78, 156); color: rgb(255, 255, 255); text-align: right;">Updated every 1 minute</th>
                     </tr>
                 </thead>
             </table>
         </div>
         <div class="column">
-            <table class="ui inverted table">
+            <table class="ui table">
                 <thead style="background-color:rgb(50, 78, 156)">
                     <tr>
-                        <th scope="col" style="color: rgb(255, 255, 255);">Individual Rank</th>
-                        <th scope="col" style="color: rgb(255, 255, 255); text-align: right;">
+                        <th scope="col" style="background: rgb(50, 78, 156); color: rgb(255, 255, 255);">Individual Rank</th>
+                        <th scope="col" style="background: rgb(50, 78, 156); color: rgb(255, 255, 255); text-align: right;">
                             <span class="transparent-bg">Countdown timer :
                                 <a class="item" style="color: white;">
                                     <span id="countdown"></span>
@@ -89,7 +88,7 @@
         <div class="column">
             <div class="table-container">
                 <table class="ui inverted table">
-                    <thead style="background-color:rgb(70, 103, 194);">
+                    <thead style="background-color:rgb(77, 114, 216);">
                         <tr>
                             <th scope="col" style="color: rgb(255, 255, 255); width: 2rem;">Raking</th>
                             <th scope="col" style="color: rgb(255, 255, 255); width: 2rem;">Team</th>
@@ -105,7 +104,18 @@
                             {% else %}
                         <tr style="color: rgb(0, 0, 0); background-color: rgb(210, 210, 210)">
                             {% endif %}
-                            <td>{{ loop.index }}</td>
+
+                            <td>
+                                {% if loop.index == 1 %}
+                                <i class="medal icon" style="color:#FFD700; font-size: 24px; text-shadow: 0 0 3px #000"></i>
+                                {% elif loop.index == 2 %}
+                                <i class="medal icon" style="color: #C0C0C0; font-size: 24px; text-shadow: 0 0 3px #000"></i>
+                                {% elif loop.index == 3 %}
+                                <i class="medal icon" style="color: #CD7F32; font-size: 24px; text-shadow: 0 0 3px #000"></i>
+                                {% else %}
+                                <div style="font-size: 18px; margin-left:10px">{{ loop.index }}</div>
+                                {% endif %}
+                            </td>
                             <td>
                                 {% if team.organization_id %}
                                 <span class="ui picture header">
@@ -158,7 +168,7 @@
         <div class="column">
             <div class="table-container">
                 <table class="ui inverted table">
-                    <thead style="background-color:rgb(70, 103, 194);">
+                    <thead style="background-color:rgb(77, 114, 216);">
                         <tr>
                             
                             <th scope="col" style="color: rgb(255, 255, 255); width: 2rem;">Raking</th>
@@ -176,7 +186,9 @@
                             {% else %}
                         <tr style="color: rgb(0, 0, 0); background-color: rgb(210, 210, 210)">
                             {% endif %}
-                            <td>{{ loop.index }}</td>
+                            <td>
+                                <div style="font-size: 18px; margin-left:10px">{{ loop.index }}</div>
+                            </td>
                             <td>{{ user.display_name }} </td>
                             <td>
                                 {% if user.organization_id %}
@@ -232,7 +244,7 @@
     <div class="one column row">
         <div class="column">
             <table class="ui inverted table">
-                <thead style="background-color:rgb(50, 78, 156)">
+                <thead style="background-color:rgb(77, 114, 216);">
                     <tr>
                         <th scope="col" style="color: rgb(255, 255, 255);">Individual Rank Updated (Updated every 1
                             minutes)</th>
