@@ -35,6 +35,9 @@
           <a class="ui yellow icon button" href="{{ url_for('admin.accounts.create_or_edit', user_id=user.id) }}">
             <i class="edit icon"></i>
           </a>
+          <a class="ui yellow icon button" href="{{ url_for('admin.accounts.edit_user', user_id=user.id) }}">
+            <i class="user icon"></i>
+          </a>
           <a class="ui red icon button" onclick="showDeleteModal('{{ user.id }}')">
             <i class="trash icon"></i>
           </a>
