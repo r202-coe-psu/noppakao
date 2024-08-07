@@ -24,7 +24,7 @@ module = Blueprint("dashboards", __name__, url_prefix="/dashboard")
 
 
 @module.route("/<event_id>/", methods=["GET", "POST"])
-# @caches.cache.cached(timeout=60)
+@caches.cache.cached(timeout=60)
 def index(event_id):
     challenges = models.Challenge.objects()
     teams = models.Team.objects(status="active")
