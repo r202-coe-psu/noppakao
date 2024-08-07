@@ -135,19 +135,15 @@ def index(event_id):
         teams_transaction = list(models.Transaction.objects.aggregate(pipeline_team))
         teams_transaction_list = []
         for team_info in teams_transaction:
-            user_id = ObjectId(team_info["members"][0].id)
-            user = models.User.objects(id=user_id).first()
-            team = models.Team.objects(id=team_info["team_id"]).first()
-
-
-            team_info["organization_id"] = user.organization.id
-            team_info["organization_name"] = user.organization.name
-            team_info["organization_image"] = user.organization.get_logo_url()
-            team_info["team_image"] = team.get_logo_url()
+            team_info["team"] = models.Team.objects(id=team_info["team_id"]).first()
+            team_info["organizations"] = []
+            for member in team_info["team"].members:
+                if member.organization not in team_info["organizations"]:
+                    team_info["organizations"].append(member.organization)
 
             teams_transaction_list.append(team_info)
-        teams_transaction = teams_transaction_list
 
+        teams_transaction = teams_transaction_list
         return render_template(
             "/dashboards/index.html",
             event_challenges=event_challenges,

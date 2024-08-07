@@ -1,5 +1,7 @@
 {% extends "base/default-page.html" %}
 
+{% block title %}{{event.name}} Event Leaderboard{% endblock %} 
+
 {% block content %}
 <style>
     .dashboard-box {
@@ -49,17 +51,14 @@
     }
 </style>
 
-<title>
-    {% block title %}{{event.name}} Event Leaderboard{% endblock %} 
-</title>
 
 <h1 class="dashboard-box">
     {{event.name}} Event Leaderboard
 </h1>
 
-<div class="ui grid no-margin">
+<div>
     {% if event.type == "team" %}
-    <div class="two column row">
+    <div class="ui stackable tablet two column row grid">
         <div class="column">
             <table class="ui table">
                 <thead>
@@ -69,6 +68,67 @@
                     </tr>
                 </thead>
             </table>
+            <div class="table-container">
+                <table class="ui inverted table">
+                    <thead style="background-color:rgb(77, 114, 216);">
+                        <tr>
+                            <th scope="col" style="color: rgb(255, 255, 255); width: 2rem;">Raking</th>
+                            <th scope="col" style="color: rgb(255, 255, 255); width: 2rem;">Team</th>
+                            <th></th>
+                            <th></th>
+                            <th scope="col" class="left-aligned" style="color: rgb(255, 255, 255);">Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for team in teams_transaction %}
+                        {% set table_color = "rgb(210, 210, 210)" %}
+                        {% if loop.index % 2 != 0 %}
+                            {% set table_color = "rgb(230, 230, 230)"  %}
+                        {% endif %}
+                        <tr style="color: rgb(0, 0, 0); background-color: {{ table_color }}">
+
+                            <td>
+                                {% if loop.index == 1 %}
+                                <i class="medal icon" style="color:#FFD700; font-size: 24px; text-shadow: 0 0 3px #000"></i>
+                                {% elif loop.index == 2 %}
+                                <i class="medal icon" style="color: #C0C0C0; font-size: 24px; text-shadow: 0 0 3px #000"></i>
+                                {% elif loop.index == 3 %}
+                                <i class="medal icon" style="color: #CD7F32; font-size: 24px; text-shadow: 0 0 3px #000"></i>
+                                {% else %}
+                                <div style="font-size: 18px; margin-left:10px">{{ loop.index }}</div>
+                                {% endif %}
+                            </td>
+                            <td class="single line">
+                                {% for organization in team.organizations %}
+                                <span class="ui picture">
+                                    <img src="{{ organization.get_logo_url() }}" style="width: 35px; height: 35px;">
+                                </span>
+                                {% endfor %}
+                                <span></span>
+                            </td>
+                            <td>
+                                <span class="ui picture">
+                                    <img src="{{ team.team.get_logo_url() }}"
+                                        style="width: 35px; height: 35px;">
+                                </span>
+                            </td>
+                            <td>
+                                
+                                    <div style="font-weight: bold;">{{ team.team.name }}</div>
+                                    <div>{{ team.organizations | join(' / ', attribute='name')  }}</div>
+                                
+                            </td>
+                            
+                            <td class="right-aligned">
+                            {{ 0 if not team.total_score else team.total_score }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+
         </div>
         <div class="column">
             <table class="ui table">
@@ -85,91 +145,7 @@
                     </tr>
                 </thead>
             </table>
-        </div>
-    </div>
 
-    <div class="two column row">
-        <div class="column">
-            <div class="table-container">
-                <table class="ui inverted table">
-                    <thead style="background-color:rgb(77, 114, 216);">
-                        <tr>
-                            <th scope="col" style="color: rgb(255, 255, 255); width: 2rem;">Raking</th>
-                            <th scope="col" style="color: rgb(255, 255, 255); width: 2rem;">Team</th>
-                            <th></th>
-                            <th></th>
-                            <th scope="col" class="left-aligned" style="color: rgb(255, 255, 255);">Score</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for team in teams_transaction %}
-                        {% if loop.index % 2 != 0 %}
-                        <tr style="color: rgb(0, 0, 0); background-color: rgb(230, 230, 230)">
-                            {% else %}
-                        <tr style="color: rgb(0, 0, 0); background-color: rgb(210, 210, 210)">
-                            {% endif %}
-
-                            <td>
-                                {% if loop.index == 1 %}
-                                <i class="medal icon" style="color:#FFD700; font-size: 24px; text-shadow: 0 0 3px #000"></i>
-                                {% elif loop.index == 2 %}
-                                <i class="medal icon" style="color: #C0C0C0; font-size: 24px; text-shadow: 0 0 3px #000"></i>
-                                {% elif loop.index == 3 %}
-                                <i class="medal icon" style="color: #CD7F32; font-size: 24px; text-shadow: 0 0 3px #000"></i>
-                                {% else %}
-                                <div style="font-size: 18px; margin-left:10px">{{ loop.index }}</div>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if team.organization_id %}
-                                <span class="ui picture header">
-                                    <img src="{{ team.organization_image }}"
-                                        style="width: 35px; height: 35px;">
-                                </span>
-                                <span></span>
-                                {% else %}
-                                <div>
-                                    No Organization
-                                </div>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if team.team_id and team.organization_id%}
-                                <span class="ui picture header">
-                                    <img src="{{ team.team_image }}"
-                                        style="width: 35px; height: 35px;">
-                                </span>
-                                {% else %}
-                                <div>
-                                    No Team
-                                </div>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if team.team_id %}
-                                <span>
-                                    <div style="font-weight: bold;">{{ team.name }}</div>
-                                    <div>{{ team.organization_name }}</div>
-                                </span>
-                                {% else %}
-                                <div>
-                                    No Team
-                                </div>
-                                {% endif %}
-                            </td>
-                            
-                            {% if not team.total_score %}
-                            <td class="left-aligned">0</td>
-                            {% else %}
-                            <td class="left-aligned">{{ team.total_score }}</td>
-                            {% endif %}
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="column">
             <div class="table-container">
                 <table class="ui inverted table">
                     <thead style="background-color:rgb(77, 114, 216);">
@@ -244,6 +220,8 @@
             </div>
         </div>
     </div>
+
+    
     {% else %}
     <div class="one column row">
         <div class="column">
