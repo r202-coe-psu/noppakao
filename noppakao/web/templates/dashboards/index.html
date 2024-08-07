@@ -49,9 +49,13 @@
     }
 </style>
 
-<div class="dashboard-box">
-    Leaderboard
-</div>
+<title>
+    {% block title %}{{event.name}} Event Leaderboard{% endblock %} 
+</title>
+
+<h1 class="dashboard-box">
+    {{event.name}} Event Leaderboard
+</h1>
 
 <div class="ui grid no-margin">
     {% if event.type == "team" %}
