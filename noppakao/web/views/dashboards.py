@@ -24,7 +24,7 @@ module = Blueprint("dashboards", __name__, url_prefix="/dashboard")
 
 
 @module.route("/<event_id>/", methods=["GET", "POST"])
-@caches.cache.cached(timeout=60)
+# @caches.cache.cached(timeout=60)
 def index(event_id):
     challenges = models.Challenge.objects()
     teams = models.Team.objects(status="active")
@@ -121,12 +121,14 @@ def index(event_id):
         users_transaction = list(models.Transaction.objects.aggregate(pipeline_user))
         users_transaction_list = []
         for user_info in users_transaction:
-            user_id = ObjectId(user_info["user_id"])
-            user = models.User.objects(id=user_id).first()
+            user = models.User.objects(id=user_info["user_id"]).first()
+            team = models.Team.objects(id=user_info["team_id"]).first()
 
             user_info["organization_id"] = user.organization.id
             user_info["organization_name"] = user.organization.name
             user_info["organization_image"] = user.organization.get_logo_url()
+            user_info["team_image"] = team.get_logo_url()
+
             users_transaction_list.append(user_info)
         users_transaction = users_transaction_list
 
@@ -135,10 +137,14 @@ def index(event_id):
         for team_info in teams_transaction:
             user_id = ObjectId(team_info["members"][0].id)
             user = models.User.objects(id=user_id).first()
+            team = models.Team.objects(id=team_info["team_id"]).first()
+
 
             team_info["organization_id"] = user.organization.id
             team_info["organization_name"] = user.organization.name
             team_info["organization_image"] = user.organization.get_logo_url()
+            team_info["team_image"] = team.get_logo_url()
+
             teams_transaction_list.append(team_info)
         teams_transaction = teams_transaction_list
 

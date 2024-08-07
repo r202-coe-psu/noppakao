@@ -30,7 +30,7 @@
                                 <div class="image"
                                     style="width: 300px; height: 300px; overflow: hidden; border-radius: 50%;">
                                     <img class="ui big circular image"
-                                        src="{{ url_for('teams.get_image', team_id=team.id) }}"
+                                        src="{{ url_for('teams.get_image', team_id=team.id, filename=team.picture.filename) }}"
                                         style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
                                 </div>
                             </div>

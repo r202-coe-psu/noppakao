@@ -122,7 +122,7 @@
                             <td>
                                 {% if team.team_id and team.organization_id%}
                                 <span class="ui picture header">
-                                    <img src="{{url_for('teams.get_image',team_id=team.team_id)}}"
+                                    <img src="{{ team.team_image }}"
                                         style="width: 35px; height: 35px;">
                                 </span>
                                 {% else %}
@@ -193,7 +193,7 @@
                             <td>
                                 {% if user.team_id %}
                                 <span class="ui picture header">
-                                    <img src="{{url_for('teams.get_image',team_id=user.team_id)}}"
+                                    <img src="{{ user.team_image }}"
                                         style="width: 35px; height: 35px;">
                                 </span>
                                 {% else %}

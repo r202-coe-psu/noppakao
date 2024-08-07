@@ -180,8 +180,8 @@ def recover(team_id):
     return redirect(url_for("teams.index"))
 
 
-@module.route("/<team_id>/picture")
-def get_image(team_id):
+@module.route("/<team_id>/picture/<filename>")
+def get_image(team_id, filename=""):
     response = Response()
     response.status_code = 404
     team = models.Team.objects.get(id=team_id)

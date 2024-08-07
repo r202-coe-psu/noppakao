@@ -31,6 +31,7 @@ class Team(me.Document):
             return url_for(
                 "teams.get_image",
                 team_id=self.id,
+                filename=self.picture.filename,
             )
         else:
             return url_for("static", filename="images/hacker.png")
