@@ -61,7 +61,7 @@ def create_or_edit(team_id):
             user.get_fullname()
             + (f" ( {user.organization.name} )" if user.organization else ""),
         )
-        for user in models.User.objects(status="active")
+        for user in models.User.objects(status="active", roles=["user"])
         if user.organization
     ]
     if not form.validate_on_submit():
@@ -72,7 +72,8 @@ def create_or_edit(team_id):
         )
 
     new_members = [
-        models.User.objects(id=user_id).first() for user_id in form.members.data
+        models.User.objects(id=user_id, roles=["user"]).first()
+        for user_id in form.members.data
     ]
 
     # แก้ไขทีม แต่ห้ามลบหัวหน้าทีมออก
