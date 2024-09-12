@@ -264,7 +264,7 @@
                             {% endif %}
                             <td>{{ loop.index }}</td>
                             <td>{{ user.display_name }}</td>
-                            {#<td>
+                            <td>
                                 {% if user.organization_id %}
                                 <span class="ui picture header">
                                     <img src="{{ user.organization_image }}"
@@ -278,7 +278,7 @@
                             </td>
                             <td>
                                 <span>{{ user.organization_name }}</span>
-                            </td>#}
+                            </td>
                             {% if not user.total_score %}
                             <td class="left-aligned">0</td>
                             {% else %}
