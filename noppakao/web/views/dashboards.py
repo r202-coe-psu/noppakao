@@ -185,8 +185,8 @@ def index(event_id):
             user_id = ObjectId(user_info["user_id"])
             user = models.User.objects(id=user_id).first()
 
-            user_info["organization_id"] = user.organization.id
-            user_info["organization_name"] = user.organization.name
+            # user_info["organization_id"] = user.organization.id
+            # user_info["organization_name"] = user.organization.name
             user_info["organization_image"] = user.organization.get_logo_url()
             users_transaction_list.append(user_info)
         users_transaction = users_transaction_list
