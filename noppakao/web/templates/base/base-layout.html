@@ -5,6 +5,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  <link rel="stylesheet" type="text/css"
+    href="{{ url_for('static', filename='node_modules/@phosphor-icons/web/src/regular/style.css') }}">
+  <link rel="stylesheet" type="text/css"
+    href="{{ url_for('static', filename='node_modules/@phosphor-icons/web/src/fill/style.css') }}">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="{{ url_for('static', filename='node_modules/jquery/dist/jquery.min.js') | add_date_url }}"></script>
   <script
@@ -12,9 +17,6 @@
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <link rel="stylesheet" type="text/css" media="all"
     href="{{ url_for('static', filename='node_modules/fomantic-ui-css/semantic.min.css') | add_date_url }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') | add_date_url }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/color.css') | add_date_url }}">
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/color.css') | add_date_url }}">
   {% block default_head %}{% endblock %}
   {% block additional_head %}{% endblock %}
 
