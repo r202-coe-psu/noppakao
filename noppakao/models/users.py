@@ -31,25 +31,23 @@ class User(me.Document, UserMixin):
         required=True, default=datetime.datetime.now, auto_now=True
     )
 
+    def check_team_event(self, event_id):
+        from noppakao import models
+
+        event = models.Event.objects(id=event_id).first()
+        team = models.Team.objects(event=event, members__in=[self]).first()
+        if team:
+            return True
+
+        return None
+
     def check_join_event(self, event_id):
         from noppakao import models
 
         event = models.Event.objects(id=event_id).first()
-
-        if event.type == "team":
-            team = models.Team.objects(
-                members__in=[current_user], status="active"
-            ).first()
-            event_competitor = models.EventCompetitor.objects(
-                event=event, team=team
-            ).first()
-            if event_competitor:
-                return True
-
-        elif event.type == "solo":
-            event_role = models.EventRole.objects(user=self, event=event).first()
-            if event_role:
-                return True
+        event_role = models.EventRole.objects(user=self, event=event).first()
+        if event_role:
+            return True
 
         return None
 

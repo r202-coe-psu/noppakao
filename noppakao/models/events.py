@@ -12,7 +12,7 @@ EVENT_TYPE = ["solo", "team"]
 class Event(me.Document):
     meta = {"collection": "events"}  # ตั้งชื่อ collection
 
-    code = me.StringField(required=True, unique=True)
+    code = me.StringField(required=True, unique=True, max_length=256)
     name = me.StringField(required=True, max_length=256)  # หัวข้อโจทย์
     description = me.StringField()  # รายละเอียด
     type = me.StringField(required=True, choices=EVENT_TYPE, default="solo")
@@ -31,7 +31,10 @@ class Event(me.Document):
     )
     register_ended_date = me.DateTimeField(required=True, default=datetime.datetime.now)
 
-    publish_date = me.DateTimeField(required=True, default=datetime.datetime.now)
+    publish_started_date = me.DateTimeField(
+        required=True, default=datetime.datetime.now
+    )
+    publish_ended_date = me.DateTimeField(required=True, default=datetime.datetime.now)
 
     status = me.StringField(default="active", choices=STATUS_CHOICES)  # บอกถึงสถานะ
     created_date = me.DateTimeField(
@@ -242,7 +245,8 @@ class EventCompetitor(me.Document):
     meta = {"collection": "event_competitors"}
     event = me.ReferenceField("Event", dbref=True, required=True)
 
-    team = me.ReferenceField("Team", dbref=True, required=True)
+    team = me.ReferenceField("Team", dbref=True)
+    team_name = me.StringField(default="")
 
     status = me.StringField(default="active", choices=STATUS_CHOICES)  # บอกถึงสถานะ
     created_date = me.DateTimeField(
