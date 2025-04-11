@@ -77,7 +77,7 @@ def create_event(admin):
         ended_date=datetime.datetime.now() + datetime.timedelta(days=1),
         register_started_date=datetime.datetime.now(),
         register_ended_date=datetime.datetime.now() + datetime.timedelta(days=1),
-        publish_date=datetime.datetime.now(),
+        publish_started_date=datetime.datetime.now(),
         created_by=admin,
         updated_by=admin,
     )

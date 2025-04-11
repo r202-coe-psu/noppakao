@@ -34,7 +34,6 @@ def index(event_id):
     now = datetime.now()
 
     if event.type == "team":
-
         pipeline_user = [
             {"$match": {"event": ObjectId(event_id)}},
             {
@@ -117,9 +116,6 @@ def index(event_id):
             user = models.User.objects(id=user_info["user_id"]).first()
             team = models.Team.objects(id=user_info["team_id"]).first()
 
-            user_info["organization_id"] = user.organization.id
-            user_info["organization_name"] = user.organization.name
-            user_info["organization_image"] = user.organization.get_logo_url()
             user_info["team_image"] = team.get_logo_url()
 
             users_transaction_list.append(user_info)

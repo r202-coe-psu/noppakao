@@ -145,19 +145,40 @@ def create_or_edit_challenge(event_id, event_challenge_id):
 @acl.roles_required("admin")
 def create_or_edit(event_id):
     form = forms.events.EventForm()
-
     if event_id:
         event = models.events.Event.objects(id=event_id).first()
         form = forms.events.EventForm(obj=event)
 
+    if not event_id:
+        form.publish_started_date.data = datetime.datetime.now().replace(
+            microsecond=0, second=0, minute=0, hour=0
+        )
+
+        form.publish_ended_date.data = datetime.datetime.now().replace(
+            microsecond=0, second=0, minute=0, hour=0
+        ) + datetime.timedelta(days=7)
+
+        form.register_started_date.data = datetime.datetime.now().replace(
+            microsecond=0, second=0
+        )
+        form.register_ended_date.data = datetime.datetime.now().replace(
+            microsecond=0, second=0
+        ) + datetime.timedelta(minutes=30)
+
+        form.ended_date.data = datetime.datetime.now().replace(
+            microsecond=0, second=0, minute=0, hour=0
+        ) + datetime.timedelta(days=1)
+
+        form.started_date.data = datetime.datetime.now().replace(
+            microsecond=0, second=0, minute=0, hour=0
+        )
+
     if not form.validate_on_submit():
-        print(form.errors)
         return render_template("/admin/events/create_or_edit.html", form=form)
 
     if not event_id:
         event = models.Event()
     form.populate_obj(event)
-
     if not event_id:
         event.created_by = current_user._get_current_object()
 
