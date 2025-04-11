@@ -9,6 +9,7 @@ STATUS_CHOICES = ["active", "disactive"]
 class Team(me.Document):
     meta = {"collection": "teams"}
 
+    event = me.ReferenceField("Event", dbref=True)
     name = me.StringField(required=True, max_length=255)
     organization = me.StringField()
     picture = me.FileField()
