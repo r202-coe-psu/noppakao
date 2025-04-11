@@ -3,9 +3,3 @@ import datetime
 from ... import acl
 
 module = Blueprint("admin", __name__, url_prefix="/admin")
-
-
-@module.route("/")
-@acl.roles_required("admin")
-def index():
-    return redirect(url_for("admin.dashboards.index"))
