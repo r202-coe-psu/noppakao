@@ -2,7 +2,7 @@
 {% import '/base/html-renderer.html' as renderer %}
 
 {% block content %}
-<div class="ui fluid container">
+<div class="ui container">
     <div class="ui segment">
         <h2 class="ui header">
             {% if 'create' in request.path %}
@@ -12,7 +12,7 @@
             {% endif %}
         </h2>
     </div>
-    <form class="ui form" enctype="multipart/form-data" method="post">
+    <form class="ui form" method="post">
         {{ form.csrf_token }}
 
         <div class="field">
@@ -34,13 +34,23 @@
             {{ form.flag_prefix.label }}
             {{ form.flag_prefix(class="ui input fluid") }}
         </div>
-
-        <div class="field">
-            <label>{{ form.publish_date.label}}</label>
-            <div class="ui calendar" id="{{ form.publish_date.id }}">
-                <div class="ui input left icon">
-                    <i class="calendar icon"></i>
-                    {{ form.publish_date }}
+        <div class="two fields">
+            <div class="field">
+                <label>{{ form.publish_started_date.label}}</label>
+                <div class="ui calendar" id="{{ form.publish_started_date.id }}">
+                    <div class="ui input left icon">
+                        <i class="calendar icon"></i>
+                        {{ form.publish_started_date }}
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <label>{{ form.publish_ended_date.label}}</label>
+                <div class="ui calendar" id="{{ form.publish_ended_date.id }}">
+                    <div class="ui input left icon">
+                        <i class="calendar icon"></i>
+                        {{ form.publish_ended_date }}
+                    </div>
                 </div>
             </div>
         </div>
@@ -76,6 +86,7 @@
                     </div>
                 </div>
             </div>
+            
             <div class="field">
                 <label>{{ form.ended_date.label }}</label>
                 <div class="ui calendar" id="{{ form.ended_date.id }}">
@@ -96,10 +107,11 @@
             {{ form.status.label }}
             {{ form.status(class="ui dropdown fluid") }}
         </div>
-
-        <button class="ui primary button" type="submit">
-            <i class="save icon"></i> Save
-        </button>
+        <div style="display: flex;justify-content: flex-end;">
+            <button class="ui primary button " type="submit">
+                <i class="save icon"></i> Save
+            </button>
+        </div>
     </form>
 </div>
 {% endblock content %}
@@ -108,35 +120,44 @@
 
 <script type="text/javascript">
 
-$('#publish_date').calendar({
+$('#publish_started_date').calendar({
     type: 'datetime',
-    formatter: { datetime: 'YYYY-MM-DD HH:mm:ss' },
+    formatter: { datetime: 'DD-MM-YYYY HH:mm:ss' },
     ampm: false,
     monthFirst: false,
+    endCalendar: $('#publish_ended_date'),
+});
+
+$('#publish_ended_date').calendar({
+    type: 'datetime',
+    formatter: { datetime: 'DD-MM-YYYY HH:mm:ss' },
+    ampm: false,
+    monthFirst: false,
+    startCalendar: $('#publish_started_date'),
 });
 
 $('#register_started_date').calendar({
     type: 'datetime',
-    endCalendar: $('#register_ended_date'),
-    formatter: { datetime: 'YYYY-MM-DD HH:mm:ss' },
+    formatter: { datetime: 'DD-MM-YYYY HH:mm:ss' },
     ampm: false,
     monthFirst: false,
+    endCalendar: $('#register_ended_date'),
 });
 
 $('#register_ended_date').calendar({
     type: 'datetime',
     ampm: false,
     monthFirst: false,
+    formatter: { datetime: "DD-MM-YYYY HH:mm:ss" },  
     startCalendar: $('#register_started_date'),
-    formatter: { datetime: "YYYY-MM-DD HH:mm:ss" },  
 });
 
 $('#started_date').calendar({
     type: 'datetime',
-    endCalendar: $('#ended_date'),
-    formatter: { datetime: 'YYYY-MM-DD HH:mm:ss' },
+    formatter: { datetime: 'DD-MM-YYYY HH:mm:ss' },
     ampm: false,
     monthFirst: false,
+    endCalendar: $('#ended_date'),
 });
 
 $('#ended_date').calendar({
@@ -144,7 +165,7 @@ $('#ended_date').calendar({
     ampm: false,
     monthFirst: false,
     startCalendar: $('#started_date'),
-    formatter: { datetime: "YYYY-MM-DD HH:mm:ss" },  
+    formatter: { datetime: "DD-MM-YYYY HH:mm:ss" },  
 });
 
 </script>

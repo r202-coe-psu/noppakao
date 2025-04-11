@@ -1,0 +1,54 @@
+{% extends "base/default-page.html" %}
+{% import "components/modals.html" as render_modal %}
+
+{% block content %}
+<h2 class="ui dividing header">Event {{ event.name }}</h2>
+  {% if not current_user.check_team_event(event.id) %}
+  <div class="flex justify-end">
+    <a class="btn btn-primary" href="{{ url_for('events.create_team',event_id=event.id) }}">
+      <i class="ph ph-plus"></i> Create Team
+    </a>
+  </div>
+  {% endif %}
+  <div class="grid grid-cols-5">
+    {% for team in teams %}
+    <div class="card bg-base-100 w-96 shadow-sm">
+      <div class="card-body">
+        <div class="flex justify-end">
+          <span class="relative flex size-3">
+              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
+              <span class="relative inline-flex size-3 rounded-full bg-green-500"></span>
+          </span>
+        </div>
+         <div class="card-title justify-center text-3xl">
+           <i class="ph ph-users"></i>{{ team.name }}
+         </div>
+         <div class="flex-col">
+           {% for member in team.members %}
+           <div class="text-2xl">
+            <i class="ph ph-user"></i>
+             {{ member.get_fullname() }}
+           </div>
+           {% endfor %}
+         </div>
+      </div>
+      {% if not current_user.check_team_event(event.id) %}
+      {{ render_modal.ModalJoinTeam( "modal_" + (team.id|string),url_for('events.join_team', event_id=event.id,team_id=team.id ) ) }}
+      <button onclick="modal_{{ team.id }}.showModal()" type="button"
+      class="btn btn-primary join-item border border-slate-300 ">
+      เข้าร่วมทีม
+      </button>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+{% if current_user.check_team_event(event.id) %}
+  <div class="flex justify-end mt-2">
+    <a class="btn btn-primary" href="{{ url_for('events.challenge',event_id=event.id) }}"> 
+      Go To Challenge
+    </a>
+  </div>
+{% endif %}
+
+{% endblock %}

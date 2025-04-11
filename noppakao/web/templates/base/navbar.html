@@ -1,29 +1,62 @@
-<div class="ui large top fixed menu" style="background-color: rgb(50, 78, 156); border-radius: 0 !important;">
-    <div class="item" style="padding: 0.5rem !important;">
-        <img class="ui image" width="40" src="{{ url_for('static', filename='images/coe.png') }}" alt="R202 Logo"
-            style="margin-left: 0.5rem; background-color: white; border-radius: 0.5rem;">
+<div class="bg-indigo-700 fixed top-0 z-10 w-full shadow-lg rounded-b-lg">
+    <div class="flex items-center justify-between p-4">
+        <!-- Logo Section -->
+        <div class="flex items-center space-x-2">
+            <img class="w-10 h-10 rounded-lg bg-white" src="{{ url_for('static', filename='images/coe.png') }}" alt="R202 Logo">
+            <!-- Sidebar Toggle -->
+             <div>
+                 <a class="launch icon item ml-4" >
+                     
+                 </a>
+             </div>
+             <div class="drawer">
+            <input id="my-drawer" type="checkbox" class="drawer-toggle" />
+            <div class="drawer-content">
+                <!-- Page content here -->
+                <label for="my-drawer" class=" drawer-button"><i class="content icon text-white"></i></label>
+            </div>
+            <div class="drawer-side">
+                <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+                <ul class="menu bg-indigo-700 text-base-content min-h-full w-80">
+                {% include "/base/sidebar.html" with context %}
+                </ul>
+            </div>
+            </div>
+        </div>
+        <!-- Menu Section -->
+        <div class="flex items-center space-x-6">
+            {% if now %}
+                {% if "dashboard" in request.url and now >= event.started_date and event.ended_date >= now %}
+                    <a href="{{ url_for('events.challenge', event_id=event.id) }}" class="text-white hover:text-gray-300">
+                        <i class="trophy icon text-white"></i> 
+                        <span class="text-white">
+                            Challenge
+                        </span>
+                    </a>
+                {% endif %}
+            {% endif %}
+            <a id="ip-address" class="text-white hover:text-gray-300">
+                <i class="tv icon text-white"></i> 
+                <span class="text-white">
+                    {{ request.headers.get("X-Forwarded-For", request.remote_addr) }}
+                </span>
+            </a>
+            <a  class="text-white hover:text-gray-300">
+                <span id="current-time" class="text-white"></span>
+            </a>
+            <a href="{{ url_for('accounts.logout') }}" class="text-white hover:text-gray-300">
+                <i class="power off icon text-red-500"></i> 
+                <span class="text-white">
+                    Logout
+                </span>
+            </a>
+        </div>
     </div>
-    <a class="launch icon item" style="gap: 10px; color: white;"><i class="content icon"></i></a>
-    <div class="right menu">
+</div>
 
-        {% if now %}
-        {% if "dashboard" in request.url and now >= event.started_date and event.ended_date >= now %} 
-        
-        <a class="item" style="color: white;" href="{{ url_for('events.challenge', event_id=event.id) }}"><i
-                class="trophy icon" style="color: rgb(255, 255, 255);"></i>Challenge</a>
-        {% endif %}
-        {% endif %}
-        <a id="ip-address" class="item" style="color: white;"><i class="tv icon"></i>
-            {{ request.headers.get("X-Forwarded-For", request.remote_addr) }}
-        </a>
-        <a id="current-time" class="item" style="color: white;"><i class="compass outline icon"></i><span></span></a>
-        <a class="item" style="color: white;" href="{{url_for('accounts.logout')}}"><i class="power off icon"
-                style="color: red;"></i>Logout</a>
-    </div>
-</div>
-<div class="ui vertical inverted sidebar large menu left" style="height: 100%;">
-    {% include "/base/sidebar.html" with context %}
-</div>
+<!-- Sidebar -->
+    
+
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -35,7 +68,6 @@
         $('.ui.dropdown').dropdown();
     });
 </script>
-
 
 <script type="text/javascript">
     function updateTime() {

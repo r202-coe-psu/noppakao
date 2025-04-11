@@ -2,40 +2,40 @@
 {% import '/base/html-renderer.html' as renderer %}
 
 {% block content %}
-
-
-<div class="ui segment" style="margin-top: 2rem;">
-    <h1 class="ui header">
-        {% if 'create' in request.path %}
-        <i class="plus icon"></i> Create Team
-        {% else %}
-        <i class="edit icon"></i> Edit Team
-        {% endif %}
-    </h1>
-</div>
-{% if error_msg %}
-<div class="ui red message"> {{ error_msg }}</div>
-{% endif %}
-<div class="ui segment">
-    <form method="POST" class="ui form" enctype="multipart/form-data">
-        {{ form.csrf_token }}
-
-        <div class="field">
-            {{ form.name.label }}
-            {{ form.name }}
-        </div>
-
-        <div class="field">
-            {{ form.members.label }}
-            {{ form.members(class="ui fluid search dropdown") }}
-        </div>
-
-        <div class="field">
-            {{ form.uploaded_picture.label }}
-            {{ form.uploaded_picture }}
-        </div>
-
-        <button class="ui primary button" type="submit">Submit</button>
-    </form>
+<div class="ui container">
+    <div class="ui segment" style="margin-top: 2rem;">
+        <h1 class="ui header">
+            {% if 'create' in request.path %}
+            <i class="plus icon"></i> Create Team
+            {% else %}
+            <i class="edit icon"></i> Edit Team
+            {% endif %}
+        </h1>
+    </div>
+    {% if error_msg %}
+    <div class="ui red message"> {{ error_msg }}</div>
+    {% endif %}
+    <div class="ui segment">
+        <form method="POST" class="ui form" enctype="multipart/form-data">
+            {{ form.csrf_token }}
+    
+            <div class="field">
+                {{ form.name.label }}
+                {{ form.name }}
+            </div>
+    
+            <div class="field">
+                {{ form.members.label }}
+                {{ form.members(class="ui fluid search dropdown") }}
+            </div>
+    
+            <div class="field">
+                {{ form.uploaded_picture.label }}
+                {{ form.uploaded_picture }}
+            </div>
+    
+            <button class="ui primary button" type="submit">Submit</button>
+        </form>
+    </div>
 </div>
 {% endblock %}

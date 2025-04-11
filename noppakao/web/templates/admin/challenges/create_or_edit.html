@@ -2,7 +2,7 @@
 {% import '/base/html-renderer.html' as renderer %}
 
 {% block content %}
-<div class="ui fluid container">
+<div class="ui container">
   <div class="ui segment">
     <h2 class="ui header">
       {% if 'create' in request.path %}
@@ -49,8 +49,9 @@
       {{ form.challenge_url.label }}
       {{ form.challenge_url(class="ui input") }}
     </div>
-
-    <button class="ui primary button" type="submit">Save</button>
+    <div style="display: flex;justify-content: flex-end;">
+      <button class="ui primary button" type="submit">Save</button>
+    </div>
   </form>
 </div>
 {% endblock %}

@@ -2,52 +2,57 @@
 {% import '/base/html-renderer.html' as renderer %}
 
 {% block content %}
-<form method="POST" class="ui form">
-  <div class="ui raised segment">
-    <h1 class="ui header">{{ "Edit" if "edit" in request.path else "Create" }} User</h1>
-    <div class="ui form">
-      {{ form.csrf_token }}
-      <div class="field">
-        {{ form.display_name.label }}
-        {{ form.display_name(class="ui dropdown") }}
+<div class="ui container">
+  <form method="POST" class="ui form">
+    <div class="ui segment">
+      <h1 class="ui header">{{ "Edit" if "edit" in request.path else "Create" }} User</h1>
       </div>
-      <div class="field">
-        {{ form.username.label }}
-        {{ form.username }}
-      </div>
-      <div class="field">
-        {{ form.roles.label }}
-        {{ form.roles(class="ui dropdown") }}
-      </div>
-      <div class="field">
-        {{ form.password.label }}
-        {{ form.password }}
-      </div>
-      <div class="field">
-        {{ form.confirm_password.label }}
-        {{ form.confirm_password }}
-      </div>
-      <div class="two fields">
+      <div class="ui form">
+        {{ form.csrf_token }}
         <div class="field">
-          {{ form.first_name.label }}
-          {{ form.first_name }}
+          {{ form.display_name.label }}
+          {{ form.display_name(class="ui dropdown") }}
         </div>
         <div class="field">
-          {{ form.last_name.label }}
-          {{ form.last_name }}
+          {{ form.username.label }}
+          {{ form.username }}
+        </div>
+        <div class="field">
+          {{ form.roles.label }}
+          {{ form.roles(class="ui dropdown") }}
+        </div>
+        <div class="field">
+          {{ form.password.label }}
+          {{ form.password }}
+        </div>
+        <div class="field">
+          {{ form.confirm_password.label }}
+          {{ form.confirm_password }}
+        </div>
+        <div class="two fields">
+          <div class="field">
+            {{ form.first_name.label }}
+            {{ form.first_name }}
+          </div>
+          <div class="field">
+            {{ form.last_name.label }}
+            {{ form.last_name }}
+          </div>
+        </div>
+        <div class="field">
+          {{ form.email.label }}
+          {{ form.email }}
+        </div>
+        {% if msg_error %}
+        <div class="ui negative message">
+          <div class="header">{{ msg_error }}</div>
+        </div>
+        {% endif %}
+        <div style="display: flex;justify-content: flex-end;">
+          <button type="submit" class="ui primary button">Submit</button>
         </div>
       </div>
-      <div class="field">
-        {{ form.email.label }}
-        {{ form.email }}
-      </div>
-      {% if msg_error %}
-      <div class="ui negative message">
-        <div class="header">{{ msg_error }}</div>
-      </div>
-      {% endif %}
-      <button type="submit" class="ui primary button">Submit</button>
-    </div>
-  </div>
-</form>
+    
+  </form>
+</div>
 {% endblock %}

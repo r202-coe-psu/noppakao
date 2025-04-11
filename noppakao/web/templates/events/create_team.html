@@ -3,33 +3,21 @@
 
 {% block content %}
 <div class="ui container">
-  <div class="ui segment">
+    <div class="ui segment">
     <h1 class="ui header">
-      {% if 'create' in request.path %}
       Create TEAM
-      {% else %}
-      Edit TEAM
-      {% endif %}
     </h1>
   </div>
-  
   {% if error_msg %}
   <div class="ui red message"> {{ error_msg }}</div>
   {% endif %}
-  
-  
-  <div class="ui segment">
+   <div class="ui segment">
     <form method="POST" class="ui form" enctype="multipart/form-data">
       {{ form.csrf_token }}
   
       <div class="field">
         {{ form.name.label }}
         {{ form.name }}
-      </div>
-  
-      <div class="field">
-        {{ form.members.label }}
-        {{ form.members(class="ui fluid search dropdown") }}
       </div>
   
       <div class="field">

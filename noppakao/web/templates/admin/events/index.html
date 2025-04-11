@@ -3,13 +3,10 @@
 {% block content %}
 <div class="ui fluid container">
   <h2 class="ui dividing header">Event List</h2>
-
   <a class="ui primary labeled icon right floated button" href="{{ url_for('admin.events.create_or_edit') }}"
     style="color: white;">
     <i class="add icon"></i> Create Event
   </a>
-
-
   <div class="ui four stackable cards">
     {% for event in events %}
     <div class="card">
@@ -28,22 +25,20 @@
           <h3 class="ui header">Event Details</h3>
           <div class="ui list">
             <div class="item">
-              <i class="file alternate outline icon"></i>
               <div class="content">
-                <strong>Description:</strong> {{ event.description }}
+                <strong><i class="ph ph-file-text"></i>Description:</strong> {{ event.description }}
               </div>
             </div>
             <div class="item">
-              <i class="calendar outline icon"></i>
+              
               <div class="content">
-                <strong>Publish Date:</strong> <span style="color: #2185d0;">{{ event.publish_date.strftime('%B %d, %Y
+                <strong><i class="ph ph-calendar"></i> Publish Date:</strong> <span style="color: #2185d0;">{{ event.publish_started_date.strftime('%B %d, %Y
                   %I:%M %p') }}</span>
               </div>
             </div>
             <div class="item">
-              <i class="calendar check outline icon"></i>
               <div class="content">
-                <strong>Join Date:</strong> <span style="color: #21ba45;"> {% if event.started_date.strftime("%m") ==
+                <strong><i class="ph ph-calendar-check"></i>Join Date:</strong> <span style="color: #21ba45;"> {% if event.started_date.strftime("%m") ==
                   event.ended_date.strftime("%m") %}
                   {{ event.started_date.strftime("%d") }} - {{ event.ended_date.strftime("%d %b %Y") }}
                   {% else %}
@@ -53,9 +48,8 @@
               </div>
             </div>
             <div class="item">
-              <i class="calendar plus outline icon"></i>
               <div class="content">
-                <strong>Register Event Date:</strong>
+                <strong><i class="ph ph-calendar-plus"></i>Register Event Date:</strong>
                 <span style="color: #fb7d08;">
                   {% if event.register_started_date.strftime("%d") == event.register_ended_date.strftime("%d") %}
                   <!-- Single day event, show only time -->

@@ -1,25 +1,27 @@
 {% extends "/base/default-page.html" %}
 
 {% block content %}
-<div class="ui segment">
-    <div class="ui segment">
-        <h2 class="ui header">
-            {% if 'create' in request.path %}
-            Create Category
-            {% else %}
-            Edit Category
-            {% endif %}
-        </h2>
-    </div>
-    <form method="POST" class="ui form" enctype="multipart/form-data">
-        {{ form.csrf_token }}
+<div class="ui container">
 
-        <div class="field">
-            {{ form.name.label.text }}
-            {{ form.name }}
+        <div class="ui segment">
+            <h2 class="ui header">
+                {% if 'create' in request.path %}
+                Create Category
+                {% else %}
+                Edit Category
+                {% endif %}
+            </h2>
         </div>
-
-        <button class="ui primary button" type="submit">Submit</button>
-    </form>
+        <form method="POST" class="ui form" enctype="multipart/form-data">
+            {{ form.csrf_token }}
+    
+            <div class="field">
+                {{ form.name.label.text }}
+                {{ form.name }}
+            </div>
+            <div style="display: flex;justify-content: flex-end;">
+                <button class="ui primary button" type="submit">Submit</button>
+            </div>
+        </form>
 </div>
 {% endblock %}

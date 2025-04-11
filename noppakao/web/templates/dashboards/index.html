@@ -75,7 +75,6 @@
                             <th scope="col" style="color: rgb(255, 255, 255); width: 2rem;">Raking</th>
                             <th scope="col" style="color: rgb(255, 255, 255); width: 2rem;">Team</th>
                             <th></th>
-                            <th></th>
                             <th scope="col" class="left-aligned" style="color: rgb(255, 255, 255);">Score</th>
                         </tr>
                     </thead>
@@ -98,14 +97,7 @@
                                 <div style="font-size: 18px; margin-left:10px">{{ loop.index }}</div>
                                 {% endif %}
                             </td>
-                            <td class="single line">
-                                {% for organization in team.organizations %}
-                                <span class="ui picture">
-                                    <img src="{{ organization.get_logo_url() }}" style="width: 35px; height: 35px;">
-                                </span>
-                                {% endfor %}
-                                <span></span>
-                            </td>
+
                             <td>
                                 <span class="ui picture">
                                     <img src="{{ team.team.get_logo_url() }}"
@@ -113,10 +105,8 @@
                                 </span>
                             </td>
                             <td>
-                                
-                                    <div style="font-weight: bold;">{{ team.team.name }}</div>
-                                    <div>{{ team.organizations | join(' / ', attribute='name')  }}</div>
-                                
+                            <div style="font-weight: bold;">{{ team.team.name }}</div>
+                            <div>{{ team.organizations | join(' / ', attribute='name')  }}</div>
                             </td>
                             
                             <td class="right-aligned">
@@ -155,7 +145,6 @@
                             <th scope="col" style="color: rgb(255, 255, 255); width: 2rem;">Name</th>
                             <th scope="col" style="color: rgb(255, 255, 255); width: 2rem;">Team</th>
                             <th></th>
-                            <th></th>
                             <th scope="col" class="left-aligned" style="color: rgb(255, 255, 255);">Score</th>
                         </tr>
                     </thead>
@@ -171,18 +160,6 @@
                             </td>
                             <td>{{ user.display_name }} </td>
                             <td>
-                                {% if user.organization_id %}
-                                <span class="ui picture header">
-                                    <img src="{{ user.organization_image }}"
-                                        style="width: 35px; height: 35px;">
-                                </span>
-                                {% else %}
-                                <div>
-                                    No Organization
-                                </div>
-                                {% endif %}
-                            </td>
-                            <td>
                                 {% if user.team_id %}
                                 <span class="ui picture header">
                                     <img src="{{ user.team_image }}"
@@ -196,10 +173,9 @@
                             </td>
                             
                             <td>
-                                {% if user.team and  user.organization_name %}
+                                {% if user.team  %}
                                 <span>
                                     <div style="font-weight: bold;">{{ user.team }}</div>
-                                    <div>{{ user.organization_name }}</div>
                                 </span>
                                 {% else %}
                                 <div>
