@@ -1,4 +1,4 @@
-APP_TITLE = "RABBITS CTF"
+APP_TITLE = "COE CTF"
 MONGODB_DB = "noppakaodb"
 OAUTH_CACHE_TYPE = "simple"
 CACHE_TYPE = "SimpleCache"
