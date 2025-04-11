@@ -14,11 +14,6 @@ BaseEventForm = model_form(
         "name": {"label": "Name"},
         "description": {"label": "Description"},
         "flag_prefix": {"label": "Flag Prefix"},
-        # "started_date": {"label": "Start Date"},
-        # "ended_date": {"label": "End Date"},
-        # "register_started_date": {"label": "Register Started Date"},
-        # "register_ended_date": {"label": "Register End Date"},
-        # "publish_date": {"label": "Publish Date"},
     },
 )
 
@@ -27,38 +22,44 @@ class EventForm(BaseEventForm):
     type = fields.SelectField("เลือกประเภท", choices=models.events.EVENT_TYPE)
     status = fields.SelectField("Status", choices=models.events.STATUS_CHOICES)
 
-    publish_date = fields.DateTimeField(
-        "Publish Date",
+    publish_started_date = fields.DateTimeField(
+        "Publish Start Date",
         validators=[validators.Optional()],
-        format="%Y-%m-%d %H:%M:%S",
+        format="%d-%m-%Y %H:%M:%S",
+        widget=widgets.TextInput(),
+    )
+    publish_ended_date = fields.DateTimeField(
+        "Publish End Date",
+        validators=[validators.Optional()],
+        format="%d-%m-%Y %H:%M:%S",
         widget=widgets.TextInput(),
     )
 
     register_started_date = fields.DateTimeField(
         "Register Started Date",
         validators=[validators.Optional()],
-        format="%Y-%m-%d %H:%M:%S",
+        format="%d-%m-%Y %H:%M:%S",
         widget=widgets.TextInput(),
     )
 
     register_ended_date = fields.DateTimeField(
         "Register End Date",
         validators=[validators.Optional()],
-        format="%Y-%m-%d %H:%M:%S",
+        format="%d-%m-%Y %H:%M:%S",
         widget=widgets.TextInput(),
     )
 
     started_date = fields.DateTimeField(
         "Started Date",
         validators=[validators.Optional()],
-        format="%Y-%m-%d %H:%M:%S",
+        format="%d-%m-%Y %H:%M:%S",
         widget=widgets.TextInput(),
     )
 
     ended_date = fields.DateTimeField(
         "Ended Date",
         validators=[validators.Optional()],
-        format="%Y-%m-%d %H:%M:%S",
+        format="%d-%m-%Y %H:%M:%S",
         widget=widgets.TextInput(),
     )
 

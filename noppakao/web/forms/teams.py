@@ -29,3 +29,29 @@ class TeamsForm(BaseTeamsForm):
         ],
     )
     members = fields.SelectMultipleField("Members")
+
+
+BaseTeamsEventForm = model_form(
+    models.Team,
+    FlaskForm,
+    exclude=[
+        "created_by",
+        "created_date",
+        "last_updated_by",
+        "updated_date",
+        "score",
+        "status",
+        "picture",
+        "members",
+    ],
+    field_args={"name": {"label": "Team name"}},
+)
+
+
+class TeamsEventForm(BaseTeamsEventForm):
+    uploaded_picture = file.FileField(
+        "Upload team image (png or jpg) , Recommended image size: 250(px) x 230(px)",
+        validators=[
+            file.FileAllowed(["png", "jpg", "jpeg"], "You can use only jpg , png"),
+        ],
+    )
