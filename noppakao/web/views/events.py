@@ -40,37 +40,51 @@ def index():
     )
 
 
+@module.route("/<event_id>/joiner", methods=["GET", "POST"])
+@login_required
+def joiner(event_id):
+    event = models.Event.objects.get(id=event_id)
+    teams = models.Team.objects(event=event)
+    return render_template("events/joiner.html", event=event, teams=teams)
+
+
+@module.route("/<event_id>/create_team", methods=["GET", "POST"])
+@login_required
+def create_team(event_id):
+    event = models.Event.objects.get(id=event_id)
+    form = forms.teams.TeamsEventForm()
+    if not form.validate_on_submit():
+        print(form.errors)
+        return render_template("events/create_team.html", form=form)
+    team = models.Team()
+    form.populate_obj(team)
+
+    if form.uploaded_picture.data:
+        if not team.picture:
+            team.picture.put(
+                form.uploaded_picture.data,
+                filename=form.uploaded_picture.data.filename,
+                content_type=form.uploaded_picture.data.content_type,
+            )
+
+    team.members.append(current_user._get_current_object())
+    team.event = event
+    team.save()
+    return redirect(url_for("events.joiner", event_id=event.id))
+
+
 @module.route("/<event_id>/join", methods=["GET", "POST"])
 @login_required
 def join(event_id):
     event = models.Event.objects(id=event_id).first()
     all_team = models.EventCompetitor.objects(event=event).distinct(field="team")
     all_team_competitor = [team.members for team in all_team if team.status == "active"]
-    print()
     code = request.args.get("code")
     msg = ""
 
     if event.code != code:
         msg = "Code mismatch"
         return redirect(url_for("events.index", msg=msg))
-
-    if event.type == "team":
-        team = models.Team.objects(members__in=[current_user], status="active").first()
-        if team:
-            for member in team.members:
-                for team_competitor in all_team_competitor:
-                    if member in team_competitor:
-                        error_msg = "Only one user can be member in one team."
-                        return redirect(url_for("events.index", error_msg=error_msg))
-            event_competitor = models.EventCompetitor()
-            event_competitor.team = team
-            event_competitor.event = event
-            event_competitor.created_by = current_user._get_current_object()
-            event_competitor.updated_by = current_user._get_current_object()
-            event_competitor.save()
-        else:
-            msg = "Please create a team."
-            return redirect(url_for("events.index", msg=msg))
 
     msg = "Successfully joined"
     event_role = models.EventRole()
@@ -83,9 +97,28 @@ def join(event_id):
     return redirect(url_for("events.index", msg=msg))
 
 
+@module.route("/<event_id>/teams/<team_id>/join_team", methods=["GET", "POST"])
+@login_required
+def join_team(event_id, team_id):
+    team = models.Team.objects.get(id=team_id)
+
+    if models.Team.objects(
+        event=event_id, members__in=[current_user._get_current_object()]
+    ).first():
+        return redirect(url_for("events.joiner", event_id=event_id))
+
+    team.members.append(current_user._get_current_object())
+    team.save()
+
+    return redirect(url_for("events.joiner", event_id=event_id))
+
+
 @module.route("/<event_id>/challenge", methods=["GET", "POST"])
 @login_required
 def challenge(event_id):
+
+    if not current_user.check_team_event(event_id):
+        return redirect(url_for("events.joiner", event_id=event_id))
 
     teams = models.Team.objects(status="active").order_by("-score", "updated_date")
     users = models.User.objects(status="active", roles__ne="admin").order_by(
@@ -97,10 +130,6 @@ def challenge(event_id):
 
     dialog_state = {"status": request.args.get("dialog_state", None)}
     team = models.Team.objects(members__in=[current_user], status="active").first()
-
-    if not team and event.type == "team":
-        msg = "Please create a team."
-        return redirect(url_for("events.index", msg=msg))
 
     if not current_user.check_join_event(event.id):
         msg = "คุณกำลังพยายามเข้าไปใน กิจกรรมที่คุณไม่ได้เข้าร่วม"
