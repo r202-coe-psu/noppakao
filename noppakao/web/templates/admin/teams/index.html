@@ -3,71 +3,72 @@
 
 {% block content %}
 <div class="ui container">
-    <div class="ui segment">
-        <a class="ui primary labeled icon button" href="{{ url_for('admin.teams.create_or_edit') }}">
-            <i class="add icon"></i>Create Team
-        </a>
+  <div class="ui segment">
+    <div class="flex justify-end mr-4">
+      <a class="btn btn-primary" href="{{ url_for('admin.teams.create_or_edit') }}">
+        <i class="add icon"></i>Create Team
+      </a>
     </div>
+  </div>
 
-    <div class="ui segment">
-        <h2 class="ui header">Teams</h2>
-        <div class="ui divided items">
-            {% if teams %}
-            {% for team in teams %}
-            <div class="item">
-                <div class="content">
-                    <div class="left floated content">
-                        <div class="header">{{ team.name }}</div>
-                        <div class="description">
-                            <p>Members:</p>
-                            <ul>
-                                {% for member in team.members %}
-                                <li>{{ member.get_fullname() }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="right floated content">
-                        <a class="ui yellow icon button"
-                            href="{{ url_for('admin.teams.create_or_edit', team_id=team.id) }}">
-                            <i class="edit icon"></i>
-                        </a>
-                        <a class="ui red icon button" onclick="showDeleteModal('{{ team.id }}')">
-                            <i class="trash icon"></i>
-                        </a>
-                    </div>
-                </div>
+  <div class="ui segment">
+    <h2 class="ui header">Teams</h2>
+    <div class="ui divided items">
+      {% if teams %}
+      {% for team in teams %}
+      <div class="item">
+        <div class="content">
+          <div class="left floated content">
+            <div class="header">{{ team.name }}</div>
+            <div class="description">
+              <p>Members:</p>
+              <ul>
+                {% for member in team.members %}
+                <li>{{ member.get_fullname() }}</li>
+                {% endfor %}
+              </ul>
             </div>
-            <div class="ui small modal {{ team.id }}">
-                <div class="header">Delete Team</div>
-                <div class="content">
-                    <p>Are you sure you want to delete <span class="ui red text">{{ team.name }}</span>?</p>
-                </div>
-                <div class="actions">
-                    <a class="ui negative button" href="{{ url_for('admin.teams.delete', team_id=team.id) }}">
-                        Delete
-                    </a>
-                    <div class="ui button" onclick="$('.ui.small.modal.{{ team.id }}').modal('hide')">Cancel</div>
-                </div>
-            </div>
-            {% endfor %}
-            {% else %}
-            <div class="ui message">
-                <div class="header">No teams available</div>
-                <p>Please create a team to see the details here.</p>
-            </div>
-            {% endif %}
+          </div>
+          <div class="right floated content">
+            <a class="ui yellow icon button" href="{{ url_for('admin.teams.create_or_edit', team_id=team.id) }}">
+              <i class="edit icon"></i>
+            </a>
+            <a class="ui red icon button" onclick="showDeleteModal('{{ team.id }}')">
+              <i class="trash icon"></i>
+            </a>
+          </div>
         </div>
+      </div>
+      <div class="ui small modal {{ team.id }}">
+        <div class="header">Delete Team</div>
+        <div class="content">
+          <p>Are you sure you want to delete <span class="ui red text">{{ team.name }}</span>?</p>
+        </div>
+        <div class="actions">
+          <a class="ui negative button" href="{{ url_for('admin.teams.delete', team_id=team.id) }}">
+            Delete
+          </a>
+          <div class="ui button" onclick="$('.ui.small.modal.{{ team.id }}').modal('hide')">Cancel</div>
+        </div>
+      </div>
+      {% endfor %}
+      {% else %}
+      <div class="ui message">
+        <div class="header">No teams available</div>
+        <p>Please create a team to see the details here.</p>
+      </div>
+      {% endif %}
     </div>
+  </div>
 </div>
 {% endblock %}
 
 {% block additional_js %}
 <script>
-    function showDeleteModal(team_id) {
-        if (team_id) {
-            $('.ui.small.modal.' + team_id).modal('show');
-        }
+  function showDeleteModal(team_id) {
+    if (team_id) {
+      $('.ui.small.modal.' + team_id).modal('show');
     }
+  }
 </script>
 {% endblock %}

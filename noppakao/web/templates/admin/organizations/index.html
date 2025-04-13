@@ -3,11 +3,11 @@
 {% block content %}
 <div class="ui fluid container">
   <h2 class="ui dividing header">Organization List</h2>
-
-  <a class="ui primary labeled icon right floated button" href="{{ url_for('admin.organizations.create_or_edit') }}"
-    style="color: white;">
-    <i class="add icon"></i> Create Organization
-  </a>
+  <div class="flex justify-end mr-4">
+    <a class="btn btn-primary" href="{{ url_for('admin.organizations.create_or_edit') }}">
+      <i class="add icon"></i> Create Organization
+    </a>
+  </div>
   <div class="ui stackable cards">
     {% for organization in organizations %}
     <div class="card">

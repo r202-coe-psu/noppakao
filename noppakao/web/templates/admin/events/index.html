@@ -3,10 +3,11 @@
 {% block content %}
 <div class="ui fluid container">
   <h2 class="ui dividing header">Event List</h2>
-  <a class="ui primary labeled icon right floated button" href="{{ url_for('admin.events.create_or_edit') }}"
-    style="color: white;">
-    <i class="add icon"></i> Create Event
-  </a>
+  <div class="flex justify-end mr-4">
+    <a class="btn btn-primary" href="{{ url_for('admin.events.create_or_edit') }}">
+      <i class="add icon"></i> Create Event
+    </a>
+  </div>
   <div class="ui four stackable cards">
     {% for event in events %}
     <div class="card">
@@ -30,15 +31,17 @@
               </div>
             </div>
             <div class="item">
-              
+
               <div class="content">
-                <strong><i class="ph ph-calendar"></i> Publish Date:</strong> <span style="color: #2185d0;">{{ event.publish_started_date.strftime('%B %d, %Y
+                <strong><i class="ph ph-calendar"></i> Publish Date:</strong> <span style="color: #2185d0;">{{
+                  event.publish_started_date.strftime('%B %d, %Y
                   %I:%M %p') }}</span>
               </div>
             </div>
             <div class="item">
               <div class="content">
-                <strong><i class="ph ph-calendar-check"></i>Join Date:</strong> <span style="color: #21ba45;"> {% if event.started_date.strftime("%m") ==
+                <strong><i class="ph ph-calendar-check"></i>Join Date:</strong> <span style="color: #21ba45;"> {% if
+                  event.started_date.strftime("%m") ==
                   event.ended_date.strftime("%m") %}
                   {{ event.started_date.strftime("%d") }} - {{ event.ended_date.strftime("%d %b %Y") }}
                   {% else %}
@@ -86,17 +89,17 @@
         </div>
         <div class="ui fluid buttons" style="margin-bottom: 0.5rem;">
           <a class="ui button" style="background-color: #364989; color: white;"
-          href="{{ url_for('admin.events.challenge', event_id=event.id) }}">
-          <i class="trophy icon"></i> Event Challenges
-        </a>
-      </div>
-      <div class="ui fluid buttons" style="margin-bottom: 0.5rem;">
-        <a class="ui button primary" style="background-color: #364989; color: white;"
-        href="{{ url_for('dashboards.index', event_id=event.id) }}">
-          <i class="sort amount down icon"></i> Dashboard
-        </a>
-      </div>
-      
+            href="{{ url_for('admin.events.challenge', event_id=event.id) }}">
+            <i class="trophy icon"></i> Event Challenges
+          </a>
+        </div>
+        <div class="ui fluid buttons" style="margin-bottom: 0.5rem;">
+          <a class="ui button primary" style="background-color: #364989; color: white;"
+            href="{{ url_for('dashboards.index', event_id=event.id) }}">
+            <i class="sort amount down icon"></i> Dashboard
+          </a>
+        </div>
+
       </div>
     </div>
     {% endfor %}

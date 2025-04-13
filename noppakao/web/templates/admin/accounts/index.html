@@ -7,10 +7,12 @@
 </div>
 
 <div class="ui raised segment">
-  <a class="ui primary labeled icon button" href="{{ url_for('admin.accounts.create_or_edit') }}">
-    <i class="add icon"></i>
-    Create User
-  </a>
+  <div class="flex justify-end mr-4">
+    <a class="btn btn-primary" href="{{ url_for('admin.accounts.create_or_edit') }}">
+      <i class="add icon"></i>
+      Create User
+    </a>
+  </div>
 
   <table class="ui celled table">
     <thead>
