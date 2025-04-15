@@ -163,7 +163,9 @@ def add_multiple_challenges(event_id):
     )
 
     form = forms.events.MultipleChallengesForm()
-    form.challenges.choices = [(str(ch.id), ch.name) for ch in challenges]
+    form.challenges.choices = [
+        (str(ch.id), f"{ch.name} - [{ch.category.name}]") for ch in challenges
+    ]
     challenge_order = json.loads(request.form.get("challenge_order", "[]"))
 
     if not form.validate_on_submit():
