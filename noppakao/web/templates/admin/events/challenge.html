@@ -5,6 +5,9 @@
   <a class="btn btn-primary" href="{{ url_for('admin.events.create_or_edit_challenge', event_id=event.id) }}">
     <i class="plus icon"></i>Add Score Challenge
   </a>
+  <a class="btn btn-primary" href="{{ url_for('admin.events.add_multiple_challenges', event_id=event.id) }}">
+    <i class="plus icon"></i>Add Multiple Challenge
+  </a>
   <a class="btn btn-primary" href="{{ url_for('admin.events.event_role', event_id=event.id) }}">
     <i class="user icon"></i>Manage User Role
   </a>

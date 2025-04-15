@@ -107,3 +107,10 @@ class EventRoleForm(BaseEventRole):
         "User",
     )
     role = fields.SelectField("Role", choices=models.events.EVENT_ROLES)
+
+
+class MultipleChallengesForm(FlaskForm):
+    challenges = fields.SelectMultipleField(
+        "เลือก Challenge",
+        coerce=str,  # แก้จาก int → str
+    )

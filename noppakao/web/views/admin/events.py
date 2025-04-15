@@ -11,6 +11,7 @@ from flask import (
     send_file,
     redirect,
 )
+import json
 
 from flask_login import login_user, logout_user, login_required, current_user
 from .. import paginations
@@ -79,7 +80,6 @@ def event_role(event_id):
 @module.route("/<event_id>/challenge", methods=["GET", "POST"])
 @acl.roles_required("admin")
 def challenge(event_id):
-
     event = models.Event.objects(id=event_id).first()
     event_challenges = models.EventChallenge.objects(event=event, status="active")
     event_categorys = []
@@ -105,7 +105,6 @@ def challenge(event_id):
     "/<event_id>/challenges/<event_challenge_id>/edit", methods=["GET", "POST"]
 )
 def create_or_edit_challenge(event_id, event_challenge_id):
-
     event = models.Event.objects(id=event_id).first()
     challenges = models.Challenge.objects()
 
@@ -138,6 +137,64 @@ def create_or_edit_challenge(event_id, event_challenge_id):
     event_challenge.save()
 
     return redirect(url_for("admin.events.challenge", event_id=event.id))
+
+
+def get_int_from_form(key, default=0):
+    val = request.form.get(key)
+    try:
+        return int(val)
+    except (ValueError, TypeError):
+        return default
+
+
+@module.route("/<event_id>/add_multiple_challenges", methods=["GET", "POST"])
+@acl.roles_required("admin")
+def add_multiple_challenges(event_id):
+    event = models.Event.objects.get(id=event_id)
+    existing_challenge_ids = [
+        event_challenge.challenge.id
+        for event_challenge in models.EventChallenge.objects(
+            event=event, status="active"
+        )
+    ]
+
+    challenges = models.Challenge.objects(
+        status="active", id__nin=existing_challenge_ids
+    )
+
+    form = forms.events.MultipleChallengesForm()
+    form.challenges.choices = [
+        (str(ch.id), f"{ch.name} - [{ch.category.name}]") for ch in challenges
+    ]
+    challenge_order = json.loads(request.form.get("challenge_order", "[]"))
+
+    if not form.validate_on_submit():
+        return render_template(
+            "/admin/events/add_multiple_challenges.html",
+            event=event,
+            form=form,
+            challenges=challenges,
+        )
+
+    for challenge_id in challenge_order:
+        challenge_id_str = str(challenge_id)
+        challenge = models.Challenge.objects.get(id=challenge_id)
+
+        event_challenge = models.EventChallenge(
+            challenge=challenge,
+            event=event,
+            created_by=current_user._get_current_object(),
+            updated_by=current_user._get_current_object(),
+            first_blood_score=get_int_from_form(
+                f"first_blood_score_{challenge_id_str}"
+            ),
+            success_score=get_int_from_form(f"success_score_{challenge_id_str}"),
+            hint_score=get_int_from_form(f"hint_score_{challenge_id_str}"),
+            fail_score=get_int_from_form(f"fail_score_{challenge_id_str}"),
+        )
+        event_challenge.save()
+
+    return redirect(url_for("admin.events.challenge", event_id=event_id))
 
 
 @module.route("/create", methods=["GET", "POST"], defaults={"event_id": None})

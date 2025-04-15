@@ -1,0 +1,91 @@
+{% extends "base/default-page.html" %}
+{% import '/base/html-renderer.html' as renderer %}
+
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">Add Multiple Challenges</h2>
+<form method="post" id="challenge-form">
+  {{ form.csrf_token }}
+  <input type="hidden" name="challenge_order" id="challenge-order">
+
+  <div class="grid grid-cols-2 gap-4">
+    <!-- Selected Challenges -->
+    <div class="border rounded-lg p-4 h-[500px] overflow-y-auto">
+      <h3 class="text-lg font-semibold mb-2">Selected Challenges</h3>
+      <ul id="selected-challenges" class="space-y-2"></ul>
+    </div>
+
+    <!-- Available Challenges -->
+    <div class="border rounded-lg p-4 h-[500px] overflow-y-auto">
+      <h3 class="text-lg font-semibold mb-2">Available Challenges</h3>
+      <ul id="available-challenges" class="space-y-2">
+        {% for value, label in form.challenges.choices %}
+        <li class="flex items-center">
+          <input type="checkbox" name="challenges" class="checkbox checkbox-primary mr-2" value="{{ value }}"
+            onchange="updateChallenges(this)" id="challenge-{{ value }}">
+          <label class="ml-2" for="challenge-{{ value }}"> {{ label }}</label>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="flex justify-end p-4">
+    <button type="submit" class="btn btn-primary mt-4" onclick="updateChallengeOrder(event)">ยืนยัน</button>
+  </div>
+</form>
+
+<script>
+  let selectedChallengesOrder = [];
+
+  function updateChallenges(checkbox) {
+    const selectedList = document.getElementById('selected-challenges');
+    const challengeText = checkbox.nextElementSibling.textContent;
+    const challengeId = checkbox.value;
+
+    if (checkbox.checked) {
+      selectedChallengesOrder.push(challengeId);
+      const li = document.createElement('li');
+      li.className = 'bg-blue-100 p-2 rounded';
+      li.dataset.challengeId = challengeId;
+      li.innerHTML = `
+        <div class="flex flex-col gap-2">
+          <div>${challengeText}</div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-sm">First Blood Score:</label>
+              <input type="number" name="first_blood_score_${challengeId}" class="input input-bordered w-full" required>
+            </div>
+            <div>
+              <label class="text-sm">Success Score:</label>
+              <input type="number" name="success_score_${challengeId}" class="input input-bordered w-full" required>
+            </div>
+            <div>
+              <label class="text-sm">Hint Score:</label>
+              <input type="number" name="hint_score_${challengeId}" class="input input-bordered w-full" required>
+            </div>
+            <div>
+              <label class="text-sm">Fail Score:</label>
+              <input type="number" name="fail_score_${challengeId}" class="input input-bordered w-full" required>
+            </div>
+          </div>
+        </div>
+      `;
+      selectedList.appendChild(li);
+    } else {
+      const items = selectedList.getElementsByTagName('li');
+      for (let item of items) {
+        if (item.dataset.challengeId === challengeId) {
+          item.remove();
+          selectedChallengesOrder = selectedChallengesOrder.filter(id => id !== challengeId);
+          break;
+        }
+      }
+    }
+  }
+
+  function updateChallengeOrder(event) {
+    event.preventDefault();
+    document.getElementById('challenge-order').value = JSON.stringify(selectedChallengesOrder);
+    document.getElementById('challenge-form').submit();
+  }
+</script>
+{% endblock %}

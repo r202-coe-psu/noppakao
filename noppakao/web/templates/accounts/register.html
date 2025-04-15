@@ -2,91 +2,84 @@
 {% import '/base/html-renderer.html' as renderer %}
 
 {% block content %}
-<form method="POST">
-  <div class="ui middle aligned center aligned grid" style="min-height: 78vh;">
-    <div class="column"
-      style="max-width: 550px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); border-radius: 10px; padding: 20px;">
-      <h2 class="ui primary header">
-        <i class="sign in alternate icon"></i>
-        <div class="content">
-          Sign-Up to your account
-        </div>
-      </h2>
-      <div class="ui form">
-        {{ form.csrf_token }}
-        <div class="field">
-          <div class="ui left icon input">
-            <i class="user icon"></i>
-            {{ form.display_name(class="prompt" ,placeholder="Display Name") }}
-          </div>
-        </div>
-        <div class="field">
-          <div class="ui left icon input">
-            <i class="user icon"></i>
-            {{ form.username(class="prompt" ,placeholder="Username") }}
-          </div>
-        </div>
-        {% if "edit" not in request.path %}
-        <div class="field">
-          <div class="ui left icon input">
-            <i class="lock icon"></i>
-            {{ form.password(class="prompt" ,placeholder="Password") }}
-          </div>
-        </div>
-        <div class="field">
-          <div class="ui left icon input">
-            <i class="lock icon"></i>
-            {{ form.confirm_password(class="prompt" ,placeholder="Confirm Password") }}
-          </div>
-        </div>
-        {% endif %}
-        <div class="two fields">
-          <div class="field">
-            <div class="ui left icon input">
-              <i class="user icon"></i>
-              {{ form.first_name(class="prompt" ,placeholder="First name") }}
+<div class="justify-center items-center flex min-h-screen">
+    <div class="card max-w-[550px] w-full rounded-xl border-1 shadow-lg border-gray-200">
+        <div class="card-body">
+            <h2 class="card-title">
+                <i class="ph ph-user-plus text-4xl"></i>Sign-Up to your account
+            </h2>
+            <div class="gap-4 flex flex-col mt-4">
+                {% if form.errors %}
+                <div role="alert" class="alert alert-error alert-soft">
+                    {{ form.errors }}
+                </div>
+                {% endif %}
+                {% if msg_error %}
+                <div role="alert" class="alert alert-error alert-soft">
+                    <div class="header">{{ msg_error }}</div>
+                </div>
+                {% endif %}
+                <form method="POST" class="gap-4 flex flex-col">
+                    {{ form.csrf_token }}
+                    <div class="field">
+                        <label class="input w-full">
+                            <i class="ph ph-user text-lg"></i>
+                            {{ form.display_name(class="prompt", placeholder="Display Name") }}
+                        </label>
+                    </div>
+                    <div class="field">
+                        <label class="input w-full">
+                            <i class="ph ph-user text-lg"></i>
+                            {{ form.username(class="prompt", placeholder="Username") }}
+                        </label>
+                    </div>
+                    {% if "edit" not in request.path %}
+                    <div class="field">
+                        <label class="input w-full">
+                            <i class="ph ph-lock text-lg"></i>
+                            {{ form.password(class="prompt", placeholder="Password", type="password") }}
+                        </label>
+                    </div>
+                    <div class="field">
+                        <label class="input w-full">
+                            <i class="ph ph-lock text-lg"></i>
+                            {{ form.confirm_password(class="prompt", placeholder="Confirm Password", type="password") }}
+                        </label>
+                    </div>
+                    {% endif %}
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="field">
+                            <label class="input w-full">
+                                <i class="ph ph-user text-lg"></i>
+                                {{ form.first_name(class="prompt", placeholder="First Name") }}
+                            </label>
+                        </div>
+                        <div class="field">
+                            <label class="input w-full">
+                                <i class="ph ph-user text-lg"></i>
+                                {{ form.last_name(class="prompt", placeholder="Last Name") }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="input w-full">
+                            <i class="ph ph-envelope text-lg"></i>
+                            {{ form.email(class="prompt", placeholder="Email Address") }}
+                        </label>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary w-full">Submit</button>
+                    </div>
+                </form>
             </div>
-          </div>
-          <div class="field">
-            <div class="ui left icon input">
-              <i class="user icon"></i>
-              {{ form.last_name(class="prompt" ,placeholder="Last name") }}
-            </div>
-          </div>
+            <div class="divider text-gray-400">OR</div>
+            <a href="{{ url_for('accounts.login') }}">
+                <button class="btn w-full text-gray-500">
+                    <i class="ph ph-sign-in text-2xl"></i>Login
+                </button>
+            </a>
         </div>
-        <div class="field">
-          <div class="ui left icon input">
-            <i class="envelope icon"></i>
-            {{ form.email(class="prompt" ,placeholder="Example@email.com") }}
-          </div>
-        </div>
-        {% if msg_error %}
-        <div class="ui negative message">
-          <div class="header">{{ msg_error }}</div>
-        </div>
-        {% endif %}
-        <p></p>
-        <div class="field">
-          <div class="d-flex justify-content-center mt-4">
-            <button type="submit" class="ui primary fluid large button">Submit</button>
-          </div>
-        </div>
-
-        <div class="field">
-          <div class="ui horizontal divider mt-4">
-            Or
-          </div>
-        </div>
-
-        <div class="field">
-          <div class="d-flex justify-content-center">
-            <a href="{{url_for('accounts.login')}}" class="ui fluid large button" style="background-color: #CDDFEF;"><i
-                class="sign in alternate icon"></i>Login</a>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
-</form>
+</div>
 <div>{% include "/base/footer.html" %}</div>
 {% endblock %}
