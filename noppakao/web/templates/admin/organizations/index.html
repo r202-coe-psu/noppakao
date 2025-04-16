@@ -1,35 +1,42 @@
 {% extends "base/default-page.html" %}
 
 {% block content %}
-<div class="ui fluid container">
-  <h2 class="ui dividing header">Organization List</h2>
-  <div class="flex justify-end mr-4">
-    <a class="btn btn-primary" href="{{ url_for('admin.organizations.create_or_edit') }}">
-      <i class="add icon"></i> Create Organization
+<div class="flex flex-col gap-4">
+  <div class="flex justify-between items-center">
+    <h1 class="text-2xl font-bold">Organization List</h1>
+    <a href="{{ url_for('admin.organizations.create_or_edit') }}">
+      <button class="btn btn-primary w-full">
+        <i class="ph-bold ph-plus"></i>
+        Create Organization
+      </button>
     </a>
   </div>
-  <div class="ui stackable cards">
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
     {% for organization in organizations %}
-    <div class="card">
-      <div class="large ui image">
-
-        <img src="{{ organization.get_logo_url() }}" alt="{{ organization.image.filename}}">
-
-      </div>
-      <div class="content">
-        <div class="header">
-          {{ organization.name }}
+    <div class="card w-full shadow-sm">
+      <figure class="pt-4">
+        <img src="{{ organization.get_logo_url() }}" alt="{{ organization.image.filename}}" class="w-32 h-32">
+      </figure>
+      <div class="card-body">
+        <p class=" font-semibold">{{ organization.name }}</p>
+        <p>{{ organization.description }}</p>
+        {% if organization.status == 'active' %}
+        <div class="flex flex-row gap-2 items-center">
+          <i class="ph-fill ph-circle text-[8px] text-[var(--color-success)]"></i>
+          {{ organization.status }}
         </div>
-        <div class="description">
-          <p><strong>Description:</strong> {{ organization.description }}</p>
-          <p><strong>Status:</strong> {{ organization.status }}</p>
+        {% else %}
+        <div class="flex flex-row gap-2 items-center">
+          <i class="ph-fill ph-circle text-[8px] text-[var(--color-error)]"></i>
+          {{ organization.status }}
         </div>
-      </div>
-      <div class="extra content">
-        <div class="ui fluid buttons" style="margin-bottom: 0.5rem;">
-          <a class="ui button primary"
-            href="{{ url_for('admin.organizations.create_or_edit', organization_id=organization.id) }}">
-            <i class="edit icon"></i> Edit Organization
+        {% endif %}
+        <div class="mt-2">
+          <a href="{{ url_for('admin.organizations.create_or_edit', organization_id=organization.id) }}">
+            <button class="btn btn-primary btn-block btn-outline">
+              <i class="ph ph-note-pencil text-lg"></i>
+              Edit
+            </button>
           </a>
         </div>
       </div>
