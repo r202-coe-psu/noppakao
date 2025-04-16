@@ -1,0 +1,5 @@
+#!/bin/sh
+
+/app/scripts/npm run tw:watch &
+
+. /venv/bin/activate && poetry install && /app/scripts/run-web -P 7080

@@ -1,0 +1,48 @@
+version: '3.8'
+services:
+    mongodb:
+        image: mongo
+        container_name: noppakao-mongodb
+        ports:
+            - 27017:27017
+        volumes:
+            - noppakao-ctf:/data/db
+            - /etc/localtime:/etc/localtime:ro
+        restart: always
+        networks:
+            - noppakao-ctf
+        logging:
+            options:
+                max-size: "10m"
+                max-file: "3"
+    web:
+        build: .
+        image: noppakao-image
+        container_name: noppakao-web
+        volumes:
+            - .:/app
+            - /etc/localtime:/etc/localtime:ro
+        ports:
+            - 7080:7080
+        links:
+            - mongodb
+        networks:
+            - noppakao-ctf
+        restart: always
+        environment:
+            MONGODB_HOST: mongodb
+            NOPPHAKAO_SETTINGS: /app/noppakao-production.cfg
+        command:
+            "/app/scripts/run-web-develop"
+        logging:
+            options:
+                max-size: "10m"
+                max-file: "3"
+
+networks:
+    noppakao-ctf:
+        driver: bridge
+        
+
+volumes:
+    noppakao-ctf:

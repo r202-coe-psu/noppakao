@@ -14,4 +14,4 @@ $(pwd)/scripts/auto-build-brython &
 
 
 
-FLASK_DEBUG=true NOPPHAKAO_SETTINGS=$(pwd)/noppakao-development.cfg noppakao-web -H 0.0.0.0 -d
+FLASK_DEBUG=true NOPPHAKAO_SETTINGS=$(pwd)/noppakao-development.cfg noppakao-web -H 0.0.0.0 -d $@
