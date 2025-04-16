@@ -5,7 +5,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-
   <link rel="stylesheet" href="{{ 'css/app.css' | static_url }}">
   <script src="{{ 'node_modules/jquery/dist/jquery.min.js' | static_url }}"></script>
   <script type="module" src="{{ 'node_modules/cally/dist/cally.js' | static_url }}"></script>
@@ -32,17 +31,6 @@
     {% block body %}{% endblock body %}
   </div>
 </body>
-<script>
-  $('.ui.dropdown')
-    .dropdown();
-  $(document)
-    .ready(function () {
-      $('.left.sidebar.menu')
-        .sidebar('attach events', '.launch.icon.item', 'show')
-        ;
-    })
-    ;
-</script>
 
 <style type="text/css">
   #link:hover {
