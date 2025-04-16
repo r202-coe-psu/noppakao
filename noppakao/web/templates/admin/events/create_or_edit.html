@@ -2,8 +2,8 @@
 {% import '/base/html-renderer-refactor.html' as renderer %}
 
 {% block content %}
-<div class="container mx-auto px-4">
-    <div class="card bg-base-100 shadow-xl mb-6">
+<div class="max-w-3xl mx-auto px-4">
+    <div class="card bg-base-100 shadow-md mb-6">
         <div class="card-body">
             <h2 class="card-title text-2xl">
                 {% if 'create' in request.path %}
@@ -14,7 +14,7 @@
             </h2>
         </div>
     </div>
-    
+
     <form class="form-control" method="post">
         {{ form.csrf_token }}
 
@@ -50,103 +50,55 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
                 <div class="relative" id="{{ form.publish_started_date.id }}_wrapper">
-                        {{ renderer.render_datetime_field(form.publish_started_date) }}
+                    {{ renderer.render_datetime_field(form.publish_started_date) }}
                 </div>
             </div>
             <div>
-                <label class="label">
-                    <span class="label-text">{{ form.publish_ended_date.label }}</span>
-                </label>
                 <div class="relative" id="{{ form.publish_ended_date.id }}_wrapper">
-                        {{ renderer.render_datetime_field(form.publish_ended_date) }}
+                    {{ renderer.render_datetime_field(form.publish_ended_date) }}
                 </div>
             </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-                <label class="label">
-                    <span class="label-text">{{ form.register_started_date.label }}</span>
-                </label>
                 <div class="relative" id="{{ form.register_started_date.id }}_wrapper">
-                    <div class="input-group">
-                        <span class="input-group-text">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                        </span>
-                        {{ form.register_started_date(class="input input-bordered w-full") }}
-                    </div>
+                    {{ renderer.render_datetime_field(form.register_started_date) }}
                 </div>
             </div>
             <div>
-                <label class="label">
-                    <span class="label-text">{{ form.register_ended_date.label }}</span>
-                </label>
                 <div class="relative" id="{{ form.register_ended_date.id }}_wrapper">
-                    <div class="input-group">
-                        <span class="input-group-text">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                        </span>
-                        {{ form.register_ended_date(class="input input-bordered w-full") }}
-                    </div>
+                    {{ renderer.render_datetime_field(form.register_ended_date) }}
                 </div>
             </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-                <label class="label">
-                    <span class="label-text">{{ form.started_date.label }}</span>
-                </label>
                 <div class="relative" id="{{ form.started_date.id }}_wrapper">
-                    <div class="input-group">
-                        <span class="input-group-text">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                        </span>
-                        {{ form.started_date(class="input input-bordered w-full") }}
-                    </div>
+                    {{ renderer.render_datetime_field(form.started_date) }}
                 </div>
             </div>
             <div>
-                <label class="label">
-                    <span class="label-text">{{ form.ended_date.label }}</span>
-                </label>
                 <div class="relative" id="{{ form.ended_date.id }}_wrapper">
-                    <div class="input-group">
-                        <span class="input-group-text">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                        </span>
-                        {{ form.ended_date(class="input input-bordered w-full") }}
-                    </div>
+                    {{ renderer.render_datetime_field(form.ended_date) }}
                 </div>
             </div>
         </div>
 
         <div class="mb-4">
-            <label class="label">
-                <span class="label-text">{{ form.type.label }}</span>
-            </label>
-            {{ form.type(class="select select-bordered w-full") }}
+            {{ renderer.render_select_field(form.type) }}
         </div>
 
         <div class="mb-4">
-            <label class="label">
-                <span class="label-text">{{ form.status.label }}</span>
-            </label>
-            {{ form.status(class="select select-bordered w-full") }}
+            {{ renderer.render_select_field(form.status) }}
         </div>
 
         <div class="flex justify-end mt-6">
             <button class="btn btn-primary" type="submit">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"></svg>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor"></svg>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
                 Save
             </button>
@@ -157,58 +109,58 @@
 
 {% block additional_js %}
 <script type="text/javascript">
-// You'll need to replace Semantic UI calendar with a Tailwind/DaisyUI compatible
-// date/time picker library like Flatpickr, Pikaday, or Litepicker
+    // You'll need to replace Semantic UI calendar with a Tailwind/DaisyUI compatible
+    // date/time picker library like Flatpickr, Pikaday, or Litepicker
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Example using Flatpickr (you would need to include this library)
-    // Configuration for publish dates
-    flatpickr("#{{ form.publish_started_date.id }}", {
-        enableTime: true,
-        dateFormat: "d-m-Y H:i:S",
-        time_24hr: true,
-        onChange: function(selectedDates) {
-            publishEndPicker.set('minDate', selectedDates[0]);
-        }
+    document.addEventListener('DOMContentLoaded', function () {
+        // Example using Flatpickr (you would need to include this library)
+        // Configuration for publish dates
+        flatpickr("#{{ form.publish_started_date.id }}", {
+            enableTime: true,
+            dateFormat: "d-m-Y H:i:S",
+            time_24hr: true,
+            onChange: function (selectedDates) {
+                publishEndPicker.set('minDate', selectedDates[0]);
+            }
+        });
+
+        const publishEndPicker = flatpickr("#{{ form.publish_ended_date.id }}", {
+            enableTime: true,
+            dateFormat: "d-m-Y H:i:S",
+            time_24hr: true,
+        });
+
+        // Configuration for register dates
+        flatpickr("#{{ form.register_started_date.id }}", {
+            enableTime: true,
+            dateFormat: "d-m-Y H:i:S",
+            time_24hr: true,
+            onChange: function (selectedDates) {
+                registerEndPicker.set('minDate', selectedDates[0]);
+            }
+        });
+
+        const registerEndPicker = flatpickr("#{{ form.register_ended_date.id }}", {
+            enableTime: true,
+            dateFormat: "d-m-Y H:i:S",
+            time_24hr: true,
+        });
+
+        // Configuration for event dates
+        flatpickr("#{{ form.started_date.id }}", {
+            enableTime: true,
+            dateFormat: "d-m-Y H:i:S",
+            time_24hr: true,
+            onChange: function (selectedDates) {
+                eventEndPicker.set('minDate', selectedDates[0]);
+            }
+        });
+
+        const eventEndPicker = flatpickr("#{{ form.ended_date.id }}", {
+            enableTime: true,
+            dateFormat: "d-m-Y H:i:S",
+            time_24hr: true,
+        });
     });
-    
-    const publishEndPicker = flatpickr("#{{ form.publish_ended_date.id }}", {
-        enableTime: true,
-        dateFormat: "d-m-Y H:i:S",
-        time_24hr: true,
-    });
-    
-    // Configuration for register dates
-    flatpickr("#{{ form.register_started_date.id }}", {
-        enableTime: true,
-        dateFormat: "d-m-Y H:i:S",
-        time_24hr: true,
-        onChange: function(selectedDates) {
-            registerEndPicker.set('minDate', selectedDates[0]);
-        }
-    });
-    
-    const registerEndPicker = flatpickr("#{{ form.register_ended_date.id }}", {
-        enableTime: true,
-        dateFormat: "d-m-Y H:i:S",
-        time_24hr: true,
-    });
-    
-    // Configuration for event dates
-    flatpickr("#{{ form.started_date.id }}", {
-        enableTime: true,
-        dateFormat: "d-m-Y H:i:S",
-        time_24hr: true,
-        onChange: function(selectedDates) {
-            eventEndPicker.set('minDate', selectedDates[0]);
-        }
-    });
-    
-    const eventEndPicker = flatpickr("#{{ form.ended_date.id }}", {
-        enableTime: true,
-        dateFormat: "d-m-Y H:i:S",
-        time_24hr: true,
-    });
-});
 </script>
 {% endblock additional_js %}
