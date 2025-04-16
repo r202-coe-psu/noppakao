@@ -4,6 +4,8 @@ import logger
 import logging
 import importlib
 from . import accounts
+from noppakao.utils import template_filters
+
 
 from flask import g, redirect, url_for
 
@@ -12,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 def add_date_url(url):
     now = datetime.datetime.now()
-    return f'{url}?date={now.strftime("%Y%m%d")}'
+    return f"{url}?date={now.strftime('%Y%m%d')}"
 
 
 def get_subblueprints(directory):
@@ -60,13 +62,11 @@ def get_subblueprints(directory):
 
 
 def register_blueprint(app):
-    app.add_template_filter(add_date_url)
+    app.add_template_filter(template_filters.static_url)
+    app.add_template_filter(template_filters.format_date)
+    app.add_template_filter(template_filters.format_number)
     parent = pathlib.Path(__file__).parent
     blueprints = get_subblueprints(parent)
-
-    @app.route("/")
-    def index():
-        return redirect(url_for("events.index"))
 
     for blueprint in blueprints:
         app.register_blueprint(blueprint)
