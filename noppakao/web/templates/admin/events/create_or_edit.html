@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="max-w-3xl mx-auto px-4">
-    <div class="card bg-base-100 shadow-md mb-6">
+    <div class="card bg-base-100 border-1 border-gray-300 mb-6">
         <div class="card-body">
             <h2 class="card-title text-2xl">
                 {% if 'create' in request.path %}
@@ -94,12 +94,9 @@
             {{ renderer.render_select_field(form.status) }}
         </div>
 
-        <div class="flex justify-end mt-6">
+        <div class="flex justify-end mt-6 mb-6">
             <button class="btn btn-primary" type="submit">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor"></svg>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
+                <i class="ph ph-floppy-disk"></i>
                 Save
             </button>
         </div>
