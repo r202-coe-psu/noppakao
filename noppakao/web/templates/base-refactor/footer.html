@@ -1,27 +1,17 @@
-<div class="ui vertical footer segment" style="background-color: #eaf4ff; padding: 2em 0;">
-  <div class="ui container">
-    <div class="ui stackable height stackable grid">
-      <div class="five wide column">
-        <div class="ui link list">
-          <img width="180" src="{{ url_for('static', filename='images/coe.png') }}" alt="R202 Logo"
-            style="margin-bottom: 1em;">
-          <p>Developed by R202 research lab</p>
-        </div>
-      </div>
-      <div class="five wide column">
-        <h4 class="ui header">Department of Computer Engineering</h4>
-        <div class="ui link list">
-          <p>Faculty of Engineering</p>
-          <p>Prince of Songkla University</p>
-          <p>Hat Yai, Thailand</p>
-        </div>
-      </div>
-      <div class="five wide column">
-        <h4 class="ui header">Connect</h4>
-        <div class="ui link list">
-          <a href="http://coe.psu.ac.th" class="item" style="color: #4183c4;">CoE, Eng, PSU</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+<footer class="footer sm:footer-horizontal text-base-content px-25 py-10 bg-[#eaf4ff]">
+  <aside>
+    <img width="180" src="{{ url_for('static', filename='images/coe.png') }}" alt="R202 Logo"
+      style="margin-bottom: 1em;">
+    <p>Developed by R202 research lab</p>
+  </aside>
+  <nav>
+    <h6 class="footer-title">Department of Computer Engineering</h6>
+    <p>Faculty of Engineering</p>
+    <p>Prince of Songkla University</p>
+    <p>Hat Yai, Thailand</p>
+  </nav>
+  <nav>
+    <h6 class="footer-title">Connect</h6>
+    <a href="http://coe.psu.ac.th" class="item" style="color: #4183c4;">CoE, Eng, PSU</a>
+  </nav>
+</footer>
