@@ -1,20 +1,20 @@
-<div class="navbar shadow-sm px-25 bg-[#133c6d] text-white">
+<div class="navbar shadow-sm px-10 md:px-15 lg:px-25 bg-[#133c6d] text-white">
     <div class="flex-none">
         <div class="drawer">
             <input id="my-drawer" type="checkbox" class="drawer-toggle" />
             <div class="drawer-content">
-                <label for="my-drawer" class="btn btn-ghost btn-square drawer-button"><i
+                <label for="my-drawer" class="btn btn-ghost  btn-square drawer-button"><i
                         class="ph-bold ph-list text-2xl"></i></label>
             </div>
             <div class="drawer-side z-50">
                 <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
-                <ul class="menu bg-indigo-700 text-base-content min-h-full w-80">
+                <ul class="menu bg-[#133c6d] min-h-full w-80">
                     {% include "/base/sidebar.html" with context %}
                 </ul>
             </div>
         </div>
     </div>
-    <div class="flex-1 ml-2 gap-2 flex flex-row items-center">
+    <div class="flex-1 ml-4 gap-2 flex flex-row items-center">
         <img class="w-10 h-10 rounded-lg bg-white" src="{{ url_for('static', filename='images/coe.png') }}"
             alt="R202 Logo">
         <a class="text-xl font-bold">COE CTF</a>
@@ -23,9 +23,9 @@
         <div class="flex items-center space-x-6">
             {% if now %}
             {% if "dashboard" in request.url and now >= event.started_date and event.ended_date >= now %}
-            <a href="{{ url_for('events.challenge', event_id=event.id) }}" class="text-white hover:text-gray-300">
-                <i class="ph ph-trophy"></i>
-                <span class="text-white">
+            <a href="{{ url_for('events.challenge', event_id=event.id) }}" class="flex flex-row gap-1">
+                <i class="ph ph-trophy translate-y-[3px]"></i>
+                <span>
                     Challenge
                 </span>
             </a>
