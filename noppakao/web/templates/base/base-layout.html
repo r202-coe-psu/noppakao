@@ -12,11 +12,6 @@
     href="{{ url_for('static', filename='node_modules/@phosphor-icons/web/src/fill/style.css') }}">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="{{ url_for('static', filename='node_modules/jquery/dist/jquery.min.js') | add_date_url }}"></script>
-  <script
-    src="{{ url_for('static', filename='node_modules/fomantic-ui-css/semantic.min.js') | add_date_url }}"></script>
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-  <link rel="stylesheet" type="text/css" media="all"
-    href="{{ url_for('static', filename='node_modules/fomantic-ui-css/semantic.min.css') | add_date_url }}">
   {% block default_head %}{% endblock %}
   {% block additional_head %}{% endblock %}
 
