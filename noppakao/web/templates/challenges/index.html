@@ -13,7 +13,7 @@
 {{ SuccessDialog(url_for('events.challenge', event_id=event.id)) }}
 {% endif %}
 
-<div class="flex flex-row items-center justify-between bg-base-200 p-4 rounded-lg border-2 border-base-300 mx-4">
+<div class="flex flex-row items-center justify-between bg-base-200 p-4 rounded-lg border-2 border-base-300 ">
 	<!-- Score Section -->
 	<div class="flex-1 flex flex-wrap gap-4">
 		{% if event.type == 'team' %}
@@ -34,32 +34,29 @@
 	<div class="flex-none px-4 gap-2">
 		<div class="text-xl">
 			Countdown Timer:
-			<span id="countdown" class="font-bold text-lg"></span>
+			<span id="countdown" class="font-bold text-lg px-2"></span>
 		</div>
 	</div>
-	<a class="text-xl" href="{{ url_for('dashboards.index', event_id=event.id) }}">
-		<i class="sort amount down icon"></i> Dashboard
+	<a class="text-xl flex flex-row gap-2 items-center " href="{{ url_for('dashboards.index', event_id=event.id) }}">
+		<i class="ph-fill ph-chart-line"></i>
+		<p class="cursor-pointer hover:underline">Dashboard</p>
 	</a>
 </div>
-<!-- Navbar -->
-<div class="flex flex-row mt-2">
-	<div class="flex-1 px-4">
-		<h3>
-			<span class="text-4xl font-bold">Challenge</span>
-		</h3>
-	</div>
-</div>
+<p class="text-4xl font-bold my-8">
+	Challenge
+</p>
 
-<div class="ui breadcrumb" style="padding: 1em">
-	<a class="section" href="{{ url_for('events.index') }}">Events</a>
-	<i class="right angle icon divider"></i>
-	<div class="active section">Challenge</div>
+<div class="flex items-center p-4">
+	<a class="text-base cursor-pointer hover:underline" href="{{ url_for('events.index') }}">Events</a>
+	<div class="divider divider-horizontal mx-4"></div>
+	<div class="font-bold cursor-pointer hover:underline">Challenge</div>
 </div>
-<div id="loader" class="ui active inverted dimmer" style="display: none;">
+<div id="loader" class="fixed inset-0 flex items-center justify-center bg-base-100 bg-opacity-70 z-50"
+	style="display: none;">
 	<l-quantum size="80" speed="1.75" color="#165fd4"></l-quantum>
 </div>
 
-<div class="flex grid grid-cols-1 xl:grid-cols-3 gap-4 justify-between mt-2">
+<div class="flex grid grid-cols-1 lg:grid-cols-2 gap-4 justify-between mt-2">
 	{% for challenge_category in event.get_challenge_categories() %}
 	<div class="card bg-base-100 shadow-sm border-2 border-base-200">
 		<div class="card-body">
@@ -90,11 +87,11 @@
 								<td><i class="ph-fill ph-cube" style="color: #386CAF;"></i></td>
 								<td class="clickable-name"><a>{{
 										event_challenge.challenge.name }}</a></td>
-								<td>{{ event_challenge.success_score }}</td>
-								<td>{{ event_challenge.first_blood_score }}</td>
-								<td>{{ event_challenge.hint_score }}</td>
-								<td>{{ event_challenge.fail_score }}</td>
-								<td>{{ event_challenge.total_solve_challenge() }}</td>
+								<td class="text-center">{{ event_challenge.success_score }}</td>
+								<td class="text-center">{{ event_challenge.first_blood_score }}</td>
+								<td class="text-center">{{ event_challenge.hint_score }}</td>
+								<td class="text-center">{{ event_challenge.fail_score }}</td>
+								<td class="text-center">{{ event_challenge.total_solve_challenge() }}</td>
 								{% if event_challenge.solve_challenge() %}
 								<td><i class="ph-fill ph-trophy" style="color: rgb(255, 196, 0);"></i></td>
 								{% else %}
@@ -320,12 +317,12 @@
 			const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
 			const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-			document.getElementById("countdown").innerHTML = '<i class="clock outline icon"></i>' + days + "d " + hours + "h "
+			document.getElementById("countdown").innerHTML = '<i class="ph-fill ph-clock mx-2"></i>' + days + "d " + hours + "h "
 				+ minutes + "m " + seconds + "s ";
 
 			if (distance < 0) {
 				clearInterval(x);
-				document.getElementById("countdown").innerHTML = '<i class="clock outline icon"></i> Out Of Time';
+				document.getElementById("countdown").innerHTML = '<i class="ph-fill ph-clock mx-2"></i> Out Of Time';
 				document.getElementById("countdown").classList.add("flash-red");
 			}
 		}, 1000);
