@@ -1,85 +1,82 @@
-{% extends "base/default-page.html" %}
+{% extends "/base/default-page.html" %}
 {% import '/base/html-renderer.html' as renderer %}
 
 {% block content %}
-<div class="ui raised segment">
-  <h1 class="ui header">Users</h1>
-</div>
-
-<div class="ui raised segment">
-  <div class="flex justify-end mr-4">
-    <a class="btn btn-primary" href="{{ url_for('admin.accounts.create_or_edit') }}">
-      <i class="add icon"></i>
-      Create User
+<div class="flex flex-col gap-4">
+  <div class="flex justify-between items-center">
+    <h1 class="text-2xl font-bold">Users</h1>
+    <a href="{{ url_for('admin.accounts.create_or_edit') }}">
+      <button class="btn btn-primary">
+        <i class="ph-bold ph-plus"></i>
+        Create User
+      </button>
     </a>
   </div>
+  <div class="overflow-x-auto rounded-box border border-base-300 bg-base-100">
+    <table class="table">
+      <thead class="bg-base-200 text-gray-800">
+        <tr class="border-gray-200">
+          <th></th>
+          <th>Display Name</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th class="text-center">Status</th>
+          <th class="text-center">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr class="border-gray-200">
+          <td class="text-center">{{ loop.index }}</td>
+          <td>{{ user.display_name }}</td>
+          <td>{{ user.first_name }} {{ user.last_name }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.phone_number }}</td>
+          <td class="text-center">
+            {% if user.status == 'active' %}
+            <div class="flex flex-row gap-2 justify-center items-center">
+              <i class="ph-fill ph-circle text-[8px] text-[var(--color-success)]"></i>
+              {{ user.status }}
+            </div>
+            {% else %}
+            <div class="flex flex-row gap-2 justify-center items-center">
+              <i class="ph-fill ph-circle text-[8px] text-[var(--color-error)]"></i>
+              {{ user.status }}
+            </div>
+            {% endif %}
+          </td>
+          <td class="flex gap-2 justify-center items-center">
+            <a href="{{ url_for('admin.accounts.create_or_edit', user_id=user.id) }}">
+              <button class="btn btn-square btn-primary justify-center items-center">
+                <i class="ph ph-pencil-simple-line"></i>
+              </button>
+            </a>
+            <button class="btn btn-square btn-error justify-center items-center"
+              onclick="document.getElementById('{{ user.id }}').showModal()">
+              <i class="ph ph-trash-simple"></i>
+            </button>
+          </td>
+        </tr>
 
-  <table class="ui celled table">
-    <thead>
-      <tr>
-        <th>Display Name</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Phone</th>
-        <th>Status</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for user in users %}
-      <tr>
-        <td>{{ user.display_name }}</td>
-        <td>{{ user.first_name }} {{ user.last_name }}</td>
-        <td>{{ user.email }}</td>
-        <td>{{ user.phone_number }}</td>
-        <td>{{ user.status }}</td>
-        <td>
-          <a class="ui yellow icon button" href="{{ url_for('admin.accounts.create_or_edit', user_id=user.id) }}">
-            <i class="edit icon"></i>
-          </a>
-          <a class="ui yellow icon button" href="{{ url_for('admin.accounts.edit_user', user_id=user.id) }}">
-            <i class="user icon"></i>
-          </a>
-          <a class="ui red icon button" onclick="showDeleteModal('{{ user.id }}')">
-            <i class="trash icon"></i>
-          </a>
-          <a class="ui blue icon button" href="{{ url_for('admin.accounts.recover', user_id=user.id) }}">
-            <i class="redo icon"></i>
-          </a>
-        </td>
-      </tr>
-
-      <!-- Delete Modal -->
-      <div class="ui small modal {{ user.id }}">
-        <div class="header">
-          Delete User
-        </div>
-        <div class="content">
-          <p>Are you sure you want to delete <span class="ui red text">{{ user.first_name }} {{ user.last_name
-              }}</span>?</p>
-        </div>
-        <div class="actions">
-          <a class="ui negative button" href="{{ url_for('admin.accounts.delete', user_id=user.id) }}">
-            Delete
-          </a>
-          <div class="ui button" onclick="$('.ui.small.modal.{{ user.id }}').modal('hide')">
-            Cancel
+        <dialog id="{{ user.id }}" class="modal">
+          <div class="modal-box">
+            <h3 class="text-lg font-bold">Delete User</h3>
+            <p>Are you sure you want to delete <span class="text-red-500">{{ user.first_name }} {{ user.last_name
+                }}</span>?</p>
+            <div class="modal-action">
+              <form method="dialog" class="modal-backdrop">
+                <button class="btn">Cancel</button>
+                <a class="btn btn-error" href="{{ url_for('admin.accounts.delete', user_id=user.id) }}">
+                  Delete
+                </a>
+              </form>
+            </div>
           </div>
-        </div>
-      </div>
-      {% endfor %}
-    </tbody>
-  </table>
+        </dialog>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
-
-{% endblock %}
-
-{% block additional_js %}
-<script>
-  function showDeleteModal(user_id) {
-    if (user_id) {
-      $('.ui.small.modal.' + user_id).modal('show');
-    }
-  }
-</script>
 {% endblock %}
