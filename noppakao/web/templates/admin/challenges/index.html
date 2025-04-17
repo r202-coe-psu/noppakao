@@ -2,56 +2,54 @@
 
 {% block content %}
 <div class="flex justify-end mr-4">
-  <a class="btn btn-primary" href="{{ url_for('admin.challenges.create_or_edit') }}">
-    <i class="add icon"></i>create challenge
+  <a class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+    href="{{ url_for('admin.challenges.create_or_edit') }}">
+    <i class="add icon mr-2"></i>Create Challenge
   </a>
 </div>
 
-<div>
-  <div class="ui grid center aligned" style="padding: 1rem;">
+<div class="p-4">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
     {% for i in range((event_categorys|length)) %}
-    <div class="five wide column" id="card-template">
-      <div class="ui cards">
-        <div class="ui fluid card">
-          <div class="content">
-            <div class="header">
-              <i class="chess queen icon" style="visibility: visible;"></i>
-              Question Category <span style="color: #386CAF;">{{ event_categorys[i].name }}</span>
-            </div>
-            <div class="content" style="margin-top: 1rem;">
-              <table class="ui table" style="border: none !important;">
-                <thead>
-                  <tr>
-                    <th class="one wide"></th>
-                    <th>Challenges</th>
-                    <th class="four wide"> action </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for challenge in challenges %}
-                  {% if event_categorys[i].name == challenge.category.name %}
-                  <tr>
-                    <td><i class="cube icon" style="color: #386CAF;"></i></td>
-                    <td>{{ challenge.name }}</td>
-                    <td>
-                      <a class="ui icon blue button"
-                        href="{{ url_for('admin.challenges.create_or_edit',challenge_id=challenge.id ) }}"
-                        aria-label="Edit Challenge">
-                        <i class="edit icon"></i>
-                      </a>
-                      <a class="ui icon yellow button"
-                        href="{{ url_for('admin.challenges.view_file_challenge',challenge_id=challenge.id ) }}"
-                        aria-label="File Challenge">
-                        <i class="file icon"></i>
-                      </a>
-                    </td>
-                  </tr>
-                  {% endif %}
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
+    <div class="w-full h-90 overflow-y-auto">
+      <div class="bg-white rounded-lg shadow">
+        <div class="p-4">
+          <div class="flex items-center mb-4">
+            <i class="chess queen icon text-blue-600"></i>
+            <span class="font-bold ml-2">Question Category <span class="text-blue-600">{{ event_categorys[i].name
+                }}</span></span>
           </div>
+          <table class="w-full">
+            <thead>
+              <tr>
+                <th class="w-8 py-2"></th>
+                <th class="text-left py-2">Challenges</th>
+                <th class="w-32 py-2">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for challenge in challenges %}
+              {% if event_categorys[i].name == challenge.category.name %}
+              <tr>
+                <td class="py-2"><i class="cube icon text-blue-600"></i></td>
+                <td class="py-2">{{ challenge.name }}</td>
+                <td class="py-2 space-x-2 text-center">
+                  <a class="inline-flex p-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    href="{{ url_for('admin.challenges.create_or_edit',challenge_id=challenge.id ) }}"
+                    aria-label="Edit Challenge">
+                    <i class="ph ph-pencil-line"></i>
+                  </a>
+                  <a class="inline-flex p-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                    href="{{ url_for('admin.challenges.view_file_challenge',challenge_id=challenge.id ) }}"
+                    aria-label="File Challenge">
+                    <i class="ph ph-file"></i>
+                  </a>
+                </td>
+              </tr>
+              {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
