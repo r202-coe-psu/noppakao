@@ -1,56 +1,55 @@
 {% extends "base/default-page.html" %}
-{% import '/base/html-renderer.html' as renderer %}
+{% import '/base/html-renderer-refactor.html' as renderer %}
 
 {% block content %}
-<div class="ui container">
-  <div class="ui segment">
-    <h2 class="ui header">
-      {% if 'create' in request.path %}
-      Create Challenge
-      {% else %}
-      Edit Challenge
-      {% endif %}
-    </h2>
+<div class="max-w-3xl mx-auto ">
+  <div class="card bg-base-100 border-1 border-gray-300 mb-6">
+    <div class="card-body">
+      <h2 class="card-title text-2xl">
+        {% if 'create' in request.path %}
+        Create Challenge
+        {% else %}
+        Edit Challenge
+        {% endif %}
+      </h2>
+    </div>
   </div>
-  <form class="ui form" enctype="multipart/form-data" method="post">
-    {{ form.csrf_token }}
 
-    <div class="field">
-      {{ form.name.label }}
-      {{ form.name(class="ui input") }}
-    </div>
+  <form class="form-control" enctype="multipart/form-data" method="post">
+    <div class="">
+      {{ form.csrf_token }}
 
-    <div class="field">
-      {{ form.description.label }}
-      {{ form.description(class="ui input") }}
-    </div>
+      <div class="mb-2">
+        {{ renderer.render_field(form.name) }}
+      </div>
 
-    <div class="field">
-      {{ form.category.label }}
-      {{ form.category(class="ui dropdown") }}
-    </div>
+      <div class="mb-2">
+        {{ renderer.render_text_area_field(form.description) }}
+      </div>
 
-    <div class="field">
-      {{ form.hint.label }}
-      {{ form.hint(class="ui input") }}
-    </div>
+      <div class="mb-2">
+        {{ renderer.render_select_field(form.category) }}
+      </div>
 
-    <div class="field">
-      {{ form.answer.label }}
-      {{ form.answer(class="ui input") }}
-    </div>
+      <div class="mb-2">
+        {{ renderer.render_field(form.hint) }}
+      </div>
 
-    <div class="field">
-      {{ form.answer_type.label }}
-      {{ form.answer_type(class="ui dropdown") }}
-    </div>
+      <div class="mb-2">
+        {{ renderer.render_field(form.answer) }}
+      </div>
 
-    <div class="field">
-      {{ form.challenge_url.label }}
-      {{ form.challenge_url(class="ui input") }}
-    </div>
-    <div style="display: flex;justify-content: flex-end;">
-      <button class="ui primary button" type="submit">Save</button>
+      <div class="mb-2">
+        {{ renderer.render_select_field(form.answer_type) }}
+      </div>
+
+      <div class="mb-2">
+        {{ renderer.render_text_area_field(form.challenge_url) }}
+      </div>
+
+      <div class="flex justify-end mt-6">
+        <button class="btn btn-primary" type="submit">Save</button>
+      </div>
     </div>
   </form>
 </div>
