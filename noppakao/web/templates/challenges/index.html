@@ -56,7 +56,7 @@
 	<l-quantum size="80" speed="1.75" color="#165fd4"></l-quantum>
 </div>
 
-<div class="flex grid grid-cols-1 lg:grid-cols-2 gap-4 justify-between mt-2">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 justify-between mt-2">
 	{% for challenge_category in event.get_challenge_categories() %}
 	<div class="card bg-base-100 shadow-sm border-2 border-base-200">
 		<div class="card-body">
@@ -125,30 +125,54 @@
 											{% for challenge_resource in challenge.get_challenge_resources() %}
 											<p>
 												<a href="{{ url_for('challenges.download', challenge_resource_id=challenge_resource.id) }}"
-													target="_blank">
-													<i class="folder yellow icon"></i>{{
-													challenge_resource.file.filename }}
-													<span class="text-blue-600">({{ '%0.2f' |
-														format(challenge_resource.file.length / 1024) }} KB)</span>
+													target="_blank"
+													class="group flex flex-row items-center text-primary">
+
+													<i class="ph-fill ph-box-arrow-down mr-2 text-primary"></i>
+
+													<span class="group-hover:underline">
+														{{ challenge_resource.file.filename }}
+													</span>
+
+													<span class="text-blue-600 group-hover:underline">
+														({{ '%0.2f' | format(challenge_resource.file.length / 1024) }}
+														KB)
+													</span>
 												</a>
+
 											</p>
 											{% endfor %}
 											{% endif %}
 										</div>
 
 										{% if event_challenge.check_transaction_hint(event.id) %}
-										<div id="response-{{ event_challenge.id }}" class="ui blue segment">
+										<div id="response-{{ event_challenge.id }}"
+											class="p-4 mb-4 bg-base-100 border border-gray-300 rounded-lg border-t-2 border-t-primary">
 											{{ event_challenge.challenge.hint }}
 										</div>
 										{% elif not event_challenge.solve_challenge() %}
 										<div id="hintbtn-{{ event_challenge.id }}"
-											class="ui vertical animated fluid blue small button" tabindex="0"
+											class="w-full flex justify-center items-center"
 											onclick="ClickHint('{{event.id}}','{{ event_challenge.id }}')">
-											<div class="visible content">
-												<i class="eye icon"></i>
-											</div>
-											<div class="hidden content">
-												Show hint
+											<div class="visible w-full">
+												<button
+													class="btn btn-primary w-full text-white relative overflow-hidden group transition-all duration-300 ease-in-out">
+													<i
+														class="ph-fill ph-eye absolute transform group-hover:-translate-y-10 transition-transform duration-300 ease-in-out"></i>
+													<p id="hintbtn-text-{{ event_challenge.id }}"
+														class="transform translate-y-10 group-hover:translate-y-0 transition-transform duration-300 ease-in-out">
+														Show hint
+													</p>
+													<div id="loader-{{ event_challenge.id }}"
+														class="w-full text-center mt-2" style="display: none;">
+														<div class="flex items-center justify-center space-x-2">
+															<div
+																class="animate-spin rounded-full h-5 w-5 border-b-2 border-white">
+															</div>
+															<span class="text-white font-medium">Loading hint...</span>
+														</div>
+													</div>
+												</button>
 											</div>
 										</div>
 										<div id="response-{{ event_challenge.id }}" class="response"></div>
@@ -156,12 +180,6 @@
 										<div id="response-{{ event_challenge.id }}" class="response"></div>
 										{% endif %}
 
-										<div id="loader-{{ event_challenge.id }}" class="ui active inverted dimmer"
-											style="display: none;">
-											<div class="ui large text loader text-blue-600">
-												Loading...
-											</div>
-										</div>
 
 										{% if not event_challenge.solve_challenge() %}
 										<form method="GET"
@@ -178,8 +196,9 @@
 											</div>
 										</form>
 										{% else %}
-										<div class="ui message success text mt-4">
-											Challenge Success
+										<div class="alert alert-success text-center mt-4">
+											<i class="ph-fill ph-check-circle"></i>
+											<span class="text-base font-semibold">Challenge Success</span>
 										</div>
 										{% endif %}
 									</div>
@@ -188,7 +207,7 @@
 										<button class="btn btn-error"
 											onclick="document.getElementById('my_modal_1-{{ event_challenge.id }}').close()">
 											Close
-											<i class="fa fa-chevron-right"></i>
+											<i class="ph ph-x"></i>
 										</button>
 									</div>
 								</div>
@@ -206,27 +225,7 @@
 {% endblock %}
 
 {% block additional_js %}
-<script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/quantum.js"></script>
-<style>
-	@keyframes flash {
-		0% {
-			opacity: 1;
-		}
 
-		50% {
-			opacity: 0;
-		}
-
-		100% {
-			opacity: 1;
-		}
-	}
-
-	.flash-red {
-		color: red;
-		animation: flash 1s infinite;
-	}
-</style>
 <script type="text/javascript">
 	function updateIP() {
 		fetch('https://api.ipify.org?format=json')
@@ -247,6 +246,8 @@
 		if (event_id) {
 			var loader = document.getElementById("loader-" + event_challenge_id);
 			var hintbtn = document.getElementById("hintbtn-" + event_challenge_id);
+			var hintbtnText = document.getElementById("hintbtn-text-" + event_challenge_id);
+			hintbtnText.style.display = "none";
 			loader.style.display = "block";
 
 			$('.response').hide().empty();
@@ -258,7 +259,7 @@
 					success: function (response) {
 						console.log(response.hint);
 						$('.response').html(`
-              <div class="ui blue segment">${response.hint}</div>
+              <div class="p-4 mb-4 bg-base-100 border border-gray-300 rounded-lg border-t-2 border-t-primary">${response.hint}</div>
             `).show();
 					},
 					complete: function () {
