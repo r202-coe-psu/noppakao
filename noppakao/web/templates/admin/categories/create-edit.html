@@ -1,10 +1,27 @@
 {% extends "/base/default-page.html" %}
+{% import '/base/html-renderer-refactor.html' as renderer %}
+
+{% block title %}
+{% if 'create' in request.path %}
+Create Category
+{% else %}
+Edit Category
+{% endif %}
+{% endblock %}
+
+{% block page_title %}
+{% if 'create' in request.path %}
+Create Category
+{% else %}
+Edit Category
+{% endif %}
+{% endblock %}
 
 {% block content %}
-<div class="ui container">
-
-        <div class="ui segment">
-            <h2 class="ui header">
+<div class="max-w-3xl mx-auto px-4">
+    <div class="card bg-base-100 border-1 border-gray-300   mb-6">
+        <div class="card-body">
+            <h2 class="card-title text-2xl">
                 {% if 'create' in request.path %}
                 Create Category
                 {% else %}
@@ -12,16 +29,22 @@
                 {% endif %}
             </h2>
         </div>
-        <form method="POST" class="ui form" enctype="multipart/form-data">
-            {{ form.csrf_token }}
-    
-            <div class="field">
-                {{ form.name.label.text }}
-                {{ form.name }}
-            </div>
-            <div style="display: flex;justify-content: flex-end;">
-                <button class="ui primary button" type="submit">Submit</button>
-            </div>
-        </form>
+    </div>
+
+    <div class="">
+        <div class="">
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.csrf_token }}
+
+                <div class="form-control w-full mb-4">
+                    {{ renderer.render_field(form.name)}}
+                </div>
+
+                <div class="flex justify-end">
+                    <button class="btn btn-primary" type="submit">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 {% endblock %}
