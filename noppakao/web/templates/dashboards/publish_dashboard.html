@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{event.name}} Event Leaderboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@2.51.5/dist/full.css" rel="stylesheet">
+</head>
+<div class="container mx-auto p-4">
+  <h1 class="text-white text-2xl font-mono text-center p-4 mb-8 bg-primary rounded-lg">
+    {{event.name}} Event Leaderboard
+  </h1>
+
+  <div>
+    {% if event.type == "team" %}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Team Rankings -->
+      <div>
+        <div class="card bg-base-100 shadow-xl">
+          <div class="card-title p-4 bg-primary text-white justify-between">
+            <span>Team Rank</span>
+            <span>Updated every 1 minute</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="table table-zebra w-full">
+              <thead class="bg-primary/80 text-white">
+                <tr>
+                  <th class="w-16">Ranking</th>
+                  <th class="w-16">Team</th>
+                  <th></th>
+                  <th class="text-left">Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for team in teams_transaction %}
+                <tr>
+                  <td>
+                    {% if loop.index == 1 %}
+                    <span class="text-2xl">🥇</span>
+                    {% elif loop.index == 2 %}
+                    <span class="text-2xl">🥈</span>
+                    {% elif loop.index == 3 %}
+                    <span class="text-2xl">🥉</span>
+                    {% else %}
+                    <span class="text-lg ml-2">{{ loop.index }}</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <div class="avatar">
+                      <div class="w-9 h-9 rounded">
+                        <img src="{{ team.team.get_logo_url() }}" alt="team logo">
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="font-bold break-words">{{ team.team.name }}
+                    </div>
+                    <div class="text-sm opacity-70 break-words">{{ team.organizations | join(' / ', attribute='name') }}
+                    </div>
+                  </td>
+                  <td class="text-right">{{ 0 if not team.total_score else team.total_score }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Individual Rankings -->
+      <div>
+        <div class="card bg-base-100 shadow-xl">
+          <div class="card-title p-4 bg-primary text-white justify-between">
+            <span>Individual Rank</span>
+            <span>
+              Countdown timer:
+              <span id="countdown" class="ml-2"></span>
+            </span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="table table-zebra w-full">
+              <thead class="bg-primary/80 text-white">
+                <tr>
+                  <th class="w-16">Ranking</th>
+                  <th>Name</th>
+                  <th>Team</th>
+                  <th></th>
+                  <th class="text-left">Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for user in users_transaction %}
+                <tr>
+                  <td>
+                    <span class="text-lg ml-2">{{ loop.index }}</span>
+                  </td>
+                  <td>{{ user.display_name }}</td>
+                  <td>
+                    {% if user.team_id %}
+                    <div class="avatar">
+                      <div class="w-9 h-9 rounded">
+                        <img src="{{ user.team_image }}" alt="team logo">
+                      </div>
+                    </div>
+                    {% else %}
+                    <span class="opacity-70">No Team</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if user.team %}
+                    <div class="font-bold ">{{ user.team }}</div>
+                    {% else %}
+                    <span class="opacity-70">No Team or Organization</span>
+                    {% endif %}
+                  </td>
+                  <td class="text-left">{{ user.total_score if user.total_score else 0 }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% else %}
+    <!-- Individual Event Layout -->
+    <div class="card bg-base-100 shadow-xl">
+      <div class="card-title p-4 bg-primary text-white justify-between">
+        <span>Individual Rank (Updated every 1 minute)</span>
+        <span>
+          Countdown timer:
+          <span id="countdown" class="ml-2"></span>
+        </span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="table table-zebra w-full">
+          <thead class="bg-primary/80 text-white">
+            <tr>
+              <th>Ranking</th>
+              <th>Name</th>
+              <th>Organization</th>
+              <th></th>
+              <th class="text-left">Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users_transaction %}
+            <tr>
+              <td>{{ loop.index }}</td>
+              <td>{{ user.display_name }}</td>
+              <td>
+                {% if user.organization_id %}
+                <div class="avatar">
+                  <div class="w-9 h-9 rounded">
+                    <img src="{{ user.organization_image }}" alt="org logo">
+                  </div>
+                </div>
+                {% else %}
+                <span class="opacity-70">No Organization</span>
+                {% endif %}
+              </td>
+              <td>{{ user.organization_name }}</td>
+              <td class="text-left">{{ user.total_score if user.total_score else 0 }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<script type="text/javascript">
+  function countdown(ended_date) {
+    const countDownDate = new Date(ended_date).getTime();
+
+    const x = setInterval(function () {
+      const now = new Date().getTime();
+      const distance = countDownDate - now;
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById("countdown").innerHTML = `<i class="fa fa-clock"></i> ${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+      if (distance < 0) {
+        clearInterval(x);
+        document.getElementById("countdown").innerHTML = '<i class="fa fa-clock"></i> Out Of Time';
+        document.getElementById("countdown").classList.add("text-error animate-pulse");
+      }
+    }, 1000);
+  }
+
+  window.onload = function () {
+    const ended_date = "{{ event.ended_date }}";
+    console.log("Initial Ended Date:", ended_date);
+    countdown(ended_date);
+  }
+
+  window.setTimeout(function () {
+    window.location.reload();
+  }, 60000);
+</script>
+
+</html>
