@@ -18,6 +18,15 @@ from noppakao.web import forms
 module = Blueprint("events", __name__, url_prefix="/events")
 
 
+@module.route("/dashboards", methods=["GET", "POST"])
+def dashboards():
+    events = models.Event.objects(status="active")
+    return render_template(
+        "events/dashboards.html",
+        events=events,
+    )
+
+
 @module.route("/", methods=["GET", "POST"])
 @login_required
 def index():
@@ -116,7 +125,6 @@ def join_team(event_id, team_id):
 @module.route("/<event_id>/challenge", methods=["GET", "POST"])
 @login_required
 def challenge(event_id):
-
     if not current_user.check_team_event(event_id):
         return redirect(url_for("events.joiner", event_id=event_id))
 
