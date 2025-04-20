@@ -39,7 +39,7 @@ def index():
 
 @module.route("/login", methods=["GET", "POST"])
 def login():
-    if current_user.is_authenticated:
+    if current_user.is_authenticated and "admin" not in current_user.roles:
         return redirect(url_for("events.index"))
 
     form = forms.accounts.LoginForm()
