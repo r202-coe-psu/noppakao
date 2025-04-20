@@ -1,175 +1,108 @@
 {% extends "base/default-page.html" %}
-{% import '/base/html-renderer.html' as renderer %}
+{% import '/base/html-renderer-refactor.html' as renderer %}
 
 {% block content %}
-<div class="ui container">
-    <div class="ui segment">
-        <h2 class="ui header">
-            {% if 'create' in request.path %}
-            Create Event
-            {% else %}
-            Edit Event
-            {% endif %}
-        </h2>
+<div class="max-w-3xl mx-auto px-4">
+  <div class="card bg-base-100 border-1 border-gray-300 mb-6">
+    <div class="card-body">
+      <h2 class="card-title text-2xl">
+        {% if 'create' in request.path %}
+        Create Event
+        {% else %}
+        Edit Event
+        {% endif %}
+      </h2>
     </div>
-    <form class="ui form" method="post">
-        {{ form.csrf_token }}
+  </div>
 
-        <div class="field">
-            {{ form.code.label }}
-            {{ form.code(class="ui input fluid") }}
-        </div>
+  <form class="form-control" method="post">
+    {{ form.csrf_token }}
 
-        <div class="field">
-            {{ form.name.label }}
-            {{ form.name(class="ui input fluid") }}
-        </div>
+    <div class="mb-4">
+      {{ renderer.render_field(form.code) }}
+    </div>
 
-        <div class="field">
-            {{ form.description.label }}
-            {{ form.description(class="ui input fluid") }}
-        </div>
+    <div class="mb-4">
+      {{ renderer.render_field(form.name) }}
+    </div>
 
-        <div class="field">
-            {{ form.flag_prefix.label }}
-            {{ form.flag_prefix(class="ui input fluid") }}
-        </div>
-        <div class="two fields">
-            <div class="field">
-                <label>{{ form.publish_started_date.label}}</label>
-                <div class="ui calendar" id="{{ form.publish_started_date.id }}">
-                    <div class="ui input left icon">
-                        <i class="calendar icon"></i>
-                        {{ form.publish_started_date }}
-                    </div>
-                </div>
-            </div>
-            <div class="field">
-                <label>{{ form.publish_ended_date.label}}</label>
-                <div class="ui calendar" id="{{ form.publish_ended_date.id }}">
-                    <div class="ui input left icon">
-                        <i class="calendar icon"></i>
-                        {{ form.publish_ended_date }}
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="mb-4">
+      {{ renderer.render_text_area_field(form.description) }}
+    </div>
 
-        <div class="two fields">
-            <div class="field">
-                <label>{{ form.register_started_date.label }}</label>
-                <div class="ui calendar" id="{{ form.register_started_date.id}}">
-                    <div class="ui input left icon">
-                        <i class="calendar icon"></i>
-                        {{ form.register_started_date }}
-                    </div>
-                </div>
-            </div>
-            <div class="field">
-                <label>{{ form.register_ended_date.label}}</label>
-                <div class="ui calendar" id="{{ form.register_ended_date.id}}">
-                    <div class="ui input left icon">
-                        <i class="calendar icon"></i>
-                        {{ form.register_ended_date }}
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="mb-4">
+      {{ renderer.render_text_area_field(form.flag_prefix) }}
+    </div>
 
-        <div class="two fields">
-            <div class="field">
-                <label>{{ form.started_date.label }}</label>
-                <div class="ui calendar" id="{{ form.started_date.id }}">
-                    <div class="ui input left icon">
-                        <i class="calendar icon"></i>
-                        {{ form.started_date }}
-                    </div>
-                </div>
-            </div>
-            
-            <div class="field">
-                <label>{{ form.ended_date.label }}</label>
-                <div class="ui calendar" id="{{ form.ended_date.id }}">
-                    <div class="ui input left icon">
-                        <i class="calendar icon"></i>
-                        {{ form.ended_date }}
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="field">
-            {{ form.type.label }}
-            {{ form.type(class="ui dropdown fluid") }}
-        </div>
-
-        <div class="field">
-            {{ form.status.label }}
-            {{ form.status(class="ui dropdown fluid") }}
-        </div>
-        <div style="display: flex;justify-content: flex-end;">
-            <button class="ui primary button " type="submit">
-                <i class="save icon"></i> Save
+    <!-- <div>
+            <button popovertarget="cally-popover1" class="input input-border" id="cally1" style="anchor-name:--cally1">
+                Pick a date
             </button>
+            <div popover id="cally-popover1" class="dropdown bg-base-100 rounded-box shadow-lg" style="position-anchor:--cally1">
+                <calendar-date class="cally" onchange="document.getElementById('cally1').innerText = this.value">
+                <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
+                <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
+                <calendar-month></calendar-month>
+                </calendar-date>
+            </div>
+        </div> -->
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div>
+        <div class="relative" id="{{ form.publish_started_date.id }}_wrapper">
+          {{ renderer.render_datetime_field(form.publish_started_date) }}
         </div>
-    </form>
+      </div>
+      <div>
+        <div class="relative" id="{{ form.publish_ended_date.id }}_wrapper">
+          {{ renderer.render_datetime_field(form.publish_ended_date) }}
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div>
+        <div class="relative" id="{{ form.register_started_date.id }}_wrapper">
+          {{ renderer.render_datetime_field(form.register_started_date) }}
+        </div>
+      </div>
+      <div>
+        <div class="relative" id="{{ form.register_ended_date.id }}_wrapper">
+          {{ renderer.render_datetime_field(form.register_ended_date) }}
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div>
+        <div class="relative" id="{{ form.started_date.id }}_wrapper">
+          {{ renderer.render_datetime_field(form.started_date) }}
+        </div>
+      </div>
+      <div>
+        <div class="relative" id="{{ form.ended_date.id }}_wrapper">
+          {{ renderer.render_datetime_field(form.ended_date) }}
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-4">
+      {{ renderer.render_select_field(form.type) }}
+    </div>
+
+    <div class="mb-4">
+      {{ renderer.render_select_field(form.status) }}
+    </div>
+
+    <div class="flex justify-end mt-6 mb-6">
+      <button class="btn btn-primary" type="submit">
+        <i class="ph ph-floppy-disk"></i>
+        Save
+      </button>
+    </div>
+  </form>
 </div>
 {% endblock content %}
 
 {% block additional_js %}
-
-<script type="text/javascript">
-
-$('#publish_started_date').calendar({
-    type: 'datetime',
-    formatter: { datetime: 'DD-MM-YYYY HH:mm:ss' },
-    ampm: false,
-    monthFirst: false,
-    endCalendar: $('#publish_ended_date'),
-});
-
-$('#publish_ended_date').calendar({
-    type: 'datetime',
-    formatter: { datetime: 'DD-MM-YYYY HH:mm:ss' },
-    ampm: false,
-    monthFirst: false,
-    startCalendar: $('#publish_started_date'),
-});
-
-$('#register_started_date').calendar({
-    type: 'datetime',
-    formatter: { datetime: 'DD-MM-YYYY HH:mm:ss' },
-    ampm: false,
-    monthFirst: false,
-    endCalendar: $('#register_ended_date'),
-});
-
-$('#register_ended_date').calendar({
-    type: 'datetime',
-    ampm: false,
-    monthFirst: false,
-    formatter: { datetime: "DD-MM-YYYY HH:mm:ss" },  
-    startCalendar: $('#register_started_date'),
-});
-
-$('#started_date').calendar({
-    type: 'datetime',
-    formatter: { datetime: 'DD-MM-YYYY HH:mm:ss' },
-    ampm: false,
-    monthFirst: false,
-    endCalendar: $('#ended_date'),
-});
-
-$('#ended_date').calendar({
-    type: 'datetime',
-    ampm: false,
-    monthFirst: false,
-    startCalendar: $('#started_date'),
-    formatter: { datetime: "DD-MM-YYYY HH:mm:ss" },  
-});
-
-</script>
-
-
-
 {% endblock additional_js %}

@@ -39,7 +39,7 @@ def index():
 
 @module.route("/login", methods=["GET", "POST"])
 def login():
-    if current_user.is_authenticated:
+    if current_user.is_authenticated and "admin" not in current_user.roles:
         return redirect(url_for("events.index"))
 
     form = forms.accounts.LoginForm()
@@ -58,7 +58,7 @@ def login():
                 )
             elif user and oauth.handle_authorized_user(form):
                 if "admin" in current_user.roles:
-                    return render_template("/admin/events/index.html", events=events)
+                    return redirect(url_for("admin.events.index"))
                 return redirect(url_for("events.index"))
 
             else:
@@ -83,7 +83,6 @@ def register():
     msg_error = ""
 
     if not form.validate_on_submit():
-
         user.username = form.username.data
         print(form.errors)
         return render_template(

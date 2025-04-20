@@ -2,59 +2,54 @@
 {% import '/base/html-renderer.html' as renderer %}
 
 {% block content %}
-<div class="ui container">
-  <div class="ui segment">
-    <div class="flex justify-end mr-4">
-      <a class="btn btn-primary" href="{{ url_for('admin.teams.create_or_edit') }}">
-        <i class="add icon"></i>Create Team
-      </a>
-    </div>
-  </div>
+<div class="container mx-auto p-4 flex flex-col gap-4">
+  <a class="btn btn-primary" href="{{ url_for('admin.teams.create_or_edit') }}">
+    <i class="ph-bold ph-plus"></i>Create Team
+  </a>
 
-  <div class="ui segment">
-    <h2 class="ui header">Teams</h2>
-    <div class="ui divided items">
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title text-2xl mb-4">Teams</h2>
       {% if teams %}
-      {% for team in teams %}
-      <div class="item">
-        <div class="content">
-          <div class="left floated content">
-            <div class="header">{{ team.name }}</div>
-            <div class="description">
-              <p>Members:</p>
-              <ul>
+      <div class="divide-y divide-base-300">
+        {% for team in teams %}
+        <div class="py-4 flex justify-between items-start">
+          <div>
+            <h3 class="text-xl font-bold">{{ team.name }}</h3>
+            <div class="mt-2">
+              <p class="font-semibold">Members:</p>
+              <ul class="list-disc list-inside mt-1">
                 {% for member in team.members %}
                 <li>{{ member.get_fullname() }}</li>
                 {% endfor %}
               </ul>
             </div>
           </div>
-          <div class="right floated content">
-            <a class="ui yellow icon button" href="{{ url_for('admin.teams.create_or_edit', team_id=team.id) }}">
-              <i class="edit icon"></i>
+          <div class="flex gap-2">
+            <a class="btn btn-warning btn-square" href="{{ url_for('admin.teams.create_or_edit', team_id=team.id) }}">
+              <i class="ph ph-pencil-line"></i>
             </a>
-            <a class="ui red icon button" onclick="showDeleteModal('{{ team.id }}')">
-              <i class="trash icon"></i>
-            </a>
+            <button class="btn btn-error btn-square" onclick="showDeleteModal('{{ team.id }}')">
+              <i class="ph ph-trash"></i>
+            </button>
           </div>
         </div>
+
+        <dialog id="{{ team.id }}" class="modal modal-bottom sm:modal-middle">
+          <div class="modal-box">
+            <h3 class="font-bold text-lg">Delete Team</h3>
+            <p class="py-4">Are you sure you want to delete <span class="text-error">{{ team.name }}</span>?</p>
+            <div class="modal-action">
+              <a class="btn btn-error" href="{{ url_for('admin.teams.delete', team_id=team.id) }}">Delete</a>
+              <button class="btn" onclick="document.getElementById('{{ team.id }}').close()">Cancel</button>
+            </div>
+          </div>
+        </dialog>
+        {% endfor %}
       </div>
-      <div class="ui small modal {{ team.id }}">
-        <div class="header">Delete Team</div>
-        <div class="content">
-          <p>Are you sure you want to delete <span class="ui red text">{{ team.name }}</span>?</p>
-        </div>
-        <div class="actions">
-          <a class="ui negative button" href="{{ url_for('admin.teams.delete', team_id=team.id) }}">
-            Delete
-          </a>
-          <div class="ui button" onclick="$('.ui.small.modal.{{ team.id }}').modal('hide')">Cancel</div>
-        </div>
-      </div>
-      {% endfor %}
       {% else %}
-      <div class="ui message">
-        <div class="header">No teams available</div>
+      <div class="alert">
+        <h3 class="font-bold">No teams available</h3>
         <p>Please create a team to see the details here.</p>
       </div>
       {% endif %}

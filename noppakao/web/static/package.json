@@ -3,7 +3,10 @@
     "@phosphor-icons/web": "^2.1.1",
     "@tailwindcss/cli": "^4.0.15",
     "brython": "^3.12.4",
+    "cally": "^0.8.0",
+    "fireworks-js": "^2.10.8",
     "fomantic-ui-css": "^2.9.3",
+    "jquery": "^3.7.1",
     "tailwindcss": "^4.0.15"
   },
   "name": "static",

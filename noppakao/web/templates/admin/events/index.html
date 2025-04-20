@@ -1,108 +1,104 @@
 {% extends "base/default-page.html" %}
 
 {% block content %}
-<div class="ui fluid container">
-  <h2 class="ui dividing header">Event List</h2>
-  <div class="flex justify-end mr-4">
-    <a class="btn btn-primary" href="{{ url_for('admin.events.create_or_edit') }}">
-      <i class="add icon"></i> Create Event
+<div class="flex flex-col gap-4">
+  <div class="flex justify-between items-center">
+    <h1 class="text-2xl font-bold">Events</h1>
+    <a href="{{ url_for('admin.events.create_or_edit') }}">
+      <button class="btn btn-primary w-full">
+        <i class="ph-bold ph-plus"></i>
+        Create Event
+      </button>
     </a>
   </div>
-  <div class="ui four stackable cards">
-    {% for event in events %}
-    <div class="card">
-      <div class="content">
-        <div class="header">
-          {{ event.name }}
-        </div>
-        <div class="meta">
-          {% if event.type == 'team' %}
-          <i class="users icon"></i> {{ event.type }}
-          {% else %}
-          <i class="user tie icon"></i> {{ event.type }}
-          {% endif %}
-        </div>
-        <div class="description">
-          <h3 class="ui header">Event Details</h3>
-          <div class="ui list">
-            <div class="item">
-              <div class="content">
-                <strong><i class="ph ph-file-text"></i>Description:</strong> {{ event.description }}
-              </div>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+  {% for event in events %}
+  <div class="card w-full shadow-sm p-4">
+    <div class="card-body">
+      <div class="text-2xl font-bold">
+        {{ event.name }}
+      </div>
+      <div class="text-sm font-bold">
+        {% if event.type == 'team' %}
+        <span>type : </span><i class="ph-bold ph-users"></i> {{ event.type }}
+        {% else %}
+        <span>type : </span><i class="ph-bold ph-user"></i> {{ event.type }}
+        {% endif %}
+      </div>
+      <div class="description">
+        <h3 class="text-xl font-bold">Event Details</h3>
+        <div class="flex flex-col">
+          <div class="item">
+            <div class="content">
+              <strong><i class="ph ph-file-text"></i>Description:</strong> {{ event.description }}
             </div>
-            <div class="item">
+          </div>
+          <div class="item">
+            <div class="content">
+              <strong><i class="ph ph-calendar"></i> Publish Date:</strong> <span style="color: #2185d0;">{{
+                event.publish_started_date.strftime('%B %d, %Y
+                %I:%M %p') }}</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="content">
+              <strong><i class="ph ph-calendar-check"></i>Join Date:</strong> <span style="color: #21ba45;"> {% if
+                event.started_date.strftime("%m") ==
+                event.ended_date.strftime("%m") %}
+                {{ event.started_date.strftime("%d") }} - {{ event.ended_date.strftime("%d %b %Y") }}
+                {% else %}
+                {{ event.started_date.strftime("%d %b %Y") }} - {{ event.ended_date.strftime("%d %b %Y")
+                }}
+                {% endif %}</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="content">
+              <strong><i class="ph ph-calendar-plus"></i>Register Event Date:</strong>
+              <span style="color: #fb7d08;">
+                {% if event.register_started_date.strftime("%d") == event.register_ended_date.strftime("%d") %}
+                <!-- Single day event, show only time -->
+                {{ event.register_started_date.strftime("%d %b, %I:%M %p") }} - {{
+                event.register_ended_date.strftime("%I:%M %p") }}
+                {% elif event.register_started_date.strftime("%m") == event.register_ended_date.strftime("%m") %}
+                <!-- Same month, different days -->
+                {{ event.register_started_date.strftime("%d") }} - {{ event.register_ended_date.strftime("%d %b %Y")
+                }}
+                {% else %}
+                <!-- Different months or years -->
+                {{ event.register_started_date.strftime("%d %b %Y") }} - {{ event.register_ended_date.strftime("%d %b
+                %Y") }}
+                {% endif %}
+              </span>
+            </div>
 
-              <div class="content">
-                <strong><i class="ph ph-calendar"></i> Publish Date:</strong> <span style="color: #2185d0;">{{
-                  event.publish_started_date.strftime('%B %d, %Y
-                  %I:%M %p') }}</span>
-              </div>
-            </div>
-            <div class="item">
-              <div class="content">
-                <strong><i class="ph ph-calendar-check"></i>Join Date:</strong> <span style="color: #21ba45;"> {% if
-                  event.started_date.strftime("%m") ==
-                  event.ended_date.strftime("%m") %}
-                  {{ event.started_date.strftime("%d") }} - {{ event.ended_date.strftime("%d %b %Y") }}
-                  {% else %}
-                  {{ event.started_date.strftime("%d %b %Y") }} - {{ event.ended_date.strftime("%d %b %Y")
-                  }}
-                  {% endif %}</span>
-              </div>
-            </div>
-            <div class="item">
-              <div class="content">
-                <strong><i class="ph ph-calendar-plus"></i>Register Event Date:</strong>
-                <span style="color: #fb7d08;">
-                  {% if event.register_started_date.strftime("%d") == event.register_ended_date.strftime("%d") %}
-                  <!-- Single day event, show only time -->
-                  {{ event.register_started_date.strftime("%d %b, %I:%M %p") }} - {{
-                  event.register_ended_date.strftime("%I:%M %p") }}
-                  {% elif event.register_started_date.strftime("%m") == event.register_ended_date.strftime("%m") %}
-                  <!-- Same month, different days -->
-                  {{ event.register_started_date.strftime("%d") }} - {{ event.register_ended_date.strftime("%d %b %Y")
-                  }}
-                  {% else %}
-                  <!-- Different months or years -->
-                  {{ event.register_started_date.strftime("%d %b %Y") }} - {{ event.register_ended_date.strftime("%d %b
-                  %Y") }}
-                  {% endif %}
-                </span>
-              </div>
-
-            </div>
-            <div class="item">
-              <i class="info circle icon"></i>
-              <div class="content">
-                <strong>Status:</strong> {{ event.status }}
-              </div>
+          </div>
+          <div class="item">
+            <i class="info circle icon"></i>
+            <div class="content">
+              <strong>Status:</strong> {{ event.status }}
             </div>
           </div>
         </div>
-
       </div>
-      <div class="extra content">
-        <div class="ui fluid buttons" style="margin-bottom: 0.5rem;">
-          <a class="ui button primary" href="{{ url_for('admin.events.create_or_edit', event_id=event.id) }}">
-            <i class="edit icon"></i> Edit Event
-          </a>
-        </div>
-        <div class="ui fluid buttons" style="margin-bottom: 0.5rem;">
-          <a class="ui button" style="background-color: #364989; color: white;"
-            href="{{ url_for('admin.events.challenge', event_id=event.id) }}">
-            <i class="trophy icon"></i> Event Challenges
-          </a>
-        </div>
-        <div class="ui fluid buttons" style="margin-bottom: 0.5rem;">
-          <a class="ui button primary" style="background-color: #364989; color: white;"
-            href="{{ url_for('dashboards.index', event_id=event.id) }}">
-            <i class="sort amount down icon"></i> Dashboard
-          </a>
-        </div>
 
-      </div>
     </div>
-    {% endfor %}
+    <div class="flex flex-col gap-2">
+      <a class="btn btn-primary w-full" href="{{ url_for('admin.events.create_or_edit', event_id=event.id) }}">
+        <i class="edit icon"></i> Edit Event
+      </a>
+      <a class="btn bg-[#364989] text-white hover:bg-[#2d3d73] w-full"
+        href="{{ url_for('admin.events.challenge', event_id=event.id) }}">
+        <i class="trophy icon"></i> Event Challenges
+      </a>
+      <a class="btn bg-[#364989] text-white hover:bg-[#2d3d73] w-full"
+        href="{{ url_for('dashboards.index', event_id=event.id) }}">
+        <i class="sort amount down icon"></i> Dashboard
+      </a>
+    </div>
   </div>
+  {% endfor %}
 </div>
+</div>
+
 {% endblock %}

@@ -2,31 +2,41 @@
 {% import '/base/html-renderer.html' as renderer %}
 
 {% block content %}
-<div class="ui container">
-    <div class="ui segment">
-    <h1 class="ui header">
-      Create TEAM
-    </h1>
+<div class="container mx-auto px-4">
+  <div class="card bg-base-100 shadow-xl mb-4">
+    <div class="card-body">
+      <h1 class="card-title text-2xl">Create TEAM</h1>
+    </div>
   </div>
+
   {% if error_msg %}
-  <div class="ui red message"> {{ error_msg }}</div>
+  <div class="alert alert-error mb-4">
+    <span>{{ error_msg }}</span>
+  </div>
   {% endif %}
-   <div class="ui segment">
-    <form method="POST" class="ui form" enctype="multipart/form-data">
-      {{ form.csrf_token }}
-  
-      <div class="field">
-        {{ form.name.label }}
-        {{ form.name }}
-      </div>
-  
-      <div class="field">
-        {{ form.uploaded_picture.label }}
-        {{ form.uploaded_picture }}
-      </div>
-  
-      <button class="ui primary button" type="submit">Submit</button>
-    </form>
+
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <form method="POST" enctype="multipart/form-data">
+        {{ form.csrf_token }}
+
+        <div class="form-control w-full mb-4">
+          <label class="label"></label>
+          <span class="label-text">{{ form.name.label }}</span>
+          </label>
+          {{ form.name(class="input input-bordered w-full") }}
+        </div>
+
+        <div class="form-control w-full mb-4">
+          <label class="label">
+            <span class="label-text">{{ form.uploaded_picture.label }}</span>
+          </label>
+          {{ form.uploaded_picture(class="file-input file-input-bordered w-full") }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
   </div>
 </div>
 {% endblock %}

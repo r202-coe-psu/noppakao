@@ -25,41 +25,41 @@ class EventForm(BaseEventForm):
     publish_started_date = fields.DateTimeField(
         "Publish Start Date",
         validators=[validators.Optional()],
-        format="%d-%m-%Y %H:%M:%S",
+        format="%Y-%m-%dT%H:%M",
         widget=widgets.TextInput(),
     )
     publish_ended_date = fields.DateTimeField(
         "Publish End Date",
         validators=[validators.Optional()],
-        format="%d-%m-%Y %H:%M:%S",
+        format="%Y-%m-%dT%H:%M",
         widget=widgets.TextInput(),
     )
 
     register_started_date = fields.DateTimeField(
         "Register Started Date",
         validators=[validators.Optional()],
-        format="%d-%m-%Y %H:%M:%S",
+        format="%Y-%m-%dT%H:%M",
         widget=widgets.TextInput(),
     )
 
     register_ended_date = fields.DateTimeField(
         "Register End Date",
         validators=[validators.Optional()],
-        format="%d-%m-%Y %H:%M:%S",
+        format="%Y-%m-%dT%H:%M",
         widget=widgets.TextInput(),
     )
 
     started_date = fields.DateTimeField(
         "Started Date",
         validators=[validators.Optional()],
-        format="%d-%m-%Y %H:%M:%S",
+        format="%Y-%m-%dT%H:%M",
         widget=widgets.TextInput(),
     )
 
     ended_date = fields.DateTimeField(
         "Ended Date",
         validators=[validators.Optional()],
-        format="%d-%m-%Y %H:%M:%S",
+        format="%Y-%m-%dT%H:%M",
         widget=widgets.TextInput(),
     )
 

@@ -1,57 +1,58 @@
 {% extends "base/default-page.html" %}
 
 {% block content %}
-<div class="flex justify-end mr-4">
-  <a class="btn btn-primary" href="{{ url_for('admin.challenges.create_or_edit') }}">
-    <i class="add icon"></i>create challenge
-  </a>
-</div>
+<div class="flex flex-col gap-4">
+    <div class="flex justify-between items-center">
 
-<div>
-  <div class="ui grid center aligned" style="padding: 1rem;">
+    <h1 class="text-2xl font-bold">Challenges</h1>
+    <a href="{{ url_for('admin.challenges.create_or_edit') }}">
+      <button class="btn btn-primary w-full">
+        <i class="ph-bold ph-plus"></i>
+        Create Challenge
+      </button>
+    </a>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
     {% for i in range((event_categorys|length)) %}
-    <div class="five wide column" id="card-template">
-      <div class="ui cards">
-        <div class="ui fluid card">
-          <div class="content">
-            <div class="header">
-              <i class="chess queen icon" style="visibility: visible;"></i>
-              Question Category <span style="color: #386CAF;">{{ event_categorys[i].name }}</span>
-            </div>
-            <div class="content" style="margin-top: 1rem;">
-              <table class="ui table" style="border: none !important;">
-                <thead>
-                  <tr>
-                    <th class="one wide"></th>
-                    <th>Challenges</th>
-                    <th class="four wide"> action </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for challenge in challenges %}
-                  {% if event_categorys[i].name == challenge.category.name %}
-                  <tr>
-                    <td><i class="cube icon" style="color: #386CAF;"></i></td>
-                    <td>{{ challenge.name }}</td>
-                    <td>
-                      <a class="ui icon blue button"
-                        href="{{ url_for('admin.challenges.create_or_edit',challenge_id=challenge.id ) }}"
-                        aria-label="Edit Challenge">
-                        <i class="edit icon"></i>
-                      </a>
-                      <a class="ui icon yellow button"
-                        href="{{ url_for('admin.challenges.view_file_challenge',challenge_id=challenge.id ) }}"
-                        aria-label="File Challenge">
-                        <i class="file icon"></i>
-                      </a>
-                    </td>
-                  </tr>
-                  {% endif %}
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
+    <div class="bg-white rounded-box shadow">
+    <div class="w-full h-100 overflow-y-auto">
+        <div class="p-4">
+          <div class="flex items-center mb-4 flex-row gap-1">
+            <i class="ph-bold ph-list-dashes text-xl"></i>
+            <span class="font-bold ml-2"><span class="text-blue-600">{{ event_categorys[i].name
+                }}</span> Challenges</span>
           </div>
+          <table class="w-full table">
+            <thead class="text-gray-800">
+              <tr>
+                <th class="text-left w-[5%]"></th>
+                <th class="text-left w-[70%]">Challenges</th>
+                <th class="text-center w-[25%]">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for challenge in challenges %}
+              {% if event_categorys[i].name == challenge.category.name %}
+              <tr>
+                <td><i class="ph ph-cube"></i></td>
+                <td>{{ challenge.name }}</td>
+                <td class="flex flex-row gap-2 justify-center items-center">
+                  <a
+                    href="{{ url_for('admin.challenges.create_or_edit',challenge_id=challenge.id ) }}"
+                    aria-label="Edit Challenge">
+                    <button class="btn btn-square btn-primary btn-sm"><i class="ph ph-pencil-line"></i></button>
+                  </a>
+                  <a
+                    href="{{ url_for('admin.challenges.view_file_challenge',challenge_id=challenge.id ) }}"
+                    aria-label="File Challenge">
+                    <button class="btn btn-square btn-warning btn-sm"><i class="ph ph-file"></i></button>
+                  </a>
+                </td>
+              </tr>
+              {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

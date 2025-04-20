@@ -1,8 +1,13 @@
-{% extends "base/default-page.html" %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block title %}{{event.name}} Event Leaderboard{% endblock %}
-
-{% block content %}
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{event.name}} Event Leaderboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@2.51.5/dist/full.css" rel="stylesheet">
+</head>
 <div class="container mx-auto p-4">
   <h1 class="text-white text-2xl font-mono text-center p-4 mb-8 bg-primary rounded-lg">
     {{event.name}} Event Leaderboard
@@ -172,11 +177,6 @@
   </div>
 </div>
 
-{% endblock %}
-
-
-{% block additional_js %}
-
 <script type="text/javascript">
   function countdown(ended_date) {
     const countDownDate = new Date(ended_date).getTime();
@@ -190,13 +190,12 @@
       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-      document.getElementById("countdown").innerHTML = '<i class="clock outline icon"></i>' + days + "d " + hours + "h "
-        + minutes + "m " + seconds + "s ";
+      document.getElementById("countdown").innerHTML = `<i class="fa fa-clock"></i> ${days}d ${hours}h ${minutes}m ${seconds}s`;
 
       if (distance < 0) {
         clearInterval(x);
-        document.getElementById("countdown").innerHTML = '<i class="clock outline icon"></i> Out Of Time';
-        document.getElementById("countdown").classList.add("flash-red");
+        document.getElementById("countdown").innerHTML = '<i class="fa fa-clock"></i> Out Of Time';
+        document.getElementById("countdown").classList.add("text-error animate-pulse");
       }
     }, 1000);
   }
@@ -212,4 +211,4 @@
   }, 60000);
 </script>
 
-{% endblock additional_js %}
+</html>

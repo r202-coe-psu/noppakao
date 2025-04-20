@@ -2,67 +2,76 @@
 {% import '/base/html-renderer.html' as renderer %}
 
 {% block content %}
-<div class="ui raised segment">
-  <h1 class="ui header">Categories</h1>
-</div>
-
-<div class="ui raised segment">
-  <div class="flex justify-end mr-4">
-    <a class="btn btn-primary" href="{{ url_for('admin.categories.create_or_edit') }}">
-      <i class="add icon"></i>
-      Create Category
+<div class="flex flex-col gap-4">
+  <div class="flex justify-between items-center">
+    <h1 class="text-2xl font-bold">Categories</h1>
+    <a href="{{ url_for('admin.categories.create_or_edit') }}">
+      <button class="btn btn-primary w-full">
+        <i class="ph-bold ph-plus"></i>
+        Create Category
+      </button>
     </a>
   </div>
+  <div class="overflow-x-auto rounded-box border border-base-300 bg-base-100">
+    <table class="table">
+      <thead class="bg-base-200 text-gray-800">
+        <tr class="border-gray-200">
+          <th></th>
+          <th>Category Name</th>
+          <th class="text-center">Status</th>
+          <th class="text-center">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for category in categories %}
+        <tr class="border-gray-200">
+          <td class="text-center">{{ loop.index }}</td>
+          <td>{{ category.name }}</td>
+          <td class="text-center">
+            {% if category.status == 'active' %}
+            <div class="flex flex-row gap-2 justify-center items-center">
+              <i class="ph-fill ph-circle text-[8px] text-[var(--color-success)]"></i>
+              {{ category.status }}
+            </div>
+            {% else %}
+            <div class="flex flex-row gap-2 justify-center items-center">
+              <i class="ph-fill ph-circle text-[8px] text-[var(--color-error)]"></i>
+              {{ category.status }}
+            </div>
+            {% endif %}
+          </td>
+          <td class="flex gap-2 justify-center items-center">
+            <a href=" {{ url_for('admin.categories.create_or_edit', category_id=category.id) }}">
+              <button class="btn btn-square btn-primary justify-center items-center">
+                <i class="ph ph-pencil-simple-line"></i>
+              </button>
+            </a>
 
-  <table class="ui celled table">
-    <thead>
-      <tr>
-        <th>Category Name</th>
-        <th>Status</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for category in categories %}
-      <tr>
-        <td>{{ category.name }}</td>
-        <td>{{ category.status }}</td>
-        <td>
-          <a class="ui yellow icon button"
-            href="{{ url_for('admin.categories.create_or_edit', category_id=category.id) }}">
-            <i class="edit icon"></i>
-          </a>
-          <a class="ui red icon button" onclick="showDeleteModal('{{ category.id }}')">
-            <i class="trash icon"></i>
-          </a>
-        </td>
-      </tr>
+            <button class="btn btn-square btn-error justify-center items-center"
+              onclick="document.getElementById('{{ category.id }}').showModal()">
+              <i class="ph ph-trash-simple"></i>
+            </button>
 
-      <!-- Delete Modal -->
-      <div class="ui small modal {{ category.id }}">
-        <div class="header">Delete Category</div>
-        <div class="content">
-          <p>Are you sure you want to delete <span class="ui red text">{{ category.name }}</span>?</p>
-        </div>
-        <div class="actions">
-          <a class="ui negative button" href="{{ url_for('admin.categories.delete', category_id=category.id) }}">
-            Delete
-          </a>
-          <div class="ui button" onclick="$('.ui.small.modal.{{ category.id }}').modal('hide')">Cancel</div>
-        </div>
-      </div>
-      {% endfor %}
-    </tbody>
-  </table>
+          </td>
+        </tr>
+
+        <dialog id="{{ category.id }}" class="modal">
+          <div class="modal-box">
+            <h3 class="text-lg font-bold">Delete Category</h3>
+            <p>Are you sure you want to delete <span class="text-red-500">{{ category.name }}</span>?</p>
+            <div class="modal-action">
+              <form method="dialog" class="modal-backdrop">
+                <button class="btn">Cancel</button>
+                <a class="btn btn-error" href="{{ url_for('admin.categories.delete', category_id=category.id) }}">
+                  Delete
+                </a>
+              </form>
+            </div>
+          </div>
+        </dialog>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
-{% endblock %}
-
-{% block additional_js %}
-<script>
-  function showDeleteModal(category_id) {
-    if (category_id) {
-      $('.ui.small.modal.' + category_id).modal('show');
-    }
-  }
-</script>
 {% endblock %}

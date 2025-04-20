@@ -13,343 +13,343 @@
 {{ SuccessDialog(url_for('events.challenge', event_id=event.id)) }}
 {% endif %}
 
-<div class="flex flex-row items-center justify-between bg-base-200 p-4 rounded-lg border-2 border-base-300 mx-4">
+<div class="flex flex-row items-center justify-between bg-base-200 p-4 rounded-lg border-2 border-base-300 ">
   <!-- Score Section -->
   <div class="flex-1 flex flex-wrap gap-4">
-	{% if event.type == 'team' %}
-	<div class="text-xl">Team Score: {{ event.team_score() }}</div>
-	<span class="text-xl font-semibold">|</span>
-	<div class="text-xl">Team Rank: {{ event.team_rank() }}</div>
-	<span class="text-xl font-semibold">|</span>
-	<div class="text-xl">Individual Score: {{ event.competitor_score() }}</div>
-	<span class="text-xl font-semibold">|</span>
-	<div class="text-xl">Individual Rank: {{ event.competitor_rank() }}</div>
-	{% else %}
-	<div class="text-xl">Individual Score: {{ event.competitor_score() }}</div>
-	<span class="text-xl font-semibold">|</span>
-	<div class="text-xl">Individual Rank: {{ event.competitor_rank() }}</div>
-	{% endif %}
+    {% if event.type == 'team' %}
+    <div class="text-xl">Team Score: {{ event.team_score() }}</div>
+    <span class="text-xl font-semibold">|</span>
+    <div class="text-xl">Team Rank: {{ event.team_rank() }}</div>
+    <span class="text-xl font-semibold">|</span>
+    <div class="text-xl">Individual Score: {{ event.competitor_score() }}</div>
+    <span class="text-xl font-semibold">|</span>
+    <div class="text-xl">Individual Rank: {{ event.competitor_rank() }}</div>
+    {% else %}
+    <div class="text-xl">Individual Score: {{ event.competitor_score() }}</div>
+    <span class="text-xl font-semibold">|</span>
+    <div class="text-xl">Individual Rank: {{ event.competitor_rank() }}</div>
+    {% endif %}
   </div>
   <!-- Countdown Timer Section -->
   <div class="flex-none px-4 gap-2">
-	<div class="text-xl">
-	  Countdown Timer:
-	  <span id="countdown" class="font-bold text-lg"></span>
-	</div>
+    <div class="text-xl">
+      Countdown Timer:
+      <span id="countdown" class="font-bold text-lg px-2"></span>
+    </div>
   </div>
-  <a class="text-xl" href="{{ url_for('dashboards.index', event_id=event.id) }}">
-		<i class="sort amount down icon"></i> Dashboard
+  <a class="text-xl flex flex-row gap-2 items-center " href="{{ url_for('dashboards.index', event_id=event.id) }}">
+    <i class="ph-fill ph-chart-line"></i>
+    <p class="cursor-pointer hover:underline">Dashboard</p>
   </a>
 </div>
-<!-- Navbar -->
-<div class="flex flex-row mt-2" >
-  <div class="flex-1 px-4">
-    <h3 >
-		<span class="text-4xl font-bold">Challenge</span>
-	</h3>
+<p class="text-4xl font-bold my-8">
+  Challenge
+</p>
+
+<div class="flex items-center p-4">
+  <a class="text-base cursor-pointer hover:underline" href="{{ url_for('events.index') }}">Events</a>
+  <div class="divider divider-horizontal mx-4"></div>
+  <div class="font-bold cursor-pointer hover:underline">Challenge</div>
+</div>
+<div id="loader" class="fixed inset-0 flex items-center justify-center bg-base-100 bg-opacity-70 z-50"
+  style="display: none;">
+  <l-quantum size="80" speed="1.75" color="#165fd4"></l-quantum>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 justify-between mt-2">
+  {% for challenge_category in event.get_challenge_categories() %}
+  <div class="card bg-base-100 shadow-sm border-2 border-base-200">
+    <div class="card-body">
+      <div class="content">
+        <div class="text-2xl font-bold">
+          <i class="ph-fill ph-cube" style="color: #386CAF; font-size: 1.7rem;"></i>
+          {{ challenge_category.name }}
+        </div>
+        <div class="content">
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Challenges</th>
+                <th>Point</th>
+                <th><i class="ph-fill ph-drop" style="color: red;"></i>
+                </th>
+                <th><i class="ph-fill ph-key" style="color: rgb(255, 196, 0);"></i></th>
+                <th><i class="ph-fill ph-skull"></i></th>
+                <th>Solves</th>
+                <th><i class="ph-fill ph-flag"></i></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for event_challenge in event.get_event_challenges(challenge_category) %}
+              <tr class="clickable-row"
+                onclick="document.getElementById('my_modal_1-{{ event_challenge.id }}').showModal()">
+                <td><i class="ph-fill ph-cube" style="color: #386CAF;"></i></td>
+                <td class="clickable-name"><a>{{
+                    event_challenge.challenge.name }}</a></td>
+                <td class="text-center">{{ event_challenge.success_score }}</td>
+                <td class="text-center">{{ event_challenge.first_blood_score }}</td>
+                <td class="text-center">{{ event_challenge.hint_score }}</td>
+                <td class="text-center">{{ event_challenge.fail_score }}</td>
+                <td class="text-center">{{ event_challenge.total_solve_challenge() }}</td>
+                {% if event_challenge.solve_challenge() %}
+                <td><i class="ph-fill ph-trophy" style="color: rgb(255, 196, 0);"></i></td>
+                {% else %}
+                <td><i class="ph-fill ph-clock"></i>
+                </td>
+                {% endif %}
+              </tr>
+              <!-- Modal -->
+              <dialog id="my_modal_1-{{ event_challenge.id }}" class="modal">
+                <div class="modal-box max-w-4xl w-full mx-auto">
+                  <h3 class="text-lg font-bold">Challenge Details</h3>
+                  {% set challenge = event_challenge.challenge %}
+                  <div>
+                    <div class="p-4">
+                      <p>{{ challenge.description }}</p>
+                      {% if challenge.answer_type == 'plaintext' %}
+                      {% else %}
+                      <p>Example Submit: <span class="text-gray-500 italic">{{ event.flag_prefix
+                          }}{Answer}</span></p>
+                      {% endif %}
+
+                      {% if challenge.challenge_url %}
+                      <p>
+                        Link URL: <a href="{{ challenge.challenge_url }}" class="text-primary">{{
+                          challenge.challenge_url }}</a>
+                      </p>
+                      {% endif %}
+
+                      {% if challenge.get_challenge_resources() %}
+                      <p>Files:</p>
+                      {% for challenge_resource in challenge.get_challenge_resources() %}
+                      <p>
+                        <a href="{{ url_for('challenges.download', challenge_resource_id=challenge_resource.id) }}"
+                          target="_blank" class="group flex flex-row items-center text-primary">
+
+                          <i class="ph-fill ph-box-arrow-down mr-2 text-primary"></i>
+
+                          <span class="group-hover:underline">
+                            {{ challenge_resource.file.filename }}
+                          </span>
+
+                          <span class="text-blue-600 group-hover:underline">
+                            ({{ '%0.2f' | format(challenge_resource.file.length / 1024) }}
+                            KB)
+                          </span>
+                        </a>
+
+                      </p>
+                      {% endfor %}
+                      {% endif %}
+                    </div>
+
+                    {% if event_challenge.check_transaction_hint(event.id) %}
+                    <div id="response-{{ event_challenge.id }}"
+                      class="p-4 mb-4 bg-base-100 border border-gray-300 rounded-lg border-t-2 border-t-primary">
+                      {{ event_challenge.challenge.hint }}
+                    </div>
+                    {% elif not event_challenge.solve_challenge() %}
+                    <div id="hintbtn-{{ event_challenge.id }}" class="w-full flex justify-center items-center"
+                      onclick="ClickHint('{{event.id}}','{{ event_challenge.id }}')">
+                      <div class="visible w-full">
+                        <button
+                          class="btn btn-primary w-full text-white relative overflow-hidden group transition-all duration-300 ease-in-out">
+                          <i
+                            class="ph-fill ph-eye absolute transform group-hover:-translate-y-10 transition-transform duration-300 ease-in-out"></i>
+                          <p id="hintbtn-text-{{ event_challenge.id }}"
+                            class="transform translate-y-10 group-hover:translate-y-0 transition-transform duration-300 ease-in-out">
+                            Show hint
+                          </p>
+                          <div id="loader-{{ event_challenge.id }}" class="w-full text-center mt-2"
+                            style="display: none;">
+                            <div class="flex items-center justify-center space-x-2">
+                              <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-white">
+                              </div>
+                              <span class="text-white font-medium">Loading hint...</span>
+                            </div>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                    <div id="response-{{ event_challenge.id }}" class="response"></div>
+                    {% else %}
+                    <div id="response-{{ event_challenge.id }}" class="response"></div>
+                    {% endif %}
+
+
+                    {% if not event_challenge.solve_challenge() %}
+                    <form method="GET"
+                      action="{{ url_for('events.submit_challenge', event_id=event.id, challenge_id=event_challenge.id) }}">
+                      <div class="flex flex-row gap-2 mt-2">
+                        <input type="text" class="input w-full" id="answer" name="answer"
+                          placeholder="Enter your answer..." {% if challenge.answer_type=='flag' %}
+                          value="{{ event.flag_prefix + '{}' if event.flag_prefix else '' }}" {% endif %}>
+                        <button type="submit" class="btn btn-primary">
+                          Submit
+                        </button>
+                      </div>
+                    </form>
+                    {% else %}
+                    <div class="alert alert-success text-center mt-4">
+                      <i class="ph-fill ph-check-circle"></i>
+                      <span class="text-base font-semibold">Challenge Success</span>
+                    </div>
+                    {% endif %}
+                  </div>
+
+                  <div class="modal-action">
+                    <button class="btn btn-error"
+                      onclick="document.getElementById('my_modal_1-{{ event_challenge.id }}').close()">
+                      Close
+                      <i class="ph ph-x"></i>
+                    </button>
+                  </div>
+                </div>
+              </dialog>
+
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
-
-<div class="ui breadcrumb" style="padding: 1em">
-	<a class="section" href="{{ url_for('events.index') }}">Events</a>
-	<i class="right angle icon divider"></i>
-	<div class="active section">Challenge</div>
-</div>
-<div id="loader" class="ui active inverted dimmer" style="display: none;">
-	<l-quantum size="80" speed="1.75" color="#165fd4"></l-quantum>
-</div>
-
-<div class="flex grid grid-cols-1 xl:grid-cols-3 gap-4 justify-between mt-2">
-	{% for challenge_category in event.get_challenge_categories() %}
-		<div class="card  bg-base-100 shadow-sm border-2 border-base-200">
-			<div class="card-body">
-				<div class="content">
-					<div class="text-2xl font-bold">
-						<i class="cubes icon" style="color: #386CAF; font-size: 1.7rem;"></i>
-						{{ challenge_category.name }}
-					</div>
-					<div class="content">
-						<table class="table">
-							<thead>
-								<tr>
-									<th ></th>
-									<th >Challenges</th>
-									<th>Point</th>
-									<th><i class="tint icon" style="color: red;"></i>
-									</th>
-									<th><i class="key icon"
-											style="color: rgb(255, 196, 0);"></i></th>
-									<th><i class="skull crossbones icon"></i></th>
-									<th>Solves</th>
-									<th><i class="flag checkered icon"></i></th>
-								</tr>
-							</thead>
-							<tbody>
-								{% for event_challenge in event.get_event_challenges(challenge_category) %}
-								<tr class="clickable-row"  onclick="document.getElementById('my_modal_1-{{ event_challenge.id }}').showModal()" >
-									<td><i class="cube icon" style="color: #386CAF;"></i></td>
-									<td class="clickable-name"><a>{{
-											event_challenge.challenge.name }}</a></td>
-									<td>{{ event_challenge.success_score }}</td>
-									<td>{{ event_challenge.first_blood_score }}</td>
-									<td>{{ event_challenge.hint_score }}</td>
-									<td>{{ event_challenge.fail_score }}</td>
-									<td>{{ event_challenge.total_solve_challenge() }}</td>
-									{% if event_challenge.solve_challenge() %}
-									<td><i class="trophy icon"
-											style="color: rgb(255, 196, 0);"></i></td>
-									{% else %}
-									<td><i class="clock outline icon"></i>
-									</td>
-									{% endif %}
-								</tr>
-								<!-- Modal -->
-								<dialog id="my_modal_1-{{ event_challenge.id }}" class="modal">
-								<div class="modal-box max-w-4xl w-full mx-auto">
-									<h3 class="text-lg font-bold">Challenge Details</h3>
-									{% set challenge = event_challenge.challenge %}
-									<div>
-									<div class="p-4">
-										<p>{{ challenge.description }}</p>
-										{% if challenge.answer_type == 'plaintext' %}
-										{% else %}
-										<p>Example Submit: <span class="text-gray-500 italic">{{ event.flag_prefix }}{Answer}</span></p>
-										{% endif %}
-										
-										{% if challenge.challenge_url %}
-										<p>
-										Link URL: <a href="{{ challenge.challenge_url }}" class="text-primary">{{ challenge.challenge_url }}</a>
-										</p>
-										{% endif %}
-										
-										{% if challenge.get_challenge_resources() %}
-										<p>Files:</p>
-										{% for challenge_resource in challenge.get_challenge_resources() %}
-										<p>
-										<a href="{{ url_for('challenges.download', challenge_resource_id=challenge_resource.id) }}" target="_blank">
-											<i class="folder yellow icon"></i>{{ challenge_resource.file.filename }}
-											<span class="text-blue-600">({{ '%0.2f' | format(challenge_resource.file.length / 1024) }} KB)</span>
-										</a>
-										</p>
-										{% endfor %}
-										{% endif %}
-									</div>
-
-									{% if event_challenge.check_transaction_hint(event.id) %}
-									<div id="response-{{ event_challenge.id }}" class="ui blue segment">
-										{{ event_challenge.challenge.hint }}
-									</div>
-									{% elif not event_challenge.solve_challenge() %}
-									<div id="hintbtn-{{ event_challenge.id }}" class="ui vertical animated fluid blue small button" tabindex="0" onclick="ClickHint('{{event.id}}','{{ event_challenge.id }}')">
-										<div class="visible content">
-										<i class="eye icon"></i>
-										</div>
-										<div class="hidden content">
-										Show hint
-										</div>
-									</div>
-									<div id="response-{{ event_challenge.id }}" class="response"></div>
-									{% else %}
-									<div id="response-{{ event_challenge.id }}" class="response"></div>
-									{% endif %}
-
-									<div id="loader-{{ event_challenge.id }}" class="ui active inverted dimmer" style="display: none;">
-										<div class="ui large text loader text-blue-600">
-										Loading...
-										</div>
-									</div>
-
-									{% if not event_challenge.solve_challenge() %}
-									<form method="GET" action="{{ url_for('events.submit_challenge', event_id=event.id, challenge_id=event_challenge.id) }}">
-										<div class="flex flex-row gap-2 mt-2">
-										<input type="text" class="input w-full" id="answer" name="answer" placeholder="Enter your answer..." 
-											{% if challenge.answer_type == 'flag' %}
-											value="{{ event.flag_prefix + '{}' if event.flag_prefix else '' }}"
-											{% endif %}
-										>
-										<button type="submit" class="btn btn-primary">
-											Submit
-										</button>
-										</div>
-									</form>
-									{% else %}
-									<div class="ui message success text mt-4">
-										Challenge Success
-									</div>
-									{% endif %}
-									</div>
-
-									<div class="modal-action">
-									<button class="btn btn-error" onclick="document.getElementById('my_modal_1-{{ event_challenge.id }}').close()">
-										Close
-										<i class="fa fa-chevron-right"></i>
-									</button>
-									</div>
-								</div>
-								</dialog>
-
-								{% endfor %}
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	{% endfor %}
+  {% endfor %}
 </div>
 {% endblock %}
 
 {% block additional_js %}
-<script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/quantum.js"></script>
-<style>
-	@keyframes flash {
-		0% {
-			opacity: 1;
-		}
 
-		50% {
-			opacity: 0;
-		}
-
-		100% {
-			opacity: 1;
-		}
-	}
-
-	.flash-red {
-		color: red;
-		animation: flash 1s infinite;
-	}
-</style>
 <script type="text/javascript">
-	function updateIP() {
-		fetch('https://api.ipify.org?format=json')
-			.then(response => response.json())
-			.then(data => {
-				document.getElementById('ipaddress').innerHTML = `<i class="tv icon"></i>${data.ip}`;
-			})
-	}
+  function updateIP() {
+    fetch('https://api.ipify.org?format=json')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('ipaddress').innerHTML = `<i class="tv icon"></i>${data.ip}`;
+      })
+  }
 
-	document.addEventListener('DOMContentLoaded', function () {
-		updateIP();
-	});
+  document.addEventListener('DOMContentLoaded', function () {
+    updateIP();
+  });
 </script>
-
 <script>
-  // Function to load hint data
   function ClickHint(event_id, event_challenge_id) {
-    if (event_id) {
-      var loader = document.getElementById("loader-" + event_challenge_id);
-      var hintbtn = document.getElementById("hintbtn-" + event_challenge_id);
-      loader.style.display = "block";
+    if (!event_id || !event_challenge_id) return;
 
-      $('.response').hide().empty();
-      
-      setTimeout(function () {
-        $.ajax({
-          url: '/api/events/' + event_id + '/event_challenges/' + event_challenge_id,
-          type: 'GET',
-          success: function (response) {
-            console.log(response.hint);
-            $('.response').html(`
-              <div class="ui blue segment">${response.hint}</div>
-            `).show();
-          },
-          complete: function () {
-            $('.response').fadeIn();
+    const loader = document.getElementById("loader-" + event_challenge_id);
+    const hintbtn = document.getElementById("hintbtn-" + event_challenge_id);
+    const responseDiv = document.getElementById("response-" + event_challenge_id);
+
+    loader.style.display = "block";
+    responseDiv.style.display = "none";
+    responseDiv.innerHTML = "";
+
+    setTimeout(function () {
+      $.ajax({
+        url: `/api/events/${event_id}/event_challenges/${event_challenge_id}`,
+        type: 'GET',
+        success: function (response) {
+          console.log(response.hint);
+          responseDiv.innerHTML = `<div class="p-4 mb-4 bg-base-100 border border-gray-300 rounded-lg border-t-2 border-t-primary">${response.hint}</div>`;
+          responseDiv.style.display = "block";
+        },
+        complete: function () {
+          console.log("complete");
+          loader.style.display = "none";
+          hintbtn.style.display = "none";
+        }
+      });
+    }, 1000);
+  }
+
+  function showQuestion(event_id, event_challenge_id) {
+    if (!event_challenge_id) return;
+
+    document.getElementById(`my_modal_1-${event_challenge_id}`).showModal();
+
+    const loader = document.getElementById("loader-" + event_challenge_id);
+    const hintbtn = document.getElementById("hintbtn-" + event_challenge_id);
+    const responseDiv = document.getElementById("response-" + event_challenge_id);
+
+    responseDiv.style.display = "none";
+    responseDiv.innerHTML = "";
+
+    setTimeout(function () {
+      $.ajax({
+        url: `/api/events/${event_id}/event_challenges/${event_challenge_id}/check`,
+        type: 'GET',
+        success: function (response) {
+          if (response.hint) {
+            responseDiv.innerHTML = `<div class="p-4 mb-4 bg-base-100 border border-gray-300 rounded-lg border-t-2 border-t-primary">${response.hint}</div>`;
+            responseDiv.style.display = "block";
+          }
+        },
+        complete: function (jqXHR) {
+          const response = jqXHR.responseJSON;
+          if (response && response.hint) {
             loader.style.display = "none";
             hintbtn.style.display = "none";
           }
-        });
-      }, 1000);
-    } else {
-      $(response).hide().empty();
-    }
-  }
-
-  // Function to show the question modal
-  function showQuestion(event_id, event_challenge_id) {
-    event_challenge_id ? $('.ui.modal.' + event_challenge_id).modal('show') : $('.ui.modal.').modal('hide');
-    if (event_id, event_challenge_id) {
-      $('.response').hide().empty();
-      var loader = document.getElementById("loader-" + event_challenge_id);
-      var hintbtn = document.getElementById("hintbtn-" + event_challenge_id);
-      setTimeout(function () {
-        $.ajax({
-          url: '/api/events/' + event_id + '/event_challenges/' + event_challenge_id + '/check',
-          type: 'GET',
-          success: function (response) {
-            if (response.hint) {
-              $('.response').html(`
-                <div class="ui blue segment">${response.hint}</div>
-              `).show();
-            }
-          },
-          complete: function (jqXHR, textStatus) {
-            var response = jqXHR.responseJSON;
-            if (response.hint) {
-              loader.style.display = "none";
-              hintbtn.style.display = "none";
-            }
-          }
-        });
-      }, 100);
-    }
+        }
+      });
+    }, 100);
   }
 </script>
 
 <script type="text/javascript">
-	function countdown(ended_date) {
-		const countDownDate = new Date(ended_date).getTime();
+  function countdown(ended_date) {
+    const countDownDate = new Date(ended_date).getTime();
 
-		const x = setInterval(function () {
-			const now = new Date().getTime();
-			const distance = countDownDate - now;
+    const x = setInterval(function () {
+      const now = new Date().getTime();
+      const distance = countDownDate - now;
 
-			const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-			const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-			const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-			const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-			document.getElementById("countdown").innerHTML = '<i class="clock outline icon"></i>' + days + "d " + hours + "h "
-				+ minutes + "m " + seconds + "s ";
+      document.getElementById("countdown").innerHTML = '<i class="ph-fill ph-clock mx-2"></i>' + days + "d " + hours + "h "
+        + minutes + "m " + seconds + "s ";
 
-			if (distance < 0) {
-				clearInterval(x);
-				document.getElementById("countdown").innerHTML = '<i class="clock outline icon"></i> Out Of Time';
-				document.getElementById("countdown").classList.add("flash-red");
-			}
-		}, 1000);
-	}
+      if (distance < 0) {
+        clearInterval(x);
+        document.getElementById("countdown").innerHTML = '<i class="ph-fill ph-clock mx-2"></i> Out Of Time';
+        document.getElementById("countdown").classList.add("flash-red");
+      }
+    }, 1000);
+  }
 
-	window.onload = function () {
-		const ended_date = "{{ event.ended_date }}";
-		console.log("Initial Ended Date:", ended_date);
-		countdown(ended_date);
-	}
+  window.onload = function () {
+    const ended_date = "{{ event.ended_date }}";
+    console.log("Initial Ended Date:", ended_date);
+    countdown(ended_date);
+  }
 </script>
 
 <script type="text/javascript">
-	function updateTime() {
-		const now = new Date();
-		let hours = (now.getUTCHours() + 7) % 24; // Ensure hours don't exceed 24
-		let minutes = now.getUTCMinutes();
-		hours = hours < 10 ? '0' + hours : hours;
-		minutes = minutes < 10 ? '0' + minutes : minutes;
-		document.getElementById('time-display').innerHTML = `${hours}:${minutes} (UTC+7)`;
-	}
-	setInterval(updateTime, 1000);
-	updateTime();
+  function updateTime() {
+    const now = new Date();
+    let hours = (now.getUTCHours() + 7) % 24; // Ensure hours don't exceed 24
+    let minutes = now.getUTCMinutes();
+    hours = hours < 10 ? '0' + hours : hours;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    document.getElementById('time-display').innerHTML = `${hours}:${minutes} (UTC+7)`;
+  }
+  setInterval(updateTime, 1000);
+  updateTime();
 </script>
 
 <script type="text/javascript">
-	$(document).ready(function () {
-		$('.left.sidebar.menu')
-			.sidebar('attach events', '.launch.icon.item', 'show');
+  $(document).ready(function () {
+    $('.left.sidebar.menu')
+      .sidebar('attach events', '.launch.icon.item', 'show');
 
-		$('.launch.icon.item').removeClass('disabled');
+    $('.launch.icon.item').removeClass('disabled');
 
-		$('.ui.dropdown').dropdown();
-	});
+    $('.ui.dropdown').dropdown();
+  });
 </script>
 {% endblock %}

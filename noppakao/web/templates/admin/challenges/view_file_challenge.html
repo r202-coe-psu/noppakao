@@ -1,37 +1,55 @@
 {% extends "base/default-page.html" %}
-{% import '/base/html-renderer.html' as renderer %}
+{% import '/base/html-renderer-refactor.html' as renderer %}
 
 {% block content %}
-<div class="ui fluid container">
-    <h2 class="ui dividing header">Upload Challenge Resource</h2>
-    <form class="ui form" enctype="multipart/form-data" method="post">
+<div class="max-w-3xl mx-auto px-4">
+    <h2 class="text-2xl font-bold pb-2 mb-4 border-b">Upload Challenge Resource</h2>
+
+    <form enctype="multipart/form-data" method="post" class="mb-8">
         {{ form.csrf_token }}
-        <div class="field">
-            {{ form.uploaded_file.label }}
-            {{ form.uploaded_file(class="ui input") }}
-        </div>
-        <button class="ui primary button" type="submit">Save</button>
-        <a class="ui button" href="{{ url_for('admin.challenges.index') }}">Cancel</a>
+        <div class="form-control my-4">
+            {{ renderer.file_input(form.uploaded_file) }}
+            {% if form.uploaded_file.errors %}
+            <div class="text-red-500 text-sm mt-1">
+                {% for error in form.uploaded_file.errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <div class="flex gap-2 mb-6">
+                <button class="btn btn-primary" type="submit">Save</button>
+                <a class="btn" href="{{ url_for('admin.challenges.index') }}">Cancel</a>
+            </div>
     </form>
 
-    <h3 class="ui dividing header">Existing Challenge Resources</h3>
-    <div class="ui list">
+    <h3 class="text-2xl font-bold pb-2 my-4 border-b">Existing Challenge Resources</h3>
+
+    <div class="space-y-2">
         {% for challenge_resource in challenge_resources %}
-        <div class="item" style="margin-top: 0.5rem;">
-            <div class="content">
-                <div class="left floated content">
-                    <div class="header"> <i class="folder yellow icon"></i>{{ challenge_resource.challenge.name }}
+        <div class="card bg-base-100 shadow-sm">
+            <div class="card-body p-4 flex flex-row items-center justify-between">
+                <div>
+                    <div class="flex items-center">
+                        <span class="text-yellow-500 mr-2">
+                            <i class="folder icon"></i>
+                        </span>
+                        <h4 class="font-bold">{{ challenge_resource.challenge.name }}</h4>
                     </div>
-                    <div class="description" style="margin-top: 0.5rem;">{{ challenge_resource.file.filename }} <span style="color: blue">({{ '%0.2f'| format(challenge_resource.file.length / 1024) }} KB) </span>
+                    <div class="mt-1 text-sm">
+                        {{ challenge_resource.file.filename }}
+                        <span class="text-blue-500">({{ '%0.2f'| format(challenge_resource.file.length / 1024) }}
+                            KB)</span>
                     </div>
                 </div>
-                <div class="right floated content">
-                    <a class="ui negative button"
-                        href="{{ url_for('admin.challenges.delete', challenge_resource_id=challenge_resource.id, challenge_id=challenge.id) }}">Delete</a>
-                </div>
+                <a class="btn btn-error btn-sm"
+                    href="{{ url_for('admin.challenges.delete', challenge_resource_id=challenge_resource.id, challenge_id=challenge.id) }}">
+                    Delete
+                </a>
             </div>
         </div>
         {% endfor %}
     </div>
+</div>
+{# leave div tab for miss footer padding #}
 </div>
 {% endblock %}

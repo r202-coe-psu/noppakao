@@ -1,23 +1,30 @@
+# migrate_publish_date.py
+
+import sys
+import mongoengine as me
 from noppakao.models import Event
-from mongoengine import connect
-from bson import ObjectId
 
-connect("noppakaodb")
 
-# เข้าถึง raw MongoDB collection โดยตรง
-collection = Event._get_collection()
+def main():
+    # เชื่อมต่อ DB ตาม host ที่ส่งมาทาง argument
+    if len(sys.argv) > 1:
+        me.connect(db="noppakaodb", host=sys.argv[1])
+    else:
+        me.connect(db="noppakaodb")
 
-# ค้นหาทุก document ที่มี field 'publish_date'
-for doc in collection.find({"publish_date": {"$exists": True}}):
-    event_id = doc["_id"]
-    publish_date = doc["publish_date"]
-    print("started update db")
-    # อัปเดต field ใหม่และลบ field เดิม
-    collection.update_one(
-        {"_id": ObjectId(event_id)},
-        {
-            "$set": {"publish_started_date": publish_date},
-            "$unset": {"publish_date": ""},
-        },
+    collection = Event._get_collection()
+
+    # อัปเดตทุก document ที่มี publish_date
+    result = collection.update_many(
+        {"publish_date": {"$exists": True}},
+        [
+            {"$set": {"publish_started_date": "$publish_date"}},
+            {"$unset": "publish_date"},
+        ],
     )
-    print("suscess update db")
+
+    print(f"Migrated {result.modified_count} documents.")
+
+
+if __name__ == "__main__":
+    main()
