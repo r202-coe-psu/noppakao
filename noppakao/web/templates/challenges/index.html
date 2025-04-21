@@ -82,7 +82,7 @@
             </thead>
             <tbody>
               {% for event_challenge in event.get_event_challenges(challenge_category) %}
-              <tr class="clickable-row"
+              <tr class="clickable-row cursor-pointer"
                 onclick="document.getElementById('my_modal_1-{{ event_challenge.id }}').showModal()">
                 <td><i class="ph-fill ph-cube" style="color: #386CAF;"></i></td>
                 <td class="clickable-name"><a>{{
