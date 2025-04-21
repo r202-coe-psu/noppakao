@@ -2,164 +2,161 @@
 
 {% block content %}
 <h2 class="text-2xl font-bold pb-2 mb-4 border-b">
-    <i class="user secret icon"></i> Choose a CTF Events
+  <i class="user secret icon"></i> Choose a CTF Events
 </h2>
 <div class="tabs tabs-lift">
-    <input type="radio" name="tabs_3" class="tab" aria-label="Joined Events" checked="checked" />
-    <div class="tab-content bg-base-100 border-base-300 p-6">
-       <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        {% for event in events %}
-        {% if event.status == "active" %}
-        {% if now < event.publish_ended_date and now > event.publish_started_date %}
-            <div class="card bg-base-100 shadow-xl">
-                <div class="card-body">
-                    <h3 class="card-title">
-                        {% if event.type == 'team' %}
-                        <i class="users icon"></i>
-                        {% else %}
-                        <i class="user tie icon"></i>
-                        {% endif %}
-                        {{ event.name }}
-                    </h3>
-                    <div class="text-sm opacity-70 mt-2">
-                        {% if event.started_date == event.ended_date %}
-                        <span>
-                            <i class="ph ph-calendar-blank"></i>
-                            {{ event.started_date.strftime("%d %b %Y") }}
-                        </span>
-                        {% else %}
-                        <span class="flex flex-row items-center gap-1">
-                            <i class="ph ph-calendar-blank text-xl"></i>
-                            {% if event.started_date.strftime("%m") == event.ended_date.strftime("%m") %}
-                            {{ event.started_date.strftime("%d") }} - {{ event.ended_date.strftime("%d %b %Y") }}
-                            {% else %}
-                            {{ event.started_date.strftime("%d %b %Y") }} - {{ event.ended_date.strftime("%d %b %Y") }}
-                            {% endif %}
-                        </span>
-                        {% endif %}
-                    </div>
-                    <div class="card-actions mt-4">
-                        {% if now < event.started_date %} <button class="btn w-full">
-                            <i class="trophy icon"></i> Coming Soon...
-                            </button>
-                            {% elif now < event.ended_date and event.started_date < event.ended_date %} {% if
-                                current_user.check_join_event(event.id) %} {% if event.type=="team" %} <a
-                                href="{{ url_for('events.joiner', event_id=event.id) }}" class="btn btn-primary w-full">
-                                <i class="trophy icon"></i> Challenge
-                                </a>
-                                {% else %}
-                                <a href="{{ url_for('events.challenge', event_id=event.id) }}"
-                                    class="btn btn-primary w-full">
-                                    <i class="trophy icon"></i> Challenge
-                                </a>
-                                {% endif %}
-                                {% endif %}
-                                {% endif %}
-                                <a href="{{ url_for('dashboards.index', event_id=event.id) }}"
-                                    class="btn bg-[#364989] text-white w-full">
-                                    <i class="sort amount down icon"></i> Dashboard
-                                </a>
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-            {% endif %}
-            {% endfor %}
-    </div>
-</div>
-
-<input type="radio" name="tabs_3" class="tab" aria-label="Available Events"/>
-<div class="tab-content bg-base-100 border-base-300 p-6">
+  <input type="radio" name="tabs_3" class="tab" aria-label="Joined Events" checked="checked" />
+  <div class="tab-content bg-base-100 border-base-300 p-6">
     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        {% for event in events %}
-        {% if event.status == "active" and not current_user.check_join_event(event.id) and now <
-            event.publish_ended_date and now> event.publish_started_date %}
-            <div class="card bg-base-100 shadow-xl">
-                <div class="card-body">
-                    <h3 class="card-title">
-                        <i class="tag icon"></i> {{ event.name }}
-                    </h3>
-                    <div class="text-sm opacity-70 mt-2">
-                        {% if event.register_started_date == event.register_ended_date %}
-                        <span>
-                            <i class="ph ph-calendar-blank"></i>
-                            {{ event.register_started_date.strftime("%d %b %Y") }}
-                        </span>
-                        {% else %}
-                        <span>
-                            <i class="ph ph-calendar-blank"></i>
-                            {% if event.register_started_date.strftime("%m") == event.register_ended_date.strftime("%m")
-                            %}
-                            {{ event.register_started_date.strftime("%d") }} - {{ event.register_ended_date.strftime("%d
-                            %b %Y") }}
-                            {% else %}
-                            {{ event.register_started_date.strftime("%d %b %Y") }} - {{
-                            event.register_ended_date.strftime("%d %b %Y") }}
-                            {% endif %}
-                        </span>
-                        {% endif %}
-                    </div>
-                    <div class="mt-4">
-                        {% if now >= event.register_started_date and now <= event.register_ended_date %} <form
-                            action="{{ url_for('events.join', event_id=event.id) }}" class="space-y-4">
-                            <input type="text" id="code" name="code" placeholder="Enter Code"
-                                class="input input-bordered w-full">
-                            <button type="submit" class="btn bg-[#CDDFEF] w-full">
-                                <i class="add circle icon"></i> Enroll
-                            </button>
-                            </form>
-                            {% elif now < event.register_started_date %} <div>It's not time to register yet.</div>
-                    {% elif now > event.register_started_date %}
-                    <div>Registration time has expired.</div>
-                    {% endif %}
-                </div>
+      {% for event in events %}
+      {% if event.status == "active" %}
+      {% if now < event.publish_ended_date and now> event.publish_started_date %}
+        <div class="card bg-base-100 shadow-xl">
+          <div class="card-body">
+            <h3 class="card-title">
+              {% if event.type == 'team' %}
+              <i class="users icon"></i>
+              {% else %}
+              <i class="user tie icon"></i>
+              {% endif %}
+              {{ event.name }}
+            </h3>
+            <div class="text-sm opacity-70 mt-2">
+              {% if event.started_date == event.ended_date %}
+              <span>
+                <i class="ph ph-calendar-blank"></i>
+                {{ event.started_date.strftime("%d %b %Y") }}
+              </span>
+              {% else %}
+              <span class="flex flex-row items-center gap-1">
+                <i class="ph ph-calendar-blank text-xl"></i>
+                {% if event.started_date.strftime("%m") == event.ended_date.strftime("%m") %}
+                {{ event.started_date.strftime("%d") }} - {{ event.ended_date.strftime("%d %b %Y") }}
+                {% else %}
+                {{ event.started_date.strftime("%d %b %Y") }} - {{ event.ended_date.strftime("%d %b %Y") }}
+                {% endif %}
+              </span>
+              {% endif %}
             </div>
+            <div class="card-actions mt-4">
+              {% if now < event.started_date %} <button class="btn w-full">
+                <i class="trophy icon"></i> Coming Soon...
+                </button>
+                {% elif now < event.ended_date and event.started_date < event.ended_date %} {% if
+                  current_user.check_join_event(event.id) %} {% if event.type=="team" %} <a
+                  href="{{ url_for('events.joiner', event_id=event.id) }}" class="btn btn-primary w-full">
+                  <i class="trophy icon"></i> Challenge
+                  </a>
+                  {% else %}
+                  <a href="{{ url_for('events.challenge', event_id=event.id) }}" class="btn btn-primary w-full">
+                    <i class="trophy icon"></i> Challenge
+                  </a>
+                  {% endif %}
+                  {% endif %}
+                  {% endif %}
+                  <a href="{{ url_for('dashboards.index', event_id=event.id) }}"
+                    class="btn bg-[#364989] text-white w-full">
+                    <i class="sort amount down icon"></i> Dashboard
+                  </a>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+    </div>
+  </div>
+
+  <input type="radio" name="tabs_3" class="tab" aria-label="Available Events" />
+  <div class="tab-content bg-base-100 border-base-300 p-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      {% for event in events %}
+      {% if event.status == "active" and not current_user.check_join_event(event.id) and now < event.publish_ended_date
+        and now> event.publish_started_date %}
+        <div class="card bg-base-100 shadow-xl">
+          <div class="card-body">
+            <h3 class="card-title">
+              <i class="tag icon"></i> {{ event.name }}
+            </h3>
+            <div class="text-sm opacity-70 mt-2">
+              {% if event.register_started_date == event.register_ended_date %}
+              <span>
+                <i class="ph ph-calendar-blank"></i>
+                {{ event.register_started_date.strftime("%d %b %Y") }}
+              </span>
+              {% else %}
+              <span>
+                <i class="ph ph-calendar-blank"></i>
+                {% if event.register_started_date.strftime("%m") == event.register_ended_date.strftime("%m")
+                %}
+                {{ event.register_started_date.strftime("%d") }} - {{ event.register_ended_date.strftime("%d
+                %b %Y") }}
+                {% else %}
+                {{ event.register_started_date.strftime("%d %b %Y") }} - {{
+                event.register_ended_date.strftime("%d %b %Y") }}
+                {% endif %}
+              </span>
+              {% endif %}
+            </div>
+            <div class="mt-4">
+              {% if now >= event.register_started_date and now <= event.register_ended_date %} <form
+                action="{{ url_for('events.join', event_id=event.id) }}" class="space-y-4">
+                <input type="text" id="code" name="code" placeholder="Enter Code" class="input input-bordered w-full">
+                <button type="submit" class="btn bg-[#CDDFEF] w-full">
+                  <i class="add circle icon"></i> Enroll
+                </button>
+                </form>
+                {% elif now < event.register_started_date %} <div>It's not time to register yet.</div>
+            {% elif now > event.register_started_date %}
+            <div>Registration time has expired.</div>
+            {% endif %}
+          </div>
+        </div>
     </div>
     {% endif %}
     {% endfor %}
-</div>
+  </div>
 </div>
 
-<input type="radio" name="tabs_3" class="tab" aria-label="History Events"/>
+<input type="radio" name="tabs_3" class="tab" aria-label="History Events" />
 <div class="tab-content bg-base-100 border-base-300 p-6">
-    <div class="grid">
-        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {% for event in events %}
-            {% if event.status == "active" and event.ended_date < now %}
-            <div class="card bg-base-100 shadow-xl">
-                <div class="card-body">
-                    <h3 class="card-title">
-                        <i class="users icon"></i> {{ event.name }}
-                    </h3>
-                    <div class="text-sm opacity-70 mt-2">
-                        {% if event.started_date == event.ended_date %}
-                        <span>
-                            <i class="ph ph-calendar-blank"></i>
-                            {{ event.started_date.strftime("%d %b %Y") }}
-                        </span>
-                        {% else %}
-                        <span>
-                            <i class="ph ph-calendar-blank"></i>
-                            {% if event.started_date.strftime("%m") == event.ended_date.strftime("%m") %}
-                            {{ event.started_date.strftime("%d") }} - {{ event.ended_date.strftime("%d %b %Y") }}
-                            {% else %}
-                            {{ event.started_date.strftime("%d %b %Y") }} - {{ event.ended_date.strftime("%d %b %Y") }}
-                            {% endif %}
-                        </span>
-                        {% endif %}
-                    </div>
-                    <div class="mt-4 text-error">Event time out.</div>
-                    <div class="mt-4">
-                        <a href="{{ url_for('dashboards.index', event_id=event.id) }}" class="btn btn-primary w-full">
-                            <i class="sort amount down icon"></i> Dashboard
-                        </a>
-                    </div>
-                </div>
-            </div>
+  <div class="grid">
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      {% for event in events %}
+      {% if event.status == "active" and event.ended_date < now %} <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <h3 class="card-title">
+            <i class="users icon"></i> {{ event.name }}
+          </h3>
+          <div class="text-sm opacity-70 mt-2">
+            {% if event.started_date == event.ended_date %}
+            <span>
+              <i class="ph ph-calendar-blank"></i>
+              {{ event.started_date.strftime("%d %b %Y") }}
+            </span>
+            {% else %}
+            <span>
+              <i class="ph ph-calendar-blank"></i>
+              {% if event.started_date.strftime("%m") == event.ended_date.strftime("%m") %}
+              {{ event.started_date.strftime("%d") }} - {{ event.ended_date.strftime("%d %b %Y") }}
+              {% else %}
+              {{ event.started_date.strftime("%d %b %Y") }} - {{ event.ended_date.strftime("%d %b %Y") }}
+              {% endif %}
+            </span>
             {% endif %}
-            {% endfor %}
+          </div>
+          <div class="mt-4 text-error">Event time out.</div>
+          <div class="mt-4">
+            <a href="{{ url_for('dashboards.index', event_id=event.id) }}" class="btn btn-primary w-full">
+              <i class="sort amount down icon"></i> Dashboard
+            </a>
+          </div>
         </div>
     </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+</div>
 </div>
 </div>
 

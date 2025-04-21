@@ -149,7 +149,7 @@
                       class="p-4 mb-4 bg-base-100 border border-gray-300 rounded-lg border-t-2 border-t-primary">
                       {{ event_challenge.challenge.hint }}
                     </div>
-                    {% elif not event_challenge.solve_challenge() %}
+                    {% elif not event_challenge.solve_challenge() and event_challenge.challenge.hint %}
                     <div id="hintbtn-{{ event_challenge.id }}" class="w-full flex justify-center items-center"
                       onclick="ClickHint('{{event.id}}','{{ event_challenge.id }}')">
                       <div class="visible w-full">

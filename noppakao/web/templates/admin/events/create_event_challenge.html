@@ -2,115 +2,118 @@
 {% import '/base/html-renderer.html' as renderer %}
 
 {% block content %}
-<div class="ui fluid container">
-    <div class="ui segment">
-        <h2 class="ui header">
-            {% if 'create' in request.path %}
-            Create Score Challenge
-            {% else %}
-            Edit Score Challenge
-            {% endif %}
-        </h2>
+<div class="container mx-auto p-4">
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title">
+        {% if 'create' in request.path %}
+        Create Score Challenge
+        {% else %}
+        Edit Score Challenge
+        {% endif %}
+      </h2>
     </div>
-    <div class="ui grid">
-        <div class="four wide column" id="empty-column"></div> <!-- Empty column for centering -->
-        <div class="eight wide column">
-            <form class="ui form" enctype="multipart/form-data" method="post">
-                {{ form.csrf_token }}
-                <div class="field">
-                    {{ form.first_blood_score.label(class="ui label") }}
-                    {{ form.first_blood_score(class="ui input") }}
-                </div>
+  </div>
 
-                <div class="field">
-                    {{ form.success_score.label(class="ui label") }}
-                    {{ form.success_score(class="ui input") }}
-                </div>
+  <div class="md:col-span-1 hidden" id="empty-column"></div>
+  <div class="md:col-span-1">
+    <form class="form-control gap-4" enctype="multipart/form-data" method="post">
+      {{ form.csrf_token }}
+      <div class="form-control">
+        {{ form.first_blood_score.label(class="label") }}
+        {{ form.first_blood_score(class="input input-bordered w-full") }}
+      </div>
 
-                <div class="field">
-                    {{ form.hint_score.label(class="ui label") }}
-                    {{ form.hint_score(class="ui input") }}
-                </div>
+      <div class="form-control">
+        {{ form.success_score.label(class="label") }}
+        {{ form.success_score(class="input input-bordered w-full") }}
+      </div>
 
-                <div class="field">
-                    {{ form.fail_score.label(class="ui label") }}
-                    {{ form.fail_score(class="ui input") }}
-                </div>
+      <div class="form-control">
+        {{ form.hint_score.label(class="label") }}
+        {{ form.hint_score(class="input input-bordered w-full") }}
+      </div>
 
-                <div class="field">
-                    {{ form.challenge.label(class="ui label") }}
-                    <div class="ui fluid search selection dropdown">
-                        <input type="hidden" name="challenge" id="challenge">
-                        <i class="dropdown icon"></i>
-                        <div class="default text">Select a challenge</div>
-                        <div class="menu">
-                            {% for choice in form.challenge.choices %}
-                            <div class="item" data-value="{{ choice[0] }}">{{ choice[1] }}</div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
+      <div class="form-control">
+        {{ form.fail_score.label(class="label") }}
+        {{ form.fail_score(class="input input-bordered w-full") }}
+      </div>
 
-                <div class="field">
-                    <button class="ui large primary button" type="submit">
-                        <i class="save icon"></i> Save
-                    </button>
-                </div>
-            </form>
-        </div>
-        <div class="eight wide column" id="challenge-detail" style="display: none;">
-            <h2 class="ui dividing header">Challenge Detail</h2>
-            <div class="ui segment response"></div>
-        </div>
+      <div class="form-control">
+        {{ form.challenge.label(class="label") }}
+        <select class="select select-bordered w-full" name="challenge" id="challenge">
+          <option disabled selected>Select a challenge</option>
+          {% for choice in form.challenge.choices %}
+          <option value="{{ choice[0] }}">{{ choice[1] }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-control mt-4">
+        <button class="btn btn-primary" type="submit">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor"></svg>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+          </svg>
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+  <div class="md:col-span-1 hidden" id="challenge-detail">
+    <div class="card bg-base-100 shadow-xl">
+      <div class="card-body">
+        <h2 class="card-title">Challenge Detail</h2>
+        <div class="response"></div>
+      </div>
     </div>
-    <div id="loader" class="ui active inverted dimmer" style="display: none;">
-        <l-quantum size="80" speed="1.75" color="#165fd4"></l-quantum>
-    </div>
+  </div>
 </div>
 
-<script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/quantum.js"></script>
+<div id="loader" class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden">
+  <span class="loading loading-spinner loading-lg text-primary"></span>
+</div>
+</div>
 
 <script>
-    $(document).ready(function () {
-        // Initialize dropdown
-        $('#challenge').dropdown({
-            placeholder: 'Select a challenge',
-            clearable: true
-        });
+  $(document).ready(function () {
+    $("#challenge").change(function () {
+      var challengeId = $('#challenge').val();
+      if (challengeId) {
+        $("#loader").removeClass('hidden').addClass('flex');
+        $('#challenge-detail').addClass('hidden');
+        $('#empty-column').addClass('hidden');
+        $('.response').addClass('hidden').empty();
 
-        $("#challenge").change(function () {
-            var challengeId = $('#challenge').val();
-            if (challengeId) {
-                $("#loader").show();
-                $('#challenge-detail').hide(); // Hide the detail section during loading
-                $('#empty-column').hide(); // Hide the empty column during loading
-                $('.response').hide().empty();
-                setTimeout(function () {
-                    $.ajax({
-                        url: '/api/challenge/' + challengeId,
-                        type: 'get',
-                        success: function (response) {
-                            $('.response').html(`
-                                <p><strong>Name:</strong> ${response.name}</p>
-                                <p><strong>Category:</strong> ${response.category}</p>
-                                <p><strong>Answer Type:</strong> ${response.answer_type}</p>
-                                <p><strong>Answer:</strong> ${response.answer}</p>
-                                <p><strong>Description:</strong> ${response.description}</p>
-                            `);
-                        },
-                        complete: function () {
-                            $("#loader").hide();
-                            $('#challenge-detail').fadeIn(); // Show the detail section after loading
-                            $('.response').fadeIn();
-                        }
-                    });
-                }, 1000);
-            } else {
-                $('#challenge-detail').hide();
-                $('#empty-column').show(); // Show the empty column if no challenge is selected
-                $('.response').hide().empty();
+        setTimeout(function () {
+          $.ajax({
+            url: '/api/challenge/' + challengeId,
+            type: 'get',
+            success: function (response) {
+              $('.response').html(`
+                <div class="space-y-2">
+                  <p><span class="font-bold">Name:</span> ${response.name}</p>
+                  <p><span class="font-bold">Category:</span> ${response.category}</p>
+                  <p><span class="font-bold">Answer Type:</span> ${response.answer_type}</p>
+                  <p><span class="font-bold">Answer:</span> ${response.answer}</p>
+                  <p><span class="font-bold">Description:</span> ${response.description}</p>
+                </div>
+              `);
+            },
+            complete: function () {
+              $("#loader").removeClass('flex').addClass('hidden');
+              $('#challenge-detail').removeClass('hidden');
+              $('.response').removeClass('hidden');
             }
-        });
+          });
+        }, 1000);
+      } else {
+        $('#challenge-detail').addClass('hidden');
+        $('#empty-column').removeClass('hidden');
+        $('.response').addClass('hidden').empty();
+      }
     });
+  });
 </script>
 {% endblock %}
