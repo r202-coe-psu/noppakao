@@ -125,7 +125,8 @@ def join_team(event_id, team_id):
 @module.route("/<event_id>/challenge", methods=["GET", "POST"])
 @login_required
 def challenge(event_id):
-    if not current_user.check_team_event(event_id):
+    event = models.Event.objects(id=event_id).first()
+    if not current_user.check_team_event(event_id) and event.type == "team":
         return redirect(url_for("events.joiner", event_id=event_id))
 
     teams = models.Team.objects(status="active").order_by("-score", "updated_date")
@@ -133,12 +134,10 @@ def challenge(event_id):
         "-score", "updated_date"
     )
     challenge_resources = models.ChallengeResource.objects()
-    event = models.Event.objects(id=event_id).first()
+
     event_challenges = models.EventChallenge.objects(event=event, status="active")
 
     dialog_state = {"status": request.args.get("dialog_state", None)}
-    team = models.Team.objects(members__in=[current_user], status="active").first()
-
     if not current_user.check_join_event(event.id):
         msg = "คุณกำลังพยายามเข้าไปใน กิจกรรมที่คุณไม่ได้เข้าร่วม"
         return redirect(url_for("events.index", msg=msg))
