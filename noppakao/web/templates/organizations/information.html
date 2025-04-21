@@ -4,39 +4,39 @@
 {% if error %}
 <div class="ui red message"> {{ error }}</div>
 {% endif %}
+<div class="min-h-[85vh] flex items-center justify-center">
+  <div class="max-w-xl w-full p-8 rounded-xl shadow-lg bg-base-100">
+    <h1 class="text-5xl font-bold text-primary text-center mb-4">ORGANIZATION</h1>
+    <div class="divider"></div>
 
-<div class="ui middle aligned center aligned grid" style="height: 85vh;">
-  <div class="column"
-    style="max-width: 550px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); border-radius: 10px; padding: 20px;">
-    <h1 class="ui massive text header" style="font-size: 3rem; color: rgb(50, 78, 156) ;">ORGANIZATION</h1>
-    <div class="ui divider"></div>
-    <div class="ui grid">
-      <div class="sixteen wide column" style="font-size: 1.5rem;">
-        <div class="ui divided list">
-          <div class="item">
-            <div class="ui center aligned" style="justify-content: center !important; display:flex; margin-top: 3rem;">
-              <div class="image" style="width: 300px; height: 300px;">
-                {% if current_user.organization.image %}
-                <img class="ui centered circular image"
-                  src="{{ url_for('organizations.display_image', organization_id=current_user.organization.id ,filename=current_user.organization.image.filename) }}"
-                  alt="{{ current_user.organization.image.filename}}">
-                {% else %}
-                <img class="ui centered circular image" src="{{ url_for('static', filename='/images/hacker.png')}}">
-                {% endif %}
-              </div>
-            </div>
+    <div class="flex flex-col items-center gap-6">
+      <div class="mt-12">
+        {% if current_user.organization.image %}
+        <div class="avatar">
+          <div class="w-64 h-64 rounded-full">
+            <img
+              src="{{ url_for('organizations.display_image', organization_id=current_user.organization.id ,filename=current_user.organization.image.filename) }}"
+              alt="{{ current_user.organization.image.filename}}">
           </div>
         </div>
-        <div class="ui divided list">
-          <div class="item">
-            <div class="header"><i class="user tie icon"></i>Organization :
-              {{ current_user.organization.name if current_user.organization else "-" }} </div>
+        {% else %}
+        <div class="avatar">
+          <div class="w-64 h-64 rounded-full">
+            <img src="{{ url_for('static', filename='/images/hacker.png')}}">
           </div>
         </div>
-        <div class="ui divided list">
-          <a href="{{ url_for('organizations.change' ) }}" class="ui primary button">Change Organization</a>
+        {% endif %}
+      </div>
+
+      <div class="text-xl w-full">
+        <div class="flex items-center gap-2 p-4 border-b">
+          <i class="fa-solid fa-user-tie"></i>
+          <span class="font-semibold">Organization:</span>
+          <span>{{ current_user.organization.name if current_user.organization else "-" }}</span>
         </div>
       </div>
+
+      <a href="{{ url_for('organizations.change' ) }}" class="btn btn-primary">Change Organization</a>
     </div>
   </div>
 </div>

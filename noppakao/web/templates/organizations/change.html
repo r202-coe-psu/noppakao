@@ -2,22 +2,28 @@
 {% import '/base/html-renderer.html' as renderer %}
 
 {% block content %}
-<div class="ui segment">
-  <h1 class="ui header">
-    Change Organization
-  </h1>
+<div class="card bg-base-100 shadow-xl mb-4">
+  <div class="card-body">
+    <h1 class="card-title text-2xl">Change Organization</h1>
+  </div>
 </div>
 
-<div class="ui segment">
-  <form method="POST" class="ui form" enctype="multipart/form-data">
-    {{ form.csrf_token }}
+<div class="card bg-base-100 shadow-xl">
+  <div class="card-body">
+    <form method="POST" class="form-control" enctype="multipart/form-data">
+      {{ form.csrf_token }}
 
-    <div class="field">
-      {{ form.organization.label }}
-      {{ form.organization(class="ui fluid search dropdown") }}
-    </div>
+      <div class="form-control w-full">
+        <label class="label">
+          <span class="label-text">{{ form.organization.label }}</span>
+        </label>
+        {{ form.organization(class="select select-bordered w-full") }}
+      </div>
 
-    <button class="ui primary button" type="submit">Submit</button>
-  </form>
+      <div class="mt-4">
+        <button class="btn btn-primary" type="submit">Submit</button>
+      </div>
+    </form>
+  </div>
 </div>
 {% endblock %}
