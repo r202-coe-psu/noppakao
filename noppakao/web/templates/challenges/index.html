@@ -71,18 +71,17 @@
               <tr>
                 <th></th>
                 <th>Challenges</th>
-                <th>Point</th>
-                <th><i class="ph-fill ph-drop" style="color: red;"></i>
-                </th>
-                <th><i class="ph-fill ph-key" style="color: rgb(255, 196, 0);"></i></th>
-                <th><i class="ph-fill ph-skull"></i></th>
-                <th>Solves</th>
+                <th class="text-center">Point</th>
+                <th class="text-center"><i class="ph-fill ph-drop" style="color: red;"></i></th>
+                <th class="text-center"><i class="ph-fill ph-eye" style="color: #386CAF;"></i></th>
+                <th class="text-center"><i class="ph-fill ph-skull"></i></th>
+                <th class="text-center">Solves</th>
                 <th><i class="ph-fill ph-flag"></i></th>
               </tr>
             </thead>
             <tbody>
               {% for event_challenge in event.get_event_challenges(challenge_category) %}
-              <tr class="clickable-row"
+              <tr class="clickable-row cursor-pointer"
                 onclick="document.getElementById('my_modal_1-{{ event_challenge.id }}').showModal()">
                 <td><i class="ph-fill ph-cube" style="color: #386CAF;"></i></td>
                 <td class="clickable-name"><a>{{

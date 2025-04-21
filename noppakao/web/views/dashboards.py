@@ -26,7 +26,7 @@ module = Blueprint("dashboards", __name__, url_prefix="/dashboard")
 # อันนี้แก้ คำนวณการคิดคะแนนผิด (ตรวจสอบตรงนี้ใหม่) fix
 @module.route("/<event_id>", methods=["GET", "POST"])
 @login_required
-@caches.cache.cached(timeout=60)
+# @caches.cache.cached(timeout=60)
 def index(event_id):
     teams = models.Team.objects(status="active")
     users = models.User.objects(status="active")
