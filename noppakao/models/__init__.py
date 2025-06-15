@@ -6,6 +6,7 @@ from .teams import Team
 from .events import Event, EventChallenge, EventRole, EventCompetitor
 from .transactions import Transaction
 from .organizations import Organization
+from .oauth2 import OAuth2Token
 
 db = MongoEngine()
 

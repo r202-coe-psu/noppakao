@@ -14,7 +14,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 
 from noppakao import models
 from noppakao.web import forms
-from .. import oauth
+from .. import oauth2
 
 from flask_bcrypt import Bcrypt
 
@@ -49,14 +49,14 @@ def login():
         user = models.User.objects(username=username).first()
         events = models.Event.objects()
         if user:
-            if user.status == "unregistered" and oauth.handle_authorized_user(form):
+            if user.status == "unregistered" and oauth2.handle_authorized_user(form):
                 return redirect(url_for("accounts.setup_password", user_id=user.id))
             elif user.status == "disactive":
                 messages = ["บัญชีถูกระงับ กรุณาติดต่อผู้ดูแลระบบ"]
                 return render_template(
                     "/accounts/login.html", form=form, messages=messages
                 )
-            elif user and oauth.handle_authorized_user(form):
+            elif user and oauth2.handle_authorized_user(form):
                 if "admin" in current_user.roles:
                     return redirect(url_for("admin.events.index"))
                 return redirect(url_for("events.index"))
@@ -149,3 +149,53 @@ def setup_password(user_id):
     user.save()
 
     return redirect(url_for("accounts.login"))
+
+
+@module.route("/login/<name>")
+def login_oauth(name):
+    client = oauth2.oauth2_client
+
+    scheme = request.environ.get("HTTP_X_FORWARDED_PROTO", "http")
+
+    redirect_uri = url_for(
+        "accounts.authorized_oauth", name=name, _external=True, _scheme=scheme
+    )
+    response = None
+    if name == "google":
+        response = client.google.authorize_redirect(redirect_uri)
+    elif name == "facebook":
+        response = client.facebook.authorize_redirect(redirect_uri)
+    elif name == "line":
+        response = client.line.authorize_redirect(redirect_uri)
+
+    elif name == "psu":
+        response = client.psu.authorize_redirect(redirect_uri)
+    elif name == "engpsu":
+        response = client.engpsu.authorize_redirect(redirect_uri)
+    return response
+
+
+@module.route("/auth/<name>")
+def authorized_oauth(name):
+    client = oauth2.oauth2_client
+    remote = None
+    try:
+        if name == "google":
+            remote = client.google
+        elif name == "facebook":
+            remote = client.facebook
+        elif name == "line":
+            remote = client.line
+        elif name == "psu":
+            remote = client.psu
+        elif name == "engpsu":
+            remote = client.engpsu
+
+        token = remote.authorize_access_token()
+
+    except Exception as e:
+        print("autorize access error =>", e)
+        return redirect(url_for("accounts.login"))
+
+    session["oauth_provider"] = name
+    return oauth2.handle_authorized_oauth2(remote, token)

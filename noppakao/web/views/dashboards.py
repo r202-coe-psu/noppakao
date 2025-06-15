@@ -17,7 +17,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 
 from noppakao import models
 from .. import forms
-from .. import oauth
+from .. import oauth2
 from .. import caches
 
 module = Blueprint("dashboards", __name__, url_prefix="/dashboard")

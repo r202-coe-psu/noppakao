@@ -16,7 +16,7 @@ import json
 from flask_login import login_user, logout_user, login_required, current_user
 from .. import paginations
 
-from noppakao.web import oauth, forms, models, acl
+from noppakao.web import forms, models, acl, oauth2
 
 module = Blueprint("events", __name__, url_prefix="/events")
 

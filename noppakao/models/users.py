@@ -1,3 +1,4 @@
+from email.policy import default
 import mongoengine as me
 import datetime
 from flask_login import UserMixin, current_user
@@ -18,12 +19,14 @@ class User(me.Document, UserMixin):
     last_name = me.StringField(required=True, max_length=128)
 
     username = me.StringField(required=True, unique=True, max_length=64)
-    password = me.BinaryField(required=True)
+    password = me.BinaryField(required=True, default=b"")
     email = me.StringField(required=True, unique=True)
     phone_number = me.StringField(max_length=10, default="")
     status = me.StringField(default="active")
     roles = me.ListField(me.StringField(), default=["user"])
     organization = me.ReferenceField("Organization", dbref=True)
+    picture_url = me.StringField(default="")
+    resources = me.DictField()
 
     created_date = me.DateTimeField(required=True, default=datetime.datetime.now)
     updated_date = me.DateTimeField(required=True, default=datetime.datetime.now)
