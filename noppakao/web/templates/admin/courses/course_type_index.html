@@ -1,0 +1,76 @@
+{% extends "base/default-page.html" %}
+
+{% block content %}
+<div>
+    <div class="flex items-center justify-between mb-4">
+        <h1 class="text-3xl font-bold">Course Types</h1>
+        <a href="{{ url_for('admin.course.create_or_edit_course_type') }}">
+            <button class="btn btn-primary w-full">
+                <i class="ph ph-plus"></i>
+                Create Type
+            </button>
+        </a>
+    </div>
+    <div class="overflow-x-auto rounded-box border border-base-300 bg-base-100">
+        <table class="table">
+          <thead class="bg-base-200 text-gray-800">
+            <tr class="border-gray-200">
+              <th></th>
+              <th>Category Name</th>
+              <th class="text-center">Status</th>
+              <th class="text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for type in course_types %}
+            <tr class="border-gray-200">
+              <td class="text-center">{{ loop.index }}</td>
+              <td>{{ type.name }}</td>
+              <td class="text-center">
+                {% if type.status == 'active' %}
+                <div class="flex flex-row gap-2 justify-center items-center">
+                  <i class="ph-fill ph-circle text-[8px] text-[var(--color-success)]"></i>
+                  {{ type.status }}
+                </div>
+                {% else %}
+                <div class="flex flex-row gap-2 justify-center items-center">
+                  <i class="ph-fill ph-circle text-[8px] text-[var(--color-error)]"></i>
+                  {{ type.status }}
+                </div>
+                {% endif %}
+              </td>
+              <td class="flex gap-2 justify-center items-center">
+                <a href=" {{ url_for('admin.course.create_or_edit_course_type', course_type_id=type.id) }}">
+                  <button class="btn btn-square btn-primary justify-center items-center">
+                    <i class="ph ph-pencil-simple-line"></i>
+                  </button>
+                </a>
+    
+                <button class="btn btn-square btn-error justify-center items-center"
+                  onclick="document.getElementById('{{ type.id }}').showModal()">
+                  <i class="ph ph-trash-simple"></i>
+                </button>
+    
+              </td>
+            </tr>
+    
+            <dialog id="{{ type.id }}" class="modal">
+              <div class="modal-box">
+                <h3 class="text-lg font-bold">Delete Category</h3>
+                <p>Are you sure you want to delete <span class="text-red-500">{{ type.name }}</span>?</p>
+                <div class="modal-action">
+                  <form method="dialog" class="modal-backdrop">
+                    <button class="btn">Cancel</button>
+                  </form>
+                  <form action="{{ url_for('admin.course.delete_course_type', course_type_id=type.id) }}" method="POST">
+                    <button type="submit" class="btn btn-error">Delete</button>
+                  </form>
+                </div>
+              </div>
+            </dialog>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+</div>
+{% endblock %}

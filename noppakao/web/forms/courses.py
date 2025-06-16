@@ -8,7 +8,7 @@ from noppakao import models
 BaseCourseForm = model_form(
     models.Course,
     FlaskForm,
-    exclude=["created_date", "created_by", "updated_date", "updated_by"],
+    exclude=["created_date", "created_by", "updated_date", "updated_by","status"],
     field_args={
         "name": {"label": "ชื่อ Course"},
         "description": {"label": "รายละเอียด"},
@@ -21,7 +21,7 @@ BaseCourseForm = model_form(
 BaseCourseTypeForm = model_form(
     models.CourseType,
     FlaskForm,
-    exclude=["created_date", "updated_date"],
+    exclude=["created_date", "updated_date","status"],
     field_args={
         "name": {"label": "ชื่อประเภท Course"},
     },

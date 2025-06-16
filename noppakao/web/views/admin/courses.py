@@ -61,6 +61,15 @@ def create_or_edit_course(course_id):
     course.save()
     return redirect(url_for("admin.courses.index"))
 
+""" Course Type Management """
+@module.route("/course_type", methods=["GET"])
+@acl.roles_required("admin")
+def course_type_index():
+    course_types = models.CourseType.objects()
+    return render_template(
+        "/admin/courses/course_type_index.html", 
+        course_types=course_types
+    )
 
 @module.route("/course_type/create", methods=["GET", "POST"])
 @module.route("/course_type/<course_type_id>/edit", methods=["GET", "POST"])
@@ -92,4 +101,20 @@ def create_or_edit_course_type(course_type_id=None):
 
     course_type.updated_by = current_user._get_current_object()
     course_type.save()
-    return redirect(url_for("admin.course.index"))
+    return redirect(url_for("admin.course.course_type_index"))
+
+@module.route("/course_type/<course_type_id>/delete", methods=["POST"])
+@acl.roles_required("admin")
+def delete_course_type(course_type_id):
+    course_type = models.CourseType.objects(id=course_type_id).first()
+    if not course_type:
+        return redirect(url_for("admin.course.course_type_index"))
+
+    if course_type.status == "active":
+        course_type.status = "disactive"
+    else:
+        course_type.status = "active"
+        
+    course_type.updated_by = current_user._get_current_object()
+    course_type.save()
+    return redirect(url_for("admin.course.course_type_index"))
