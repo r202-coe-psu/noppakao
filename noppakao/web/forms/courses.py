@@ -18,6 +18,14 @@ BaseCourseForm = model_form(
     },
 )
 
+BaseCourseTypeForm = model_form(
+    models.CourseType,
+    FlaskForm,
+    exclude=["created_date", "updated_date"],
+    field_args={
+        "name": {"label": "ชื่อประเภท Course"},
+    },
+)
 class CourseForm(BaseCourseForm):
     name = fields.StringField("ชื่อ Course", validators=[validators.DataRequired()])
     description = fields.TextAreaField("รายละเอียด", validators=[validators.DataRequired()])
@@ -25,4 +33,5 @@ class CourseForm(BaseCourseForm):
     owner = fields.SelectField("เจ้าของ Course", coerce=str, validators=[validators.DataRequired()])
     type = fields.SelectField("ประเภท Course", coerce=str, validators=[validators.DataRequired()])
     
-    
+class CourseTypeForm(BaseCourseTypeForm):
+    name = fields.StringField("ชื่อประเภท Course", validators=[validators.DataRequired()])

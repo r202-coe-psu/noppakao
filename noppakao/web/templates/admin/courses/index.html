@@ -1,0 +1,23 @@
+{% extends "base/default-page.html" %}
+
+{% block content %}
+<div>
+    <div class="flex items-center justify-between mb-4">
+        <h1 class="text-3xl font-bold">Courses</h1>
+        <div class="flex flex-row gap-2">
+            <a href="{{ url_for('admin.course.create_or_edit_course') }}">
+                <button class="btn btn-primary w-full">
+                    <i class="ph-bold ph-plus"></i>
+                    Create Course
+                </button>
+            </a>
+            <a href="{{ url_for('admin.course.create_or_edit_course_type') }}">
+                <button class="btn btn-primary w-full">
+                    <i class="ph-bold ph-book"></i>
+                    Course Type
+                </button>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

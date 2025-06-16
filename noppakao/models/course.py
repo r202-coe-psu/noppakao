@@ -16,7 +16,7 @@ class Course(me.Document):
     updated_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
     )  # เวลาการสร้างหรืออัพเดตล่าสุด
-    create_date = me.DateTimeField(
+    created_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
     )  # เวลาการสร้าง
 
@@ -27,7 +27,7 @@ class CourseType(me.Document):
     updated_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
     )  # เวลาการสร้างหรืออัพเดตล่าสุด
-    create_date = me.DateTimeField(
+    created_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
     )  # เวลาการสร้าง
 
