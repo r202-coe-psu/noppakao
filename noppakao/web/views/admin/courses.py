@@ -15,11 +15,14 @@ module = Blueprint("course", __name__, url_prefix="/courses")
 @module.route("/", methods=["GET"])
 @acl.roles_required("admin")
 def index():
+    courses = models.Course.objects()
     return render_template(
         "admin/courses/index.html",
+        courses=courses,
     )
 
 
+""" Course Management """
 @module.route("/<course_id>", methods=["GET"])
 @acl.roles_required("admin")
 def course_detail(course_id):
@@ -55,11 +58,14 @@ def create_or_edit_course(course_id):
     if not form.validate_on_submit():
         return render_template("/admin/courses/create_or_edit.html", form=form)
 
-    form.populate_obj(course)
+    course.name = form.name.data
+    course.description = form.description.data
+    course.owner = models.User.objects.get(id=form.owner.data)
+    course.type = models.CourseType.objects.get(id=form.type.data)
 
     course.updated_by = current_user._get_current_object()
     course.save()
-    return redirect(url_for("admin.courses.index"))
+    return redirect(url_for("admin.course.index"))
 
 """ Course Type Management """
 @module.route("/course_type", methods=["GET"])
