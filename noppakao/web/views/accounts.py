@@ -44,33 +44,31 @@ def login():
 
     form = forms.accounts.LoginForm()
 
-    if form.validate_on_submit():
-        username = form.username.data
-        user = models.User.objects(username=username).first()
-        events = models.Event.objects()
-        if user:
-            if user.status == "unregistered" and oauth2.handle_authorized_user(form):
-                return redirect(url_for("accounts.setup_password", user_id=user.id))
-            elif user.status == "disactive":
-                messages = ["บัญชีถูกระงับ กรุณาติดต่อผู้ดูแลระบบ"]
-                return render_template(
-                    "/accounts/login.html", form=form, messages=messages
-                )
-            elif user and oauth2.handle_authorized_user(form):
-                if "admin" in current_user.roles:
-                    return redirect(url_for("admin.events.index"))
-                return redirect(url_for("events.index"))
+    if not form.validate_on_submit():
+        return render_template("accounts/login.html", form=form)
 
-            else:
-                messages = ["Username หรือ Passwords ไม่ถูกต้องกรุณากรอกใหม่"]
-                return render_template(
-                    "/accounts/login.html", form=form, messages=messages
-                )
-        else:
-            messages = ["Username หรือ Passwords ไม่ถูกต้องกรุณากรอกใหม่"]
-            return render_template("/accounts/login.html", form=form, messages=messages)
+    user = models.User.objects(username=form.username.data).first()
 
-    return render_template("accounts/login.html", form=form)
+    if not user or not bcrypt.check_password_hash(
+        user.password.decode("utf-8"), form.password.data
+    ):
+        messages = ["Username หรือ Passwords ไม่ถูกต้องกรุณากรอกใหม่"]
+        return render_template("accounts/login.html", form=form, messages=messages)
+
+    if user.status == "unregistered":
+        return redirect(url_for("accounts.setup_password", user_id=user.id))
+    elif user.status == "disactive":
+        messages = ["บัญชีถูกระงับ กรุณาติดต่อผู้ดูแลระบบ"]
+        return render_template("accounts/login.html", form=form, messages=messages)
+
+    login_user(user)
+    user.last_login_date = datetime.datetime.now()
+    user.save()
+
+    if "admin" in user.roles:
+        return redirect(url_for("admin.events.index"))
+
+    return redirect(url_for("events.index"))
 
 
 @module.route(
