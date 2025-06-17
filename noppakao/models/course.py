@@ -2,6 +2,8 @@ import mongoengine as me
 import datetime
 
 
+STATUS_CHOICES = ["active", "disactive"]
+
 class Course(me.Document):
     meta = {"collection": "course"}
     name = me.StringField()  # ชื่อ course
@@ -16,9 +18,12 @@ class Course(me.Document):
     updated_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
     )  # เวลาการสร้างหรืออัพเดตล่าสุด
-    create_date = me.DateTimeField(
+    created_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
     )  # เวลาการสร้าง
+    status = me.StringField(
+        default="active", choices=STATUS_CHOICES, required=True
+    )  
 
 
 class CourseType(me.Document):
@@ -27,9 +32,12 @@ class CourseType(me.Document):
     updated_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
     )  # เวลาการสร้างหรืออัพเดตล่าสุด
-    create_date = me.DateTimeField(
+    created_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
     )  # เวลาการสร้าง
+    status = me.StringField(
+        default="active", choices=STATUS_CHOICES, required=True
+    )  
 
 
 class CourseSection(me.Document):
@@ -51,6 +59,9 @@ class CourseSection(me.Document):
     create_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
     )  # เวลาการสร้าง
+    status = me.StringField(
+        default="active", choices=STATUS_CHOICES, required=True
+    )  
 
 
 class CourseQuestion(me.Document):
@@ -68,6 +79,9 @@ class CourseQuestion(me.Document):
     create_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
     )  # เวลาการสร้าง
+    status = me.StringField(
+        default="active", choices=STATUS_CHOICES, required=True
+    )  
 
 
 class TransactionCourse(me.Document):
@@ -84,3 +98,6 @@ class TransactionCourse(me.Document):
     create_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
     )  # เวลาการสร้าง
+    status = me.StringField(
+        default="active", choices=STATUS_CHOICES, required=True
+    )  
