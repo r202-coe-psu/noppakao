@@ -37,6 +37,17 @@ def course_detail(course_id):
 @acl.roles_required("admin")
 def create_or_edit_course(course_id):
     form = forms.courses.CourseForm()
+  
+
+    if course_id:
+        course = models.Course.objects(id=course_id).first()
+        form = forms.courses.CourseForm(obj=course)
+
+    if not course_id:
+        course = models.Course()
+        course.created_by = current_user._get_current_object()
+
+
     form.owner.choices = [
         (str(user.id), user.get_fullname())
         for user in models.User.objects(roles__in=["admin"])
@@ -47,15 +58,10 @@ def create_or_edit_course(course_id):
         for course_type in models.CourseType.objects()
     ]
 
-    if course_id:
-        course = models.Course.objects(id=course_id).first()
-        form = forms.courses.CourseForm(obj=course)
-
-    if not course_id:
-        course = models.Course()
-        course.created_by = current_user._get_current_object()
-
     if not form.validate_on_submit():
+        if course_id:
+            form.owner.data = str(course.owner.id)
+            form.type.data = str(course.type.id)
         return render_template("/admin/courses/create_or_edit.html", form=form)
 
     course.name = form.name.data
