@@ -3,12 +3,12 @@ from flask_wtf import FlaskForm, file
 from wtforms import fields, widgets, validators, DateTimeField
 
 
-from noppakao import models 
+from noppakao import models
 
 BaseCourseForm = model_form(
     models.Course,
     FlaskForm,
-    exclude=["created_date", "created_by", "updated_date", "updated_by","status"],
+    exclude=["created_date", "created_by", "updated_date", "updated_by", "status"],
     field_args={
         "name": {"label": "ชื่อ Course"},
         "description": {"label": "รายละเอียด"},
@@ -21,7 +21,7 @@ BaseCourseForm = model_form(
 BaseCourseTypeForm = model_form(
     models.CourseType,
     FlaskForm,
-    exclude=["created_date", "updated_date","status"],
+    exclude=["created_date", "updated_date", "status"],
     field_args={
         "name": {"label": "ชื่อประเภท Course"},
     },
@@ -30,26 +30,69 @@ BaseCourseTypeForm = model_form(
 BaseCourseSectionForm = model_form(
     models.CourseSection,
     FlaskForm,
-    exclude=["create_date", "created_by", "updated_date", "updated_by", "status", "course"],
+    exclude=[
+        "create_date",
+        "created_by",
+        "updated_date",
+        "updated_by",
+        "status",
+        "course",
+    ],
     field_args={
         "header": {"label": "หัวข้อ Section"},
         "header_description": {"label": "รายละเอียด Section"},
         "exp_": {"label": "ประสบการณ์ที่ได้รับ"},
-        "content": {"label": "เนื้อหา"},    
+        "content": {"label": "เนื้อหา"},
     },
 )
+
+BaseCourseQuestionForm = model_form(
+    models.CourseQuestion,
+    FlaskForm,
+    exclude=[
+        "create_date",
+        "created_by",
+        "updated_date",
+        "updated_by",
+        "status",
+        "course",
+    ],
+    field_args={
+        "course_question": {"label": "คำถาม"},
+        "exp_": {"label": "ประสบการณ์ที่ได้รับ"},
+    },
+)
+
+
 class CourseForm(BaseCourseForm):
     name = fields.StringField("ชื่อ Course", validators=[validators.DataRequired()])
-    description = fields.TextAreaField("รายละเอียด", validators=[validators.DataRequired()])
+    description = fields.TextAreaField(
+        "รายละเอียด", validators=[validators.DataRequired()]
+    )
     level = fields.StringField("ระดับ", validators=[validators.DataRequired()])
-    owner = fields.SelectField("เจ้าของ Course", coerce=str, validators=[validators.DataRequired()])
-    type = fields.SelectField("ประเภท Course", coerce=str, validators=[validators.DataRequired()])
-    
+    owner = fields.SelectField(
+        "เจ้าของ Course", coerce=str, validators=[validators.DataRequired()]
+    )
+    type = fields.SelectField(
+        "ประเภท Course", coerce=str, validators=[validators.DataRequired()]
+    )
+
+
 class CourseTypeForm(BaseCourseTypeForm):
     name = fields.StringField("ชื่อประเภท Course", validators=[validators.DataRequired()])
 
+
 class CourseSectionForm(BaseCourseSectionForm):
     header = fields.StringField("หัวข้อ Section", validators=[validators.DataRequired()])
-    header_description = fields.TextAreaField("รายละเอียด Section", validators=[validators.DataRequired()])
+    header_description = fields.TextAreaField(
+        "รายละเอียด Section", validators=[validators.DataRequired()]
+    )
     exp_ = fields.IntegerField("ประสบการณ์ที่ได้รับ", validators=[validators.DataRequired()])
     content = fields.TextAreaField("เนื้อหา", validators=[validators.DataRequired()])
+
+class CourseQuestionForm(BaseCourseQuestionForm):
+    course_question = fields.SelectField(
+        "คำถาม",
+        validators=[validators.DataRequired()],
+    )
+    exp_ = fields.IntegerField("ประสบการณ์ที่ได้รับ", validators=[validators.DataRequired()])
