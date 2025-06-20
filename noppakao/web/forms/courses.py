@@ -26,6 +26,18 @@ BaseCourseTypeForm = model_form(
         "name": {"label": "ชื่อประเภท Course"},
     },
 )
+
+BaseCourseSectionForm = model_form(
+    models.CourseSection,
+    FlaskForm,
+    exclude=["create_date", "created_by", "updated_date", "updated_by", "status", "course"],
+    field_args={
+        "header": {"label": "หัวข้อ Section"},
+        "header_description": {"label": "รายละเอียด Section"},
+        "exp_": {"label": "ประสบการณ์ที่ได้รับ"},
+        "content": {"label": "เนื้อหา"},    
+    },
+)
 class CourseForm(BaseCourseForm):
     name = fields.StringField("ชื่อ Course", validators=[validators.DataRequired()])
     description = fields.TextAreaField("รายละเอียด", validators=[validators.DataRequired()])
@@ -35,3 +47,9 @@ class CourseForm(BaseCourseForm):
     
 class CourseTypeForm(BaseCourseTypeForm):
     name = fields.StringField("ชื่อประเภท Course", validators=[validators.DataRequired()])
+
+class CourseSectionForm(BaseCourseSectionForm):
+    header = fields.StringField("หัวข้อ Section", validators=[validators.DataRequired()])
+    header_description = fields.TextAreaField("รายละเอียด Section", validators=[validators.DataRequired()])
+    exp_ = fields.IntegerField("ประสบการณ์ที่ได้รับ", validators=[validators.DataRequired()])
+    content = fields.TextAreaField("เนื้อหา", validators=[validators.DataRequired()])

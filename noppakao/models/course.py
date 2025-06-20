@@ -47,7 +47,6 @@ class CourseSection(me.Document):
     exp_ = me.IntField()
     header_description = me.StringField()
 
-    status = me.StringField()
     content = me.StringField()
 
     mark_read = me.StringField()

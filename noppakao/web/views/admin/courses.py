@@ -1,3 +1,4 @@
+import datetime
 from flask import (
     Blueprint,
     render_template,
@@ -23,6 +24,8 @@ def index():
 
 
 """ Course Management """
+
+
 @module.route("/<course_id>", methods=["GET"])
 @acl.roles_required("admin")
 def course_detail(course_id):
@@ -36,17 +39,14 @@ def course_detail(course_id):
 @module.route("/<course_id>/edit", methods=["GET", "POST"])
 @acl.roles_required("admin")
 def create_or_edit_course(course_id):
-    form = forms.courses.CourseForm()
-  
-
     if course_id:
         course = models.Course.objects(id=course_id).first()
         form = forms.courses.CourseForm(obj=course)
 
     if not course_id:
+        form = forms.courses.CourseForm()
         course = models.Course()
         course.created_by = current_user._get_current_object()
-
 
     form.owner.choices = [
         (str(user.id), user.get_fullname())
@@ -73,21 +73,23 @@ def create_or_edit_course(course_id):
     course.save()
     return redirect(url_for("admin.courses.index"))
 
+
 """ Course Type Management """
+
+
 @module.route("/course_type", methods=["GET"])
 @acl.roles_required("admin")
 def course_type_index():
     course_types = models.CourseType.objects()
     return render_template(
-        "/admin/courses/course_type_index.html", 
-        course_types=course_types
+        "/admin/courses/course_type_index.html", course_types=course_types
     )
+
 
 @module.route("/course_type/create", methods=["GET", "POST"])
 @module.route("/course_type/<course_type_id>/edit", methods=["GET", "POST"])
 @acl.roles_required("admin")
 def create_or_edit_course_type(course_type_id=None):
-    form = forms.courses.CourseTypeForm()
     if course_type_id:
         course_type = models.CourseType.objects(id=course_type_id).first()
         form = forms.courses.CourseTypeForm(obj=course_type)
@@ -95,13 +97,13 @@ def create_or_edit_course_type(course_type_id=None):
     if not course_type_id:
         course_type = models.CourseType()
         course_type.created_by = current_user._get_current_object()
+        form = forms.courses.CourseTypeForm()
 
     if not form.validate_on_submit():
-        print(form.errors)
         return render_template(
             "/admin/courses/create_or_edit_course_type.html", form=form
         )
-    
+
     form.populate_obj(course_type)
 
     duplicate_course_type = models.CourseType.objects(name=course_type.name).first()
@@ -115,6 +117,7 @@ def create_or_edit_course_type(course_type_id=None):
     course_type.save()
     return redirect(url_for("admin.courses.course_type_index"))
 
+
 @module.route("/course_type/<course_type_id>/delete", methods=["POST"])
 @acl.roles_required("admin")
 def delete_course_type(course_type_id):
@@ -126,12 +129,15 @@ def delete_course_type(course_type_id):
         course_type.status = "disactive"
     else:
         course_type.status = "active"
-        
+
     course_type.updated_by = current_user._get_current_object()
     course_type.save()
     return redirect(url_for("admin.courses.course_type_index"))
 
+
 """ Course Content Management """
+
+
 @module.route("/<course_id>/", methods=["GET"])
 @acl.roles_required("admin")
 def view(course_id):
@@ -144,14 +150,36 @@ def view(course_id):
         course=course,
     )
 
+
 @module.route("/<course_id>/create_or_edit_section", methods=["GET", "POST"])
 @acl.roles_required("admin")
-def create_or_edit_course_section(course_id=None):
+def create_or_edit_course_section(course_id, section_id=None):
     course = models.Course.objects(id=course_id).first()
     if not course:
         return redirect(url_for("admin.courses.index"))
-    
-    return render_template(
-        "admin/courses/create_or_edit_course_section.html",
-        course=course,
-    )
+
+    if section_id:
+        section = models.CourseSection.objects(id=section_id).first()
+        form = forms.courses.CourseSectionForm(obj=section)
+
+    if not section_id:
+        section = models.CourseSection()
+        section.created_by = current_user._get_current_object()
+        form = forms.courses.CourseSectionForm()
+
+    if not form.validate_on_submit():
+        print(form.errors)
+        return render_template(
+            "/admin/courses/create_or_edit_course_section.html", form=form
+        )
+
+    section.course = course
+    section.header = form.header.data
+    section.header_description = form.header_description.data
+    section.exp_ = form.exp_.data
+    section.content = form.content.data 
+    section.created_by = current_user._get_current_object()
+    section.updated_by = current_user._get_current_object()
+    section.save()
+
+    return redirect(url_for("admin.courses.view", course_id=course_id))
