@@ -1,0 +1,12 @@
+{% extends "base/default-page.html" %}
+
+{% block content %}
+<div>
+    <h1 class="text-3xl font-bold">{{ course.name }}</h1>
+    <p class="mt-2"> {{ course.description }} </p>
+    <div class="my-3 border-b border-b-gray-300"></div>
+    <div class="flex flex-row justify-end">
+        <a class="btn btn-primary" href="{{ url_for('admin.courses.create_or_edit_course_section', course_id=course.id) }}"><i class="ph ph-plus"></i>Add Section </a>
+    </div>
+</div>
+{% endblock %}

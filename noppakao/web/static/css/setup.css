@@ -43,3 +43,7 @@
   --depth: 1;
   --noise: 1;
 }
+
+.divider {
+  @apply border-b border-b-gray-300;
+}

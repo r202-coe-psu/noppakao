@@ -132,14 +132,26 @@ def delete_course_type(course_type_id):
     return redirect(url_for("admin.courses.course_type_index"))
 
 """ Course Content Management """
-@module.route("/<course_id>/content", methods=["GET"])
+@module.route("/<course_id>/", methods=["GET"])
 @acl.roles_required("admin")
-def content(course_id):
+def view(course_id):
     course = models.Course.objects(id=course_id).first()
     if not course:
         return redirect(url_for("admin.courses.index"))
 
     return render_template(
-        "admin/courses/course_content.html",
+        "admin/courses/view.html",
+        course=course,
+    )
+
+@module.route("/<course_id>/create_or_edit_section", methods=["GET", "POST"])
+@acl.roles_required("admin")
+def create_or_edit_course_section(course_id=None):
+    course = models.Course.objects(id=course_id).first()
+    if not course:
+        return redirect(url_for("admin.courses.index"))
+    
+    return render_template(
+        "admin/courses/create_or_edit_course_section.html",
         course=course,
     )
