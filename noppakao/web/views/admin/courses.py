@@ -142,12 +142,15 @@ def delete_course_type(course_type_id):
 @acl.roles_required("admin")
 def view(course_id):
     course = models.Course.objects(id=course_id).first()
+    sections = models.CourseSection.objects(course=course)
+
     if not course:
         return redirect(url_for("admin.courses.index"))
 
     return render_template(
         "admin/courses/view.html",
         course=course,
+        sections=sections,
     )
 
 
@@ -182,4 +185,19 @@ def create_or_edit_course_section(course_id, section_id=None):
     section.updated_by = current_user._get_current_object()
     section.save()
 
+    return redirect(url_for("admin.courses.view", course_id=course_id))
+
+@module.route("/<course_id>/section/<section_id>/delete", methods=["POST"])
+def delete_course_section(course_id, section_id):
+    course = models.Course.objects(id=course_id).first()
+    if not course:
+        return redirect(url_for("admin.courses.index"))
+
+    section = models.CourseSection.objects(id=section_id).first()
+    if not section:
+        return redirect(url_for("admin.courses.view", course_id=course_id))
+
+    section.status = "disactive"
+    section.updated_by = current_user._get_current_object()
+    section.save()
     return redirect(url_for("admin.courses.view", course_id=course_id))
