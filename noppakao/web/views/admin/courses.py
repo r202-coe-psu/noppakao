@@ -9,7 +9,7 @@ from flask import (
 from flask_login import login_user, logout_user, login_required, current_user
 from noppakao.web import acl, forms, models
 
-module = Blueprint("course", __name__, url_prefix="/courses")
+module = Blueprint("courses", __name__, url_prefix="/courses")
 
 
 @module.route("/", methods=["GET"])
@@ -71,7 +71,7 @@ def create_or_edit_course(course_id):
 
     course.updated_by = current_user._get_current_object()
     course.save()
-    return redirect(url_for("admin.course.index"))
+    return redirect(url_for("admin.courses.index"))
 
 """ Course Type Management """
 @module.route("/course_type", methods=["GET"])
@@ -113,14 +113,14 @@ def create_or_edit_course_type(course_type_id=None):
 
     course_type.updated_by = current_user._get_current_object()
     course_type.save()
-    return redirect(url_for("admin.course.course_type_index"))
+    return redirect(url_for("admin.courses.course_type_index"))
 
 @module.route("/course_type/<course_type_id>/delete", methods=["POST"])
 @acl.roles_required("admin")
 def delete_course_type(course_type_id):
     course_type = models.CourseType.objects(id=course_type_id).first()
     if not course_type:
-        return redirect(url_for("admin.course.course_type_index"))
+        return redirect(url_for("admin.courses.course_type_index"))
 
     if course_type.status == "active":
         course_type.status = "disactive"
@@ -129,4 +129,17 @@ def delete_course_type(course_type_id):
         
     course_type.updated_by = current_user._get_current_object()
     course_type.save()
-    return redirect(url_for("admin.course.course_type_index"))
+    return redirect(url_for("admin.courses.course_type_index"))
+
+""" Course Content Management """
+@module.route("/<course_id>/content", methods=["GET"])
+@acl.roles_required("admin")
+def content(course_id):
+    course = models.Course.objects(id=course_id).first()
+    if not course:
+        return redirect(url_for("admin.courses.index"))
+
+    return render_template(
+        "admin/courses/course_content.html",
+        course=course,
+    )

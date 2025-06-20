@@ -4,7 +4,7 @@
 <div>
     <div class="flex items-center justify-between mb-4">
         <h1 class="text-3xl font-bold">Course Types</h1>
-        <a href="{{ url_for('admin.course.create_or_edit_course_type') }}">
+        <a href="{{ url_for('admin.courses.create_or_edit_course_type') }}">
             <button class="btn btn-primary w-full">
                 <i class="ph ph-plus"></i>
                 Create Type
@@ -40,7 +40,7 @@
                 {% endif %}
               </td>
               <td class="flex gap-2 justify-center items-center">
-                <a href=" {{ url_for('admin.course.create_or_edit_course_type', course_type_id=type.id) }}">
+                <a href=" {{ url_for('admin.courses.create_or_edit_course_type', course_type_id=type.id) }}">
                   <button class="btn btn-square btn-primary justify-center items-center">
                     <i class="ph ph-pencil-simple-line"></i>
                   </button>
@@ -62,7 +62,7 @@
                   <form method="dialog" class="modal-backdrop">
                     <button class="btn">Cancel</button>
                   </form>
-                  <form action="{{ url_for('admin.course.delete_course_type', course_type_id=type.id) }}" method="POST">
+                  <form action="{{ url_for('admin.courses.delete_course_type', course_type_id=type.id) }}" method="POST">
                     <button type="submit" class="btn btn-error">Delete</button>
                   </form>
                 </div>

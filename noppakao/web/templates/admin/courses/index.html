@@ -5,13 +5,13 @@
     <div class="flex items-center justify-between mb-4">
         <h1 class="text-3xl font-bold">Courses</h1>
         <div class="flex flex-row gap-2">
-            <a href="{{ url_for('admin.course.create_or_edit_course') }}">
+            <a href="{{ url_for('admin.courses.create_or_edit_course') }}">
                 <button class="btn btn-primary w-full">
                     <i class="ph-bold ph-plus"></i>
                     Create Course
                 </button>
             </a>
-            <a href="{{ url_for('admin.course.course_type_index') }}">
+            <a href="{{ url_for('admin.courses.course_type_index') }}">
                 <button class="btn btn-primary w-full">
                     <i class="ph-bold ph-book"></i>
                     Course Type
@@ -35,7 +35,10 @@
               <div class="flex flex-col">
                 <div class="item">
                   <div class="content">
-                    <strong><i class="ph ph-file-text"></i>Description:</strong> {{ course.description }}
+                    <strong><i class="ph ph-file-text"></i>Description:</strong> 
+                    <div class="overflow-hidden">
+                      <span class="truncate block w-full">{{ course.description }}</span>
+                    </div>
                   </div>
                 </div>
               
@@ -50,12 +53,12 @@
       
           </div>
           <div class="flex flex-col gap-2">
-            <a class="btn btn-primary w-full" href="{{ url_for('admin.course.create_or_edit_course', course_id=course.id) }}">
+            <a class="btn btn-primary w-full" href="{{ url_for('admin.courses.create_or_edit_course', course_id=course.id) }}">
               <i class="edit icon"></i> Edit Course
             </a>
             <a class="btn bg-[#364989] text-white hover:bg-[#2d3d73] w-full"
-              href="{{ url_for('admin.events.challenge', event_id=course.id) }}">
-              <i class="trophy icon"></i> Course Section
+              href="{{ url_for('admin.courses.content', course_id=course.id) }}">
+              <i class="trophy icon"></i> Course Content 
             </a>
             <a class="btn bg-[#364989] text-white hover:bg-[#2d3d73] w-full"
               href="{{ url_for('dashboards.index', event_id=course.id) }}">
