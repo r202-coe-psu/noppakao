@@ -1,9 +1,9 @@
-<div id="toggleBtn" class="fixed left-56 top-22 w-7 h-7 bg-[#E4E4E4] rounded-sm cursor-pointer transition-all z-10">
+<div id="toggleBtn" class="fixed left-68 top-22 w-7 h-7 bg-[#E4E4E4] rounded-sm cursor-pointer transition-all z-10">
     <i class="absolute inset-0 flex items-center justify-center ph-bold ph-caret-left text-xl transition-transform"
         id="toggleIcon"></i>
 </div>
 <nav id="sidebar"
-    class="h-screen sticky self-start top-0 px-5 py-7 bg-[#F3EFEE] justify-between flex flex-col transition-all w-60 overflow-hidden text-nowrap">
+    class="h-screen sticky self-start top-0 px-5 py-7 bg-[#F3EFEE] justify-between flex flex-col transition-all w-72 overflow-hidden text-nowrap">
     <div class="flex flex-col gap-16">
         <header>
             <div class="inline-flex items-center gap-4">
@@ -15,7 +15,7 @@
             </div>
         </header>
         <main id="sidebar-menu">
-            <ul class="flex flex-col gap-2 text-[#494949] font-bold text-lg">
+            <ul class="flex flex-col gap-2 text-[#494949] font-semibold text-lg">
                 <li class="h-12">
                     <a href="{{ url_for('course.dashboard') }}"
                         class="{{ 'bg-[#B6C0CF] text-primary' if request.path == '/course/dashboard' else 'hover:bg-[#e7e7e7]' }} flex items-center gap-4 p-2 h-full rounded-md  transition-colors">
@@ -59,15 +59,15 @@
     </div>
     <footer>
         <a href="{{ url_for('accounts.index')}}">
-            <div class="sidebar-text flex flex-col mb-10 font-bold p-2 transition-opacity">
-                <p class="text-[#494949]  text-lg">{{ current_user.first_name }} {{ current_user.last_name }}</p>
-                <p class="text-[#878787] text-md">
+            <div class="sidebar-text flex flex-col mb-2 font-bold p-2 transition-all text-[#494949] cursor-pointer hover:bg-[#e7e7e7] rounded-md">
+                <p class="text-[#494949]  text-lg truncate">{{ current_user.first_name }} {{ current_user.last_name }}</p>
+                <p class="text-[#878787] text-md font-semibold truncate">
                     {{ current_user.email }}
                 </p>
             </div>
         </a>
-        <a
-            class="flex flex-row items-center font-semibold p-2 gap-2 text-[#494949] cursor-pointer hover:bg-[#e7e7e7] transition-colors rounded-md">
+        <a href="{{ url_for('accounts.logout') }}"
+            class="flex flex-row items-center font-semibold text-lg p-2 gap-2 text-[#494949] cursor-pointer hover:bg-[#e7e7e7] transition-colors rounded-md">
             <i class="ph-bold ph-sign-out text-2xl"></i>
             <div class="sidebar-text transition-opacity">Log Out</div>
         </a>
