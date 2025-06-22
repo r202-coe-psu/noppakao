@@ -1,6 +1,29 @@
 {% extends "base/default-page-user.html" %}
 {% block content %}
-<div>
-    course/leaderboard
+<div class="flex flex-col gap-7">
+    <p class="font-bold text-2xl">Leaderboard</p>
+    <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="text-center">Place</th>
+                    <th>Name</th>
+                    <th class="text-center">Level</th>
+                    <th>Exp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in range(1,21) %}
+                <tr>
+                    <th class="text-center">{{i}}</th>
+                    <td>0xDisplayName</td>
+                    <td class="text-center">{{21-i}}</td>
+                    <td><progress class="progress progress-primary w-full" value="{{21-i}}" max="100"></progress>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}
