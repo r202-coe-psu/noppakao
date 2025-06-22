@@ -1,6 +1,78 @@
-{% extends "base/default-page.html" %}
+{% extends "base/default-page-user.html" %}
 {% block content %}
-<div>
-   courses/dashboard/
+<div class="flex flex-col gap-7">
+   <p class="font-bold text-2xl">Dashboard</p>
+   <div class="w-full h-40 bg-[#EFEEEE] rounded-md p-6 flex flex-row items-center justify-between">
+      <div class="flex flex-row gap-10 w-[50%] items-center h-full">
+         <img class="w-24 h-24 rounded-full" src="../../static/images/hacker.png" alt="Profile">
+         <div class="flex flex-col justify-between w-full h-full">
+            <div>
+               <p class="font-bold text-2xl">{{ current_user.first_name }} {{ current_user.last_name }}</p>
+               <p class="text-[#494949] font-bold">{{ current_user.email}}</p>
+            </div>
+            <div>
+               <div class="font-semibold">
+                  <div class="inline-flex items-center gap-2">
+                     <p class="text-[#878787]">Level</p>
+                     <p class="text-primary">9</p>
+                  </div>
+                  <div class="inline-flex items-center gap-2">
+                     <p class="text-[#878787]">Exp:</p>
+                     <p class="text-primary">9999</p>
+                  </div>
+               </div>
+               <progress class="progress progress-primary w-full h-1" value="56" max="100"></progress>
+            </div>
+         </div>
+      </div>
+      <div class="bg-white rounded-md w-[112px] h-full flex flex-col items-center justify-center gap-2">
+         <p class="font-semibold text-xl text-[#494949]">Streak</p>
+         <div class="text-primary flex flex-row gap-1 text-4xl">
+            <i class="ph-bold ph-fire-simple translate-y-"></i><span class="font-medium"> 5</span>
+         </div>
+      </div>
+   </div>
+   <div class="flex flex-col gap-6">
+      <p class="font-semibold text-xl">Continue your course</p>
+      <div class="@container ">
+         <div
+            class="grid grid-cols-1 @lg:grid-cols-2 @min-[850px]:flex @min-[850px]:flex-col rounded-md border-2 border-[#EFEEEE] min-h-96 p-6 gap-6 @min-[850]:gap-4">
+            {% for i in range(3) %}
+            <div
+               class="w-full bg-[#EFEEEE] rounded-md flex flex-col @min-[850px]:flex-row shadow-md h-auto @min-[850px]:h-44 relative">
+               <img src="../../static/images/example-course-thumbnail.jpg" alt="Course Thumbnail"
+                  class="w-full @min-[850px]:w-56 h-44 @min-[850px]:h-full object-cover rounded-t-md @min-[850px]:rounded-l-md @min-[850px]:rounded-t-none" />
+
+               <div
+                  class="flex flex-col @min-[850px]:flex-row w-full h-full p-4 @min-[850px]:p-6 justify-between items-start @min-[850px]:items-center gap-4">
+                  <div class="flex flex-col justify-between w-full @min-[850px]:max-w-[70%] gap-4">
+                     <div>
+                        <p class="font-semibold text-xl">Introduction to Capture the Flag (CTF)</p>
+                        <p class="text-xs text-[#494949] mt-1 text-balance">
+                           This course provides an introductory yet comprehensive overview of Capture the Flag (CTF)
+                           competitions, which are widely used in the cybersecurity community to develop and assess
+                           skills.
+                        </p>
+                     </div>
+                     <div class="flex items-center gap-4">
+                        <p class="font-semibold">Progress:</p>
+                        <progress class="progress progress-primary w-full h-1" value="70" max="100"></progress>
+                     </div>
+                  </div>
+
+                  <div
+                     class="w-full flex flex-row @min-[850px]:w-auto @min-[850px]:flex-col justify-between items-start @min-[850px]:items-end gap-2 h-full">
+                     <div
+                        class="badge badge-soft badge-primary absolute top-4 left-4 @min-[850px]:relative @min-[850px]:top-0 @min-[850px]:left-0">
+                        fundamental</div>
+                     <button class="btn btn-primary w-full">Continue</button>
+                  </div>
+               </div>
+            </div>
+
+            {% endfor %}
+         </div>
+      </div>
+   </div>
 </div>
 {% endblock %}
