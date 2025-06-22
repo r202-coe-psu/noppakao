@@ -1,6 +1,41 @@
 {% extends "base/default-page-user.html" %}
 {% block content %}
-<div>
-    course/index
+<div class="flex flex-col gap-7">
+    <p class="font-bold text-2xl">Courses</p>
+    <div class="flex flex-row items-center gap-4">
+        <label class="input w-[70%] xl:w-[80%]">
+            <i class="ph-bold ph-magnifying-glass text-[#898888]"></i>
+            <input type="search" class="grow" placeholder="Search" />
+        </label>
+        <select class="select w-[30%] xl:w-[20%]">
+            <option disabled selected>Enrollment</option>
+            <option>Enrolled</option>
+            <option>Not Enrolled</option>
+        </select>
+    </div>
+    <div class="@container ">
+        <div
+            class="grid grid-cols-1 @xl:grid-cols-2 @4xl:grid-cols-3 @6xl:grid-cols-4 rounded-md border-2 border-[#EFEEEE] min-h-96 p-6 gap-6">
+            {% for i in range(6) %}
+            <div class="card bg-base-100 h-80 shadow-sm">
+                <figure class="relative">
+                    <img src="../../static/images/example-course-thumbnail.jpg" alt="course thumbnail" />
+                    <div class="badge badge-soft badge-primary badge-sm absolute top-4 right-4">
+                        fundamental</div>
+                </figure>
+                <div class="card-body">
+                    <h2 class="card-title font-semibold">Introduction to Capture the Flag (CTF)</h2>
+                    <p class="line-clamp-3 text-xs text-[#494949]">This course provides an introductory yet
+                        comprehensive overview of Capture the Flag (CTF)
+                        competitions, which are widely used in the cybersecurity community to develop and assess skills
+                    </p>
+                    <div class="card-actions w-full mt-6">
+                        <button class="btn btn-primary w-full">Enroll</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 </div>
 {% endblock %}
