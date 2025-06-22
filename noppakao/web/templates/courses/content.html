@@ -1,10 +1,48 @@
 {% extends "base/default-page-user.html" %}
 {% block content %}
 <div>
-    content/index
+    <!-- content/index
     <br/>
     course: {{ course_id }}
     <br/>
-    page: {{ page_id }}
+    page: {{ page_id }} -->
+    <div class="breadcrumbs">
+        <ul class="text-lg font-semibold">
+            <li><a href="{{ url_for('course.index') }}">Courses</a></li>
+            <li><a href="#">{{ "Introduction to Capture the Flag (CTF)" }}</a></li>
+        </ul>
+    </div>
+    <div class="mt-4 grid-cols-12 gap-4 grid">
+        <div class="@container col-span-10">
+            <div class="rounded-md border-2 border-[#EFEEEE] min-h-96 gap-6">
+                <div
+                    class="h-44 w-full bg-[url('/static/images/example-course-thumbnail.jpg')] rounded-t-md bg-cover bg-center relative">
+                    <div
+                        class="text-white absolute inset-0 bg-[linear-gradient(to_right,#202020_0%,#202020_46%,rgba(80,73,73,0)_100%)] rounded-t-md">
+                        <div class="w-[70%] p-8">
+                            <p class="font-semibold text-lg">Introduction to Capture the Flag (CTF)</p>
+                            <p class="text-sm">This course provides an introductory yet comprehensive overview of Capture the Flag (CTF)
+                                competitions, which are widely used in the cybersecurity community to develop and assess
+                                skills</p>
+                        </div>
+                        <progress class="progress progress-primary w-full bottom-0 absolute bg-[#EFEEEE]" value="50" max="100"></progress>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-span-2 bg-[#F3EFEE] rounded-md p-6 w-full">
+            <p class="font-semibold text-[#494949] mb-6">Outline</p>
+            <ul class="flex flex-col gap-4 font-medium text-[#494949]">
+                <li class="hover:underline cursor-pointer"><a>Section 1</a></li>
+                <li class="hover:underline cursor-pointer"><a>Question 1</a></li>
+                <li class="hover:underline cursor-pointer"><a>Section 2</a></li>
+                <li class="hover:underline cursor-pointer"><a>Question 2</a></li>
+                <li class="hover:underline cursor-pointer"><a>Section 3</a></li>
+                <li class="hover:underline cursor-pointer"><a>Section 4</a></li>
+                <li class="hover:underline cursor-pointer"><a>Section 5</a></li>
+            </ul>
+        </div>
+    </div>
 </div>
 {% endblock %}

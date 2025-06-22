@@ -4,7 +4,7 @@
    <p class="font-bold text-2xl">Dashboard</p>
    <div class="w-full h-40 bg-[#EFEEEE] rounded-md p-6 flex flex-row items-center justify-between">
       <div class="flex flex-row gap-10 min-w-[50%] items-center h-full">
-         <img class="w-24 h-24 rounded-full" src="../../static/images/hacker.png" alt="Profile">
+         <img class="w-24 h-24 rounded-full" src="{{ url_for('static', filename='images/hacker.png') }}" alt="Profile">
          <div class="flex flex-col justify-between w-full h-full">
             <div>
                <p class="font-bold text-2xl">{{ current_user.first_name }} {{ current_user.last_name }}</p>
@@ -40,7 +40,7 @@
             {% for i in range(3) %}
             <div
                class="w-full bg-[#EFEEEE] rounded-md flex flex-col @min-[850px]:flex-row shadow-md h-auto @min-[850px]:h-44 relative">
-               <img src="../../static/images/example-course-thumbnail.jpg" alt="Course Thumbnail"
+               <img src="{{ url_for('static', filename='images/example-course-thumbnail.jpg') }}" alt="Course Thumbnail"
                   class="w-full @min-[850px]:w-56 h-44 @min-[850px]:h-full object-cover rounded-t-md @min-[850px]:rounded-l-md @min-[850px]:rounded-t-none" />
 
                <div
@@ -63,7 +63,7 @@
                   <div
                      class="w-full flex flex-row @min-[850px]:w-auto @min-[850px]:flex-col justify-between items-start @min-[850px]:items-end gap-2 h-full">
                      <div
-                        class="badge badge-soft badge-primary absolute top-4 left-4 @min-[850px]:relative @min-[850px]:top-0 @min-[850px]:left-0">
+                        class="badge badge-soft badge-primary absolute top-4 right-4 @min-[850px]:relative @min-[850px]:top-0 @min-[850px]:left-0">
                         fundamental</div>
                      <button class="btn btn-primary w-full">Continue</button>
                   </div>

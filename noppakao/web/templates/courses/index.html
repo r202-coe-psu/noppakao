@@ -19,7 +19,7 @@
             {% for i in range(6) %}
             <div class="card bg-base-100 h-80 shadow-sm">
                 <figure class="relative">
-                    <img src="../../static/images/example-course-thumbnail.jpg" alt="course thumbnail" />
+                    <img src="{{ url_for('static', filename='images/example-course-thumbnail.jpg') }}" alt="course thumbnail" />
                     <div class="badge badge-soft badge-primary badge-sm absolute top-4 right-4">
                         fundamental</div>
                 </figure>
