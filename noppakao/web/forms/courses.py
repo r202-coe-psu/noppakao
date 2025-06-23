@@ -88,7 +88,7 @@ class CourseSectionForm(BaseCourseSectionForm):
         "รายละเอียด Section", validators=[validators.DataRequired()]
     )
     exp_ = fields.IntegerField("ประสบการณ์ที่ได้รับ", validators=[validators.DataRequired()])
-    content = fields.TextAreaField("เนื้อหา", validators=[validators.DataRequired()])
+    content = fields.StringField("เนื้อหา")
 
 class CourseQuestionForm(BaseCourseQuestionForm):
     course_question = fields.SelectField(

@@ -1,5 +1,6 @@
 {% extends "base/default-page.html" %}
 {% import '/base/html-renderer-refactor.html' as renderer %}
+ฐ{% import '/base/editor-renderer.html' as editor_renderer %}
 
 {% block content %}
 <div class="max-w-3xl mx-auto px-4">
@@ -15,7 +16,7 @@
     </div>
   </div>
 
-  <form class="form-control" method="post">
+  <form id="course-form" class="form-control" method="POST" enctype="multipart/form-data">
     {{ form.csrf_token }}
 
     <div class="mb-4">
@@ -31,7 +32,7 @@
     </div>
 
     <div class="mb-4">
-      {{ renderer.render_text_area_field(form.content) }}
+      {{ renderer.render_editor(form.content) }}
     </div>
 
     <div class="flex justify-end mt-6 mb-6">
@@ -42,4 +43,11 @@
     </div>
   </form>
 </div>
+{% endblock %}
+
+{% block additional_js %}
+{{ editor_renderer.add_editor_library() }}
+{{ editor_renderer.config_editor() }}
+
+{{ editor_renderer.render_editor('course-form', 'content') }}
 {% endblock %}

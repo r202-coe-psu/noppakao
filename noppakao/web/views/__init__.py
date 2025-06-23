@@ -62,6 +62,7 @@ def get_subblueprints(directory):
 
 
 def register_blueprint(app):
+    app.add_template_filter(add_date_url)
     app.add_template_filter(template_filters.static_url)
     app.add_template_filter(template_filters.format_date)
     app.add_template_filter(template_filters.format_number)
