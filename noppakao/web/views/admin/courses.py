@@ -180,6 +180,8 @@ def create_or_edit_course_section(course_id, section_id=None):
             "/admin/courses/create_or_edit_course_section.html", form=form
         )
 
+    print("Form data:", request.form)
+
     section.course = course
     section.header = form.header.data
     section.header_description = form.header_description.data

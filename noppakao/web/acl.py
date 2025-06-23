@@ -1,6 +1,6 @@
 from flask import redirect, url_for, request
 from flask_login import current_user, LoginManager, login_url
-from werkzeug.exceptions import Forbidden, Unauthorized
+from werkzeug.exceptions import Forbidden, Unauthorized, NotFound
 from . import models
 
 from functools import wraps
@@ -51,3 +51,33 @@ def unauthorized_callback():
         return response
 
     return redirect(url_for("accounts.login"))
+
+def allow_download(Model, key_id):
+    def wrapper(func):
+        @wraps(func)
+        def wrapped(*args, **kwargs):
+            if not current_user.is_authenticated:
+                raise Unauthorized()
+
+            if "admin" in current_user.roles:
+                return func(*args, **kwargs)
+
+            object_id = request.view_args.get(key_id)
+            data = Model.objects(id=object_id).first()
+            if not data:
+                raise NotFound()
+
+            if data.owner == current_user._get_current_object():
+                return func(*args, **kwargs)
+
+            if not data.ticket:
+                raise NotFound()
+
+            if data.ticket.is_responsible(current_user._get_current_object()):
+                return func(*args, **kwargs)
+
+            raise Forbidden()
+
+        return wrapped
+
+    return wrapper

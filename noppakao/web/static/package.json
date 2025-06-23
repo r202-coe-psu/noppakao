@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "@enzedonline/quill-blot-formatter2": "^2.3.0",
+    "@highlightjs/cdn-assets": "^11.11.1",
     "@phosphor-icons/web": "^2.1.1",
     "@tailwindcss/cli": "^4.0.15",
     "brython": "^3.12.4",
@@ -7,6 +9,9 @@
     "fireworks-js": "^2.10.8",
     "fomantic-ui-css": "^2.9.3",
     "jquery": "^3.7.1",
+    "katex": "^0.16.22",
+    "quill": "^2.0.3",
+    "quill-image-drop-and-paste": "^2.0.1",
     "tailwindcss": "^4.0.15"
   },
   "name": "static",
