@@ -202,6 +202,7 @@ def create_or_edit_course_section(course_id, section_id=None):
 
     return redirect(url_for("admin.courses.view", course_id=course_id))
 
+
 @module.route("/<course_id>/question/create", methods=["GET", "POST"])
 @module.route("/<course_id>/question/edit/<question_id>", methods=["GET", "POST"])
 def create_or_edit_course_question(course_id, question_id=None):
@@ -241,6 +242,7 @@ def create_or_edit_course_question(course_id, question_id=None):
 
     return redirect(url_for("admin.courses.view", course_id=course_id))
 
+
 @module.route("/<course_id>/section/<content_id>/delete", methods=["POST"])
 def delete_course_content(course_id, content_id):
     course = models.Course.objects(id=course_id).first()
@@ -254,4 +256,50 @@ def delete_course_content(course_id, content_id):
     section.status = "disactive"
     section.updated_by = current_user._get_current_object()
     section.save()
+    return redirect(url_for("admin.courses.view", course_id=course_id))
+
+@module.route("/<course_id>/section/<content_id>/up", methods=["POST"])
+def move_content_up(course_id, content_id):
+    course = models.Course.objects(id=course_id).first()
+    if not course:
+        return redirect(url_for("admin.courses.index"))
+
+    content = models.CourseContent.objects(id=content_id).first()
+    if not content:
+        return redirect(url_for("admin.courses.view", course_id=course_id))
+
+    previous_content = (
+        models.CourseContent.objects(course=course, index=content.index - 1)
+        .first()
+    )
+    
+    if previous_content:
+        content.index -= 1
+        previous_content.index += 1
+        content.save()
+        previous_content.save()
+
+    return redirect(url_for("admin.courses.view", course_id=course_id))
+
+@module.route("/<course_id>/section/<content_id>/down", methods=["POST"])
+def move_content_down(course_id, content_id):
+    course = models.Course.objects(id=course_id).first()
+    if not course:
+        return redirect(url_for("admin.courses.index"))
+
+    content = models.CourseContent.objects(id=content_id).first()
+    if not content:
+        return redirect(url_for("admin.courses.view", course_id=course_id))
+
+    next_content = (
+        models.CourseContent.objects(course=course, index=content.index + 1)
+        .first()
+    )
+    
+    if next_content:
+        content.index += 1
+        next_content.index -= 1
+        content.save()
+        next_content.save()
+
     return redirect(url_for("admin.courses.view", course_id=course_id))

@@ -2176,6 +2176,9 @@
   .mt-6 {
     margin-top: calc(var(--spacing) * 6);
   }
+  .mt-10 {
+    margin-top: calc(var(--spacing) * 10);
+  }
   .mt-12 {
     margin-top: calc(var(--spacing) * 12);
   }
@@ -2783,6 +2786,9 @@
   .w-32 {
     width: calc(var(--spacing) * 32);
   }
+  .w-40 {
+    width: calc(var(--spacing) * 40);
+  }
   .w-64 {
     width: calc(var(--spacing) * 64);
   }
@@ -3358,6 +3364,9 @@
   .text-right {
     text-align: right;
   }
+  .text-start {
+    text-align: start;
+  }
   .font-mono {
     font-family: var(--font-mono);
   }
@@ -3626,6 +3635,10 @@
   .badge-secondary {
     --badge-color: var(--color-secondary);
     --badge-fg: var(--color-secondary-content);
+  }
+  .badge-success {
+    --badge-color: var(--color-success);
+    --badge-fg: var(--color-success-content);
   }
   .btn-error {
     --btn-color: var(--color-error);
