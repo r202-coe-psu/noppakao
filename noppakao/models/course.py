@@ -43,7 +43,7 @@ class CourseContent(me.Document):
     meta = {"collection": "course_content"}
     course = me.ReferenceField("Course", dbref=True, required=True)
     type = me.StringField(
-        default="section", choices=["section", "question"], required=True
+        choices=["section", "question"], required=True
     )  # ประเภทของ content มี section หรือ question 
     exp_ = me.IntField()  # จำนวน exp ที่ได้จากการทำ content นี้
 

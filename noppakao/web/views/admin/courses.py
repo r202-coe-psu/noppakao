@@ -191,7 +191,7 @@ def create_or_edit_course_section(course_id, section_id=None):
         )
 
     form.populate_obj(section)
-
+    section.type = "section"
     section.index = process_content_index(course)
 
     section.course = course
@@ -228,14 +228,13 @@ def create_or_edit_course_question(course_id, question_id=None):
             "/admin/courses/create_or_edit_course_question.html", form=form
         )
 
+    form.populate_obj(question)
+    question.type = "question"
     question.course = course
     question.course_question = models.Challenge.objects.get(
         id=form.course_question.data
     )
-
     question.index = process_content_index(course)
-
-    question.exp_ = form.exp_.data
     question.created_by = current_user._get_current_object()
     question.updated_by = current_user._get_current_object()
     question.save()
