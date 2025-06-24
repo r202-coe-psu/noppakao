@@ -28,7 +28,7 @@ BaseCourseTypeForm = model_form(
 )
 
 BaseCourseSectionForm = model_form(
-    models.CourseSection,
+    models.CourseContent,
     FlaskForm,
     exclude=[
         "create_date",
@@ -37,6 +37,9 @@ BaseCourseSectionForm = model_form(
         "updated_by",
         "status",
         "course",
+        "index",
+        "type",
+        "course_question",
     ],
     field_args={
         "header": {"label": "หัวข้อ Section"},
@@ -47,7 +50,7 @@ BaseCourseSectionForm = model_form(
 )
 
 BaseCourseQuestionForm = model_form(
-    models.CourseQuestion,
+    models.CourseContent,
     FlaskForm,
     exclude=[
         "create_date",
@@ -56,6 +59,9 @@ BaseCourseQuestionForm = model_form(
         "updated_by",
         "status",
         "course",
+        "index",
+        "type",
+        "content",
     ],
     field_args={
         "course_question": {"label": "คำถาม"},
@@ -91,6 +97,10 @@ class CourseSectionForm(BaseCourseSectionForm):
     content = fields.StringField("เนื้อหา")
 
 class CourseQuestionForm(BaseCourseQuestionForm):
+    header = fields.StringField("หัวข้อคำถาม", validators=[validators.DataRequired()])
+    header_description = fields.TextAreaField(
+        "รายละเอียดคำถาม", validators=[validators.DataRequired()]
+    )
     course_question = fields.SelectField(
         "คำถาม",
         validators=[validators.DataRequired()],

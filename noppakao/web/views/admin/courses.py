@@ -13,6 +13,17 @@ from noppakao.web import acl, forms, models
 module = Blueprint("courses", __name__, url_prefix="/courses")
 
 
+def process_content_index(course):
+    latest_section = (
+        models.CourseContent.objects(course=course, status="active")
+        .order_by("-index")
+        .first()
+    )
+    if not latest_section:
+        return 0
+    return latest_section.index + 1
+
+
 @module.route("/", methods=["GET"])
 @acl.roles_required("admin")
 def index():
@@ -142,10 +153,9 @@ def delete_course_type(course_type_id):
 @acl.roles_required("admin")
 def view(course_id):
     course = models.Course.objects(id=course_id).first()
-    sections = models.CourseSection.objects(course=course)
-    questions = models.CourseQuestion.objects(course=course)
-
-    contents = list(sections) + list(questions)
+    contents = models.CourseContent.objects(course=course, status="active").order_by(
+        "index"
+    )
 
     if not course:
         return redirect(url_for("admin.courses.index"))
@@ -166,11 +176,11 @@ def create_or_edit_course_section(course_id, section_id=None):
         return redirect(url_for("admin.courses.index"))
 
     if section_id:
-        section = models.CourseSection.objects(id=section_id).first()
+        section = models.CourseContent.objects(id=section_id).first()
         form = forms.courses.CourseSectionForm(obj=section)
 
     if not section_id:
-        section = models.CourseSection()
+        section = models.CourseContent()
         section.created_by = current_user._get_current_object()
         form = forms.courses.CourseSectionForm()
 
@@ -181,6 +191,9 @@ def create_or_edit_course_section(course_id, section_id=None):
         )
 
     form.populate_obj(section)
+
+    section.index = process_content_index(course)
+
     section.course = course
     section.created_by = current_user._get_current_object()
     section.updated_by = current_user._get_current_object()
@@ -188,23 +201,6 @@ def create_or_edit_course_section(course_id, section_id=None):
     section.save()
 
     return redirect(url_for("admin.courses.view", course_id=course_id))
-
-
-@module.route("/<course_id>/section/<section_id>/delete", methods=["POST"])
-def delete_course_section(course_id, section_id):
-    course = models.Course.objects(id=course_id).first()
-    if not course:
-        return redirect(url_for("admin.courses.index"))
-
-    section = models.CourseSection.objects(id=section_id).first()
-    if not section:
-        return redirect(url_for("admin.courses.view", course_id=course_id))
-
-    section.status = "disactive"
-    section.updated_by = current_user._get_current_object()
-    section.save()
-    return redirect(url_for("admin.courses.view", course_id=course_id))
-
 
 @module.route("/<course_id>/question/create", methods=["GET", "POST"])
 @module.route("/<course_id>/question/edit/<question_id>", methods=["GET", "POST"])
@@ -214,11 +210,11 @@ def create_or_edit_course_question(course_id, question_id=None):
         return redirect(url_for("admin.courses.index"))
 
     if question_id:
-        question = models.CourseQuestion.objects(id=question_id).first()
+        question = models.CourseContent.objects(id=question_id).first()
         form = forms.courses.CourseQuestionForm(obj=question)
 
     if not question_id:
-        question = models.CourseQuestion()
+        question = models.CourseContent()
         question.created_by = current_user._get_current_object()
         form = forms.courses.CourseQuestionForm()
 
@@ -236,6 +232,9 @@ def create_or_edit_course_question(course_id, question_id=None):
     question.course_question = models.Challenge.objects.get(
         id=form.course_question.data
     )
+
+    question.index = process_content_index(course)
+
     question.exp_ = form.exp_.data
     question.created_by = current_user._get_current_object()
     question.updated_by = current_user._get_current_object()
@@ -243,18 +242,17 @@ def create_or_edit_course_question(course_id, question_id=None):
 
     return redirect(url_for("admin.courses.view", course_id=course_id))
 
-
-@module.route("/<course_id>/question/<question_id>/delete", methods=["POST"])
-def delete_course_question(course_id, question_id):
+@module.route("/<course_id>/section/<content_id>/delete", methods=["POST"])
+def delete_course_content(course_id, content_id):
     course = models.Course.objects(id=course_id).first()
     if not course:
         return redirect(url_for("admin.courses.index"))
 
-    question = models.CourseQuestion.objects(id=question_id).first()
-    if not question:
+    section = models.CourseContent.objects(id=content_id).first()
+    if not section:
         return redirect(url_for("admin.courses.view", course_id=course_id))
 
-    question.status = "disactive"
-    question.updated_by = current_user._get_current_object()
-    question.save()
+    section.status = "disactive"
+    section.updated_by = current_user._get_current_object()
+    section.save()
     return redirect(url_for("admin.courses.view", course_id=course_id))

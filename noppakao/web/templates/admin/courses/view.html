@@ -14,7 +14,7 @@
                     href="{{ url_for('admin.courses.create_or_edit_course_section', course_id=course.id, section_id=section.id) }}"><i
                         class="ph ph-pencil-simple"></i>Edit</a>
                 <form method="post"
-                    action="{{ url_for('admin.courses.delete_course_section', course_id=course.id, section_id=section.id) }}"
+                    action="{{ url_for('admin.courses.delete_course_content', course_id=course.id, content_id=section.id) }}"
                     onsubmit="return confirm('Are you sure you want to delete this section?');">
                     <button class="btn btn-error" type="submit"><i class="ph ph-trash"></i>Delete</button>
                 </form>
@@ -48,7 +48,7 @@
                     href="{{ url_for('admin.courses.create_or_edit_course_question', course_id=course.id, question_id=question.id) }}"><i
                         class="ph ph-pencil-simple"></i>Edit</a>
                 <form method="post"
-                    action="{{ url_for('admin.courses.delete_course_question', course_id=course.id, question_id=question.id) }}"
+                    action="{{ url_for('admin.courses.delete_course_content', course_id=course.id, content_id=question.id) }}"
                     onsubmit="return confirm('Are you sure you want to delete this question?');">
                     <button class="btn btn-error" type="submit"><i class="ph ph-trash"></i>Delete</button>
                 </form>

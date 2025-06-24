@@ -39,7 +39,37 @@ class CourseType(me.Document):
         default="active", choices=STATUS_CHOICES, required=True
     )  
 
+class CourseContent(me.Document):
+    meta = {"collection": "course_content"}
+    course = me.ReferenceField("Course", dbref=True, required=True)
+    type = me.StringField(
+        default="section", choices=["section", "question"], required=True
+    )  # ประเภทของ content มี section หรือ question 
+    exp_ = me.IntField()  # จำนวน exp ที่ได้จากการทำ content นี้
 
+    index = me.IntField()  # ลำดับของ content ใน course
+    header = me.StringField()  # ชื่อของ content
+    header_description = me.StringField()  # คำอธิบายของ content
+
+    # section data
+    content = me.StringField()  # เนื้อหาของ section 
+
+    # question data
+    course_question = me.ReferenceField("Challenge", dbref=True)  # คำถาม
+
+    created_by = me.ReferenceField("User", dbref=True, required=True)  # คนสุดท้ายที่กดอัพเดต
+    updated_by = me.ReferenceField("User", dbref=True, required=True)  # คนสุดท้ายที่กดอัพเดต
+    updated_date = me.DateTimeField(
+        required=True, default=datetime.datetime.now, auto_now=True
+    )  # เวลาการสร้างหรืออัพเดตล่าสุด
+    create_date = me.DateTimeField(
+        required=True, default=datetime.datetime.now, auto_now=True
+    )  # เวลาการสร้าง
+    status = me.StringField(
+        default="active", choices=STATUS_CHOICES, required=True
+    )
+
+# NOTE: use CourseContent instead for sections
 class CourseSection(me.Document):
     meta = {"collection": "course_section"}
     course = me.ReferenceField("Course", dbref=True, required=True)
@@ -50,6 +80,7 @@ class CourseSection(me.Document):
     content = me.StringField()
 
     mark_read = me.StringField()
+    index = me.IntField()  # ลำดับของ section ใน course
     created_by = me.ReferenceField("User", dbref=True, required=True)  # คนสุดท้ายที่กดอัพเดต
     updated_by = me.ReferenceField("User", dbref=True, required=True)  # คนสุดท้ายที่กดอัพเดต
     updated_date = me.DateTimeField(
@@ -62,13 +93,14 @@ class CourseSection(me.Document):
         default="active", choices=STATUS_CHOICES, required=True
     )  
 
-
+# NOTE: use CourseContent instead for questions
 class CourseQuestion(me.Document):
     meta = {"collection": "course_question"}
     course = me.ReferenceField("Course", dbref=True, required=True)
     course_question = me.ReferenceField("Challenge", dbref=True, required=True)
     exp_ = me.IntField()
     status = me.StringField()
+    index = me.IntField()  # ลำดับของ question ใน course
 
     created_by = me.ReferenceField("User", dbref=True, required=True)  # คนสุดท้ายที่กดอัพเดต
     updated_by = me.ReferenceField("User", dbref=True, required=True)  # คนสุดท้ายที่กดอัพเดต

@@ -6,7 +6,7 @@ from .teams import Team
 from .events import Event, EventChallenge, EventRole, EventCompetitor
 from .transactions import Transaction
 from .organizations import Organization
-from .course import Course, CourseType, CourseSection, CourseQuestion
+from .course import Course, CourseType, CourseContent
 from .media import Media
 from .utils import save_to_file_field
 from .oauth2 import OAuth2Token

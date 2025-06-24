@@ -19,6 +19,14 @@
     {{ form.csrf_token }}
 
     <div class="mb-4">
+      {{ renderer.render_field(form.header) }}
+    </div>
+
+    <div class="mb-4">
+      {{ renderer.render_text_area_field(form.header_description) }}
+    </div>
+
+    <div class="mb-4">
       {{ renderer.render_select_field(form.course_question) }}
     </div>
 
