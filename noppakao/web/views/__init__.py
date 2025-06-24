@@ -3,6 +3,7 @@ import pathlib
 import logger
 import logging
 import importlib
+import markdown
 from . import accounts
 from noppakao.utils import template_filters
 
@@ -61,11 +62,21 @@ def get_subblueprints(directory):
     return blueprints
 
 
+def render_markdown(text):
+    if "<" in text.lower():
+        text = text.replace("<", "&lt;")
+    else:
+        text = text.replace(">;", "&gt;")
+    md = markdown.markdown(text)
+    return md
+
+
 def register_blueprint(app):
     app.add_template_filter(add_date_url)
     app.add_template_filter(template_filters.static_url)
     app.add_template_filter(template_filters.format_date)
     app.add_template_filter(template_filters.format_number)
+    app.add_template_filter(render_markdown)
     parent = pathlib.Path(__file__).parent
     blueprints = get_subblueprints(parent)
 

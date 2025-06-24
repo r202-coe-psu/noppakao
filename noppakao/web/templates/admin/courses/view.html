@@ -1,4 +1,5 @@
 {% extends "base/default-page.html" %}
+{% import '/base/editor-renderer.html' as editor_renderer %}
 
 {% macro section_card(section) %}
 <div class="card bg-base-100 border-1 border-gray-300 mb-4">
@@ -26,9 +27,9 @@
         <div class="overflow-hidden">
             <span class="truncate block w-full"><strong>Description:</strong> {{ section.header_description }}</span>
         </div>
-        <div class="overflow-hidden">
+        <div class="">
             <strong>Content</strong>
-            <span class="truncate block w-full">{{ section.content }}</span>
+            {{ section.content | safe }}
         </div>
     </div>
 </div>
@@ -88,4 +89,11 @@
     </div>
 
 </div>
+{% endblock %}
+
+{% block additional_js %}
+{{ editor_renderer.add_editor_library() }}
+{{ editor_renderer.config_editor() }}
+
+{{ editor_renderer.render_readonly_editor('content') }}
 {% endblock %}

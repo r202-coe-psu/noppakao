@@ -180,15 +180,11 @@ def create_or_edit_course_section(course_id, section_id=None):
             "/admin/courses/create_or_edit_course_section.html", form=form
         )
 
-    print("Form data:", request.form)
-
+    form.populate_obj(section)
     section.course = course
-    section.header = form.header.data
-    section.header_description = form.header_description.data
-    section.exp_ = form.exp_.data
-    section.content = form.content.data
     section.created_by = current_user._get_current_object()
     section.updated_by = current_user._get_current_object()
+
     section.save()
 
     return redirect(url_for("admin.courses.view", course_id=course_id))
@@ -237,7 +233,9 @@ def create_or_edit_course_question(course_id, question_id=None):
         )
 
     question.course = course
-    question.course_question = models.Challenge.objects.get(id=form.course_question.data)
+    question.course_question = models.Challenge.objects.get(
+        id=form.course_question.data
+    )
     question.exp_ = form.exp_.data
     question.created_by = current_user._get_current_object()
     question.updated_by = current_user._get_current_object()
