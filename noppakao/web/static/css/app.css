@@ -2176,9 +2176,6 @@
   .mt-6 {
     margin-top: calc(var(--spacing) * 6);
   }
-  .mt-10 {
-    margin-top: calc(var(--spacing) * 10);
-  }
   .mt-12 {
     margin-top: calc(var(--spacing) * 12);
   }
@@ -2517,11 +2514,35 @@
     column-gap: calc(0.25rem * 3);
     padding-block: calc(0.25rem * 1);
   }
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
   .line-clamp-3 {
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
+  }
+  .line-clamp-4 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+  }
+  .line-clamp-5 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 5;
   }
   .prose {
     :root & {
@@ -2618,6 +2639,9 @@
   .h-1 {
     height: calc(var(--spacing) * 1);
   }
+  .h-1\/2 {
+    height: calc(1/2 * 100%);
+  }
   .h-5 {
     height: calc(var(--spacing) * 5);
   }
@@ -2627,6 +2651,9 @@
   .h-7 {
     height: calc(var(--spacing) * 7);
   }
+  .h-8 {
+    height: calc(var(--spacing) * 8);
+  }
   .h-9 {
     height: calc(var(--spacing) * 9);
   }
@@ -2635,6 +2662,9 @@
   }
   .h-12 {
     height: calc(var(--spacing) * 12);
+  }
+  .h-20 {
+    height: calc(var(--spacing) * 20);
   }
   .h-24 {
     height: calc(var(--spacing) * 24);
@@ -2651,14 +2681,29 @@
   .h-48 {
     height: calc(var(--spacing) * 48);
   }
+  .h-60 {
+    height: calc(var(--spacing) * 60);
+  }
   .h-64 {
     height: calc(var(--spacing) * 64);
   }
   .h-80 {
     height: calc(var(--spacing) * 80);
   }
+  .h-88 {
+    height: calc(var(--spacing) * 88);
+  }
+  .h-90 {
+    height: calc(var(--spacing) * 90);
+  }
+  .h-92 {
+    height: calc(var(--spacing) * 92);
+  }
   .h-100 {
     height: calc(var(--spacing) * 100);
+  }
+  .h-\[400px\] {
+    height: 400px;
   }
   .h-\[500px\] {
     height: 500px;
@@ -2677,6 +2722,21 @@
   }
   .max-h-52 {
     max-height: calc(var(--spacing) * 52);
+  }
+  .min-h-10 {
+    min-height: calc(var(--spacing) * 10);
+  }
+  .min-h-20 {
+    min-height: calc(var(--spacing) * 20);
+  }
+  .min-h-30 {
+    min-height: calc(var(--spacing) * 30);
+  }
+  .min-h-32 {
+    min-height: calc(var(--spacing) * 32);
+  }
+  .min-h-40 {
+    min-height: calc(var(--spacing) * 40);
   }
   .min-h-96 {
     min-height: calc(var(--spacing) * 96);
@@ -2768,6 +2828,9 @@
   .w-7 {
     width: calc(var(--spacing) * 7);
   }
+  .w-8 {
+    width: calc(var(--spacing) * 8);
+  }
   .w-9 {
     width: calc(var(--spacing) * 9);
   }
@@ -2843,6 +2906,9 @@
   .min-w-0 {
     min-width: calc(var(--spacing) * 0);
   }
+  .min-w-40 {
+    min-width: calc(var(--spacing) * 40);
+  }
   .min-w-\[50\%\] {
     min-width: 50%;
   }
@@ -2857,6 +2923,9 @@
   }
   .flex-shrink {
     flex-shrink: 1;
+  }
+  .flex-shrink-0 {
+    flex-shrink: 0;
   }
   .flex-grow {
     flex-grow: 1;
@@ -2960,6 +3029,9 @@
   }
   .grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .grid-cols-12 {
     grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -3364,9 +3436,6 @@
   .text-right {
     text-align: right;
   }
-  .text-start {
-    text-align: start;
-  }
   .font-mono {
     font-family: var(--font-mono);
   }
@@ -3440,6 +3509,9 @@
   }
   .break-words {
     overflow-wrap: break-word;
+  }
+  .text-ellipsis {
+    text-overflow: ellipsis;
   }
   .checkbox-primary {
     color: var(--color-primary-content);
@@ -3624,21 +3696,9 @@
     --badge-color: var(--color-error);
     --badge-fg: var(--color-error-content);
   }
-  .badge-info {
-    --badge-color: var(--color-info);
-    --badge-fg: var(--color-info-content);
-  }
   .badge-primary {
     --badge-color: var(--color-primary);
     --badge-fg: var(--color-primary-content);
-  }
-  .badge-secondary {
-    --badge-color: var(--color-secondary);
-    --badge-fg: var(--color-secondary-content);
-  }
-  .badge-success {
-    --badge-color: var(--color-success);
-    --badge-fg: var(--color-success-content);
   }
   .btn-error {
     --btn-color: var(--color-error);

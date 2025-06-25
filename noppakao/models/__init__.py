@@ -1,5 +1,5 @@
 from flask_mongoengine import MongoEngine
-from .users import User
+from .users import User, EnrollCourse
 from .challenges import Challenge, ChallengeResource
 from .categories import Category
 from .teams import Team

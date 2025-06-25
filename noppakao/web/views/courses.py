@@ -16,8 +16,14 @@ module = Blueprint("course", __name__, url_prefix="/course")
 
 
 @module.route("/", methods=["GET"])
+@login_required
 def index():
     courses = models.Course.objects(status="active").order_by("name")
+    enrolled_courses = models.EnrollCourse.objects(user=current_user)
+    
+    enrolled_course_ids = [enrollment.course.id for enrollment in enrolled_courses]
+    for course in courses:
+        course.is_enrolled = course.id in enrolled_course_ids
 
     return render_template(
         "courses/index.html",
@@ -26,6 +32,7 @@ def index():
 
 
 @module.route("/<course_id>", methods=["GET"])
+@login_required
 def course_detail(course_id):
     return render_template(
         "courses/course_detail.html",
@@ -34,6 +41,7 @@ def course_detail(course_id):
 
 
 @module.route("/<course_id>/content/<page_id>", methods=["GET"])
+@login_required
 def course_content(course_id, page_id):
     return render_template(
         "courses/content.html",
@@ -43,6 +51,7 @@ def course_content(course_id, page_id):
 
 
 @module.route("/dashboard", methods=["GET"])
+@login_required
 def dashboard():
     return render_template(
         "courses/dashboard.html",
@@ -51,7 +60,26 @@ def dashboard():
 
 
 @module.route("/leaderboard", methods=["GET"])
+@login_required
 def leaderboard():
-    return render_template(
-        "courses/leaderboard.html"
+    return render_template("courses/leaderboard.html")
+
+
+@module.route("/enroll/<course_id>", methods=["POST"])
+@login_required
+def enroll(course_id):
+    course = models.Course.objects.get(id=course_id)
+    if not course:
+        return redirect(url_for("course.index"))
+
+    if course in current_user.enrolled_course:
+        # Already enrolled
+        return redirect(url_for("course.course_detail", course_id=course_id))
+
+    enroll = models.EnrollCourse(
+        user=current_user,
+        course=course,
     )
+    enroll.save()
+
+    return redirect(url_for("course.course_detail", course_id=course_id))

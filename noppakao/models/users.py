@@ -27,6 +27,7 @@ class User(me.Document, UserMixin):
     organization = me.ReferenceField("Organization", dbref=True)
     picture_url = me.StringField(default="")
     resources = me.DictField()
+    enrolled_course = me.ListField(me.ReferenceField("Course", dbref=True, default=[]))
 
     created_date = me.DateTimeField(required=True, default=datetime.datetime.now)
     updated_date = me.DateTimeField(required=True, default=datetime.datetime.now)
@@ -79,3 +80,10 @@ class User(me.Document, UserMixin):
             if role in self.roles:
                 return True
         return
+
+class EnrollCourse(me.Document):
+    meta = {"collection": "enroll_course"}
+    user = me.ReferenceField("User", dbref=True, required=True)
+    course = me.ReferenceField("Course", dbref=True, required=True)
+    created_date = me.DateTimeField(required=True, default=datetime.datetime.now)
+    updated_date = me.DateTimeField(required=True, default=datetime.datetime.now)
