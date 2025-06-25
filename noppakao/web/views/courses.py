@@ -7,6 +7,7 @@ from flask import (
     redirect,
 )
 from flask_login import login_user, logout_user, login_required, current_user
+from noppakao import models
 
 
 module = Blueprint("course", __name__, url_prefix="/course")
@@ -16,8 +17,11 @@ module = Blueprint("course", __name__, url_prefix="/course")
 
 @module.route("/", methods=["GET"])
 def index():
+    courses = models.Course.objects(status="active").order_by("name")
+
     return render_template(
         "courses/index.html",
+        courses=courses,
     )
 
 
