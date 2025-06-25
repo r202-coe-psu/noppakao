@@ -16,11 +16,10 @@ module = Blueprint("courses", __name__, url_prefix="/courses")
 def process_content_index(course):
     latest_section = (
         models.CourseContent.objects(course=course, status="active")
-        .order_by("-index")
         .first()
     )
     if not latest_section:
-        return 0
+        return 1
     return latest_section.index + 1
 
 

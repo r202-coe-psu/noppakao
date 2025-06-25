@@ -9,7 +9,7 @@
     <div class="breadcrumbs">
         <ul class="text-lg font-semibold">
             <li><a href="{{ url_for('course.index') }}">Courses</a></li>
-            <li><a href="#">{{ "Introduction to Capture the Flag (CTF)" }}</a></li>
+            <li><a href="{{ url_for('course.course_detail', course_id=course.id)}}">{{ course.name }}</a></li>
         </ul>
     </div>
     <div class="mt-4 grid-cols-12 gap-4 grid">
@@ -21,11 +21,13 @@
                         class="text-white absolute inset-0 bg-[linear-gradient(to_right,#202020_0%,#202020_46%,rgba(80,73,73,0)_100%)] rounded-t-md">
                         <div class="w-[70%] p-8">
                             <p class="font-semibold text-lg">Introduction to Capture the Flag (CTF)</p>
-                            <p class="text-sm">This course provides an introductory yet comprehensive overview of Capture the Flag (CTF)
+                            <p class="text-sm">This course provides an introductory yet comprehensive overview of
+                                Capture the Flag (CTF)
                                 competitions, which are widely used in the cybersecurity community to develop and assess
                                 skills</p>
                         </div>
-                        <progress class="progress progress-primary w-full bottom-0 absolute bg-[#EFEEEE]" value="50" max="100"></progress>
+                        <progress class="progress progress-primary w-full bottom-0 absolute bg-[#EFEEEE]" value="50"
+                            max="100"></progress>
                     </div>
 
                 </div>
@@ -34,13 +36,14 @@
         <div class="col-span-2 bg-[#F3EFEE] rounded-md p-6 w-full">
             <p class="font-semibold text-[#494949] mb-6">Outline</p>
             <ul class="flex flex-col gap-4 font-medium text-[#494949]">
-                <li class="hover:underline cursor-pointer"><a>Section 1</a></li>
-                <li class="hover:underline cursor-pointer"><a>Question 1</a></li>
-                <li class="hover:underline cursor-pointer"><a>Section 2</a></li>
-                <li class="hover:underline cursor-pointer"><a>Question 2</a></li>
-                <li class="hover:underline cursor-pointer"><a>Section 3</a></li>
-                <li class="hover:underline cursor-pointer"><a>Section 4</a></li>
-                <li class="hover:underline cursor-pointer"><a>Section 5</a></li>
+                {% for content in contents %}
+                <li class="hover:underline cursor-pointer">
+                    <a
+                        href="{{ url_for('course.course_content', course_id=course_id, page_id=content.index) }}">
+                        {{ content.header }}
+                    </a>
+                </li>
+                {% endfor %}
             </ul>
         </div>
     </div>
