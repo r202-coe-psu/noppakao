@@ -197,3 +197,43 @@ def authorized_oauth(name):
 
     session["oauth_provider"] = name
     return oauth2.handle_authorized_oauth2(remote, token)
+
+
+@module.route("/edit_user", methods=["GET", "POST"])
+def edit_user():
+    user = current_user._get_current_object()
+    form = forms.accounts.EditUserForm(obj=user)
+    if not form.validate_on_submit():
+        return render_template("/accounts/edit_user.html", form=form)
+    user.display_name = form.display_name.data
+    user.first_name = form.first_name.data
+    user.last_name = form.last_name.data
+    user.save()
+    return redirect(url_for("accounts.index"))
+
+
+@module.route("/setup_user", methods=["GET", "POST"])
+def setup_user():
+    form = forms.accounts.SetupUser()
+    user = current_user
+    msg_error = ""
+    form.organization.choices = [("", "ไม่เลือก")] + [
+        (f"{organization.id}", f"{organization.name}")
+        for organization in models.Organization.objects(status="active")
+    ]
+    if form.display_name.data:
+        if models.User.objects(display_name=form.display_name.data).first():
+            msg_error = "Can't use display name"
+
+    if msg_error or not form.validate_on_submit():
+        return render_template(
+            "/accounts/setup_user.html", form=form, msg_error=msg_error
+        )
+    if form.organization.data:
+        organization = models.Organization.objects(id=form.organization.data).first()
+        user.organization = organization
+
+    user.display_name = form.display_name.data
+    user.save()
+
+    return redirect(url_for("index.index"))

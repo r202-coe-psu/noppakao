@@ -1,4 +1,4 @@
-{% extends "/base/default-page.html" %}
+{% extends "/base/default-page-user.html" %}
 {% import '/base/html-renderer-refactor.html' as renderer %}
 
 {% block content %}
@@ -16,19 +16,8 @@
       <div class="col-span-2">
         {{ renderer.render_field(form.display_name) }}
       </div>
-      <div class="col-span-2">
-        {{ renderer.render_field(form.username) }}
-      </div>
-      {{ renderer.render_field(form.password) }}
-      {{ renderer.render_field(form.confirm_password) }}
-      <div class="col-span-2">
-        {{ renderer.render_select_field(form.roles) }}
-      </div>
       {{ renderer.render_field(form.first_name) }}
       {{ renderer.render_field(form.last_name) }}
-      <div class="col-span-2">
-        {{ renderer.render_field(form.email) }}
-      </div>
     </div>
     {% if msg_error %}
     <div class="text-error">

@@ -20,7 +20,7 @@ class User(me.Document, UserMixin):
 
     username = me.StringField(required=True, unique=True, max_length=64)
     password = me.BinaryField(required=True, default=b"")
-    email = me.StringField(required=True, unique=True)
+    email = me.StringField(required=True)
     phone_number = me.StringField(max_length=10, default="")
     status = me.StringField(default="active")
     roles = me.ListField(me.StringField(), default=["user"])

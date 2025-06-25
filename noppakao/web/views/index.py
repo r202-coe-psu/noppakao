@@ -17,7 +17,10 @@ module = Blueprint("index", __name__)
 @login_required
 def index():
     if current_user:
+        if not current_user.display_name:
+            return redirect(url_for("accounts.setup_user"))
         if "admin" in current_user.roles:
             return redirect(url_for("admin.events.index"))
         return redirect(url_for("events.index"))
+
     return render_template("/index/index.html")

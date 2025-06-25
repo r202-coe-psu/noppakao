@@ -73,7 +73,7 @@ def create_or_edit(user_id):
 
     if not form.validate_on_submit():
         user.username = form.username.data
-        print(form.errors)
+
         return render_template(
             "/admin/accounts/create_edit.html",
             form=form,

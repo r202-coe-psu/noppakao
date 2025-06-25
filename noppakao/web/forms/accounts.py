@@ -102,3 +102,16 @@ class AccountForm(BaseRegistrationForm):
         "Email", validators=[validators.Email(), validators.DataRequired()]
     )
     roles = fields.SelectField("Role", choices=[("user", "User"), ("admin", "Admin")])
+
+
+class SetupUser(FlaskForm):
+    organization = fields.SelectField("Organization")
+    display_name = fields.StringField(
+        "Display Name", validators=[validators.InputRequired()]
+    )
+
+
+class EditUserForm(FlaskForm):
+    display_name = fields.StringField("display_name")
+    first_name = fields.StringField("ชื่อ")
+    last_name = fields.StringField("นามสกุล")

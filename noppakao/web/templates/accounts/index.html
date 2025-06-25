@@ -2,27 +2,34 @@
 {% block content %}
 
 <div class="justify-center items-center flex min-h-[65vh]">
-    <div class="card max-w-[550px] w-full rounded-xl border-1 shadow-lg border-gray-200">
-        <div class="card-body flex flex-col gap-0">
-            <div class="card-title text-[#324e9c] flex flex-row items-center">
-                <i class="ph ph-identification-card text-6xl"></i>
-                <h1 class="text-4xl translate-y-0.5">PROFILE</h1>
-            </div>
-            <div class="divider"></div>
-            <div class="flex flex-col gap-1 text-2xl">
-                <div class="flex flex-row items-center gap-2">
-                    <i class="ph-bold ph-user"></i>
-                    <div class="font-semibold">Name : </div>
-                    {{ current_user.first_name }} {{ current_user.last_name }}
-                </div>
-                <div class="flex flex-row items-center gap-2">
-                    <i class="ph-bold ph-envelope"></i>
-                    <div class="font-semibold">Email : </div>
-                    {{ current_user.email }}
-                </div>
-            </div>
+  <div class="card max-w-[550px] w-full rounded-xl border-1 shadow-lg border-gray-200">
+    <div class="card-body flex flex-col gap-0">
+      <div class="card-title text-[#324e9c] justify-between">
+        <div class="flex flex-row items-center ">
+          <i class="ph ph-identification-card text-6xl"></i>
+          <h1 class="text-4xl translate-y-0.5">PROFILE</h1>
         </div>
+        <div>
+          <a href="{{ url_for('accounts.edit_user') }}">
+            <i class="ph-bold ph-pencil-simple-line"></i>
+          </a>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="flex flex-col gap-1 text-2xl">
+        <div class="flex flex-row items-center gap-2">
+          <i class="ph-bold ph-user"></i>
+          <div class="font-semibold">Name : </div>
+          {{ current_user.first_name }} {{ current_user.last_name }}
+        </div>
+        <div class="flex flex-row items-center gap-2">
+          <i class="ph-bold ph-envelope"></i>
+          <div class="font-semibold">Email : </div>
+          {{ current_user.email }}
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 
 
