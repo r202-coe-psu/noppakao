@@ -43,13 +43,16 @@ class CourseContent(me.Document):
     meta = {"collection": "course_content"}
     course = me.ReferenceField("Course", dbref=True, required=True)
     type = me.StringField(
-        choices=["section", "question"], required=True
+        choices=["header", "section", "question"], required=True
     )  # ประเภทของ content มี section หรือ question 
     exp_ = me.IntField()  # จำนวน exp ที่ได้จากการทำ content นี้
 
     index = me.IntField()  # ลำดับของ content ใน course
-    header = me.StringField()  # ชื่อของ content
+    header = me.StringField(required=True)  # ชื่อของ content
     header_description = me.StringField()  # คำอธิบายของ content
+
+    # header image
+    header_image = me.ReferenceField("Media", dbref=True)  # รูปภาพของ header
 
     # section data
     content = me.StringField()  # เนื้อหาของ section 

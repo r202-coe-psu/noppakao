@@ -180,8 +180,9 @@ def create_or_edit_course_section(course_id, section_id=None):
 
     if not section_id:
         section = models.CourseContent()
-        section.created_by = current_user._get_current_object()
         form = forms.courses.CourseSectionForm()
+        section.created_by = current_user._get_current_object()
+        section.course = course
 
     if not form.validate_on_submit():
         print(form.errors)
@@ -190,12 +191,24 @@ def create_or_edit_course_section(course_id, section_id=None):
         )
 
     form.populate_obj(section)
-    section.type = "section"
-    section.index = process_content_index(course)
+    if form.header_image.data:
+        file = form.header_image.data[0] if isinstance(form.header_image.data, list) else form.header_image.data
+        media = models.Media(
+        name=file.filename,
+        type="image",
+        owner=current_user._get_current_object(),
+        ip_address=request.headers.get("X-Forwarded-For", request.remote_addr),
+        )
+        media.file.put(file, content_type=file.content_type, filename=file.filename)
 
-    section.course = course
-    section.created_by = current_user._get_current_object()
+        media.save()
+        media.reload()
+        section.header_image = media
+    section.type = "section"
+    if not section.index:
+        section.index = process_content_index(course)
     section.updated_by = current_user._get_current_object()
+
 
     section.save()
 
@@ -234,7 +247,8 @@ def create_or_edit_course_question(course_id, question_id=None):
     question.course_question = models.Challenge.objects.get(
         id=form.course_question.data
     )
-    question.index = process_content_index(course)
+    if not question.index:
+        question.index = process_content_index(course)
     question.created_by = current_user._get_current_object()
     question.updated_by = current_user._get_current_object()
     question.save()

@@ -54,8 +54,6 @@ def course_content(course_id, page_id):
         course=course_id, index=page_id
     ).first()
 
-    print("\n\n\n====>Current content")
-
     if not current_content:
         return redirect(url_for("course.course_detail", course_id=course_id))
 

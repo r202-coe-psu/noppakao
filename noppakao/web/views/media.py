@@ -64,7 +64,6 @@ def download(media_id, filename):
 )
 @login_required
 def upload():
-    type = request.args.get("type", "normal").lower()
     file = request.files["image"]
 
     media = models.Media(
@@ -72,22 +71,8 @@ def upload():
         type="image",
         owner=current_user._get_current_object(),
         ip_address=request.headers.get("X-Forwarded-For", request.remote_addr),
-        is_encrypted=False,
     )
-    if type == "cybersecurity":
-        encrypted_manager = models.utils.EncryptedManager(
-            str(current_user.id),
-            media.created_date.isoformat(timespec="milliseconds").encode("utf-8"),
-        )
-        media.file.put(
-            encrypted_manager.encrypt_data(file.read()),
-            content_type=file.content_type,
-            filename=file.filename,
-        )
-        media.is_encrypted = True
-
-    else:
-        media.file.put(file, content_type=file.content_type, filename=file.filename)
+    media.file.put(file, content_type=file.content_type, filename=file.filename)
 
     media.save()
     media.reload()
