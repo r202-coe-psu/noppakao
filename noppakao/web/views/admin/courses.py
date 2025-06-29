@@ -155,7 +155,6 @@ def view(course_id):
     contents = models.CourseContent.objects(course=course, status="active").order_by(
         "index"
     )
-
     if not course:
         return redirect(url_for("admin.courses.index"))
 
@@ -185,6 +184,7 @@ def create_or_edit_course_section(course_id, section_id=None):
         section.course = course
 
     if not form.validate_on_submit():
+        form.header_image.data = None
         print(form.errors)
         return render_template(
             "/admin/courses/create_or_edit_course_section.html", form=form
@@ -266,9 +266,16 @@ def delete_course_content(course_id, content_id):
     if not section:
         return redirect(url_for("admin.courses.view", course_id=course_id))
 
+    section.index = -1
     section.status = "disactive"
     section.updated_by = current_user._get_current_object()
     section.save()
+
+    remaining_contents = models.CourseContent.objects(course=course, status="active").order_by("index")
+    for index, content in enumerate(remaining_contents):
+        content.index = index + 1
+        content.save()
+
     return redirect(url_for("admin.courses.view", course_id=course_id))
 
 @module.route("/<course_id>/section/<content_id>/up", methods=["POST"])

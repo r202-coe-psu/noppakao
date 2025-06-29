@@ -205,7 +205,7 @@
 
 {% macro render_readonly_editor(element_id) -%}
 <script type="text/javascript">
-  const {{ element_id }}_editor_quill = new Quill('#{{ element_id }}', {
+  const {{ element_id }}_editor_quill = new Quill('#{{ element_id }}-editor', {
     readOnly: true,
     modules: {
       syntax: true,

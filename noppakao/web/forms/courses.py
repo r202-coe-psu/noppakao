@@ -139,3 +139,6 @@ class CourseHeaderForm(FlaskForm):
     header_image = file.FileField("รูปภาพหัวข้อ")
     exp_ = fields.IntegerField("ประสบการณ์ที่ได้รับ", validators=[validators.DataRequired()])
     content = fields.StringField("เนื้อหา")
+
+class CourseContentForm(FlaskForm):
+    content = fields.StringField("เนื้อหา")

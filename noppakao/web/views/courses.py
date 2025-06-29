@@ -8,7 +8,7 @@ from flask import (
 )
 from flask_login import login_user, logout_user, login_required, current_user
 from noppakao import models
-
+from noppakao.web import forms
 
 module = Blueprint("course", __name__, url_prefix="/course")
 
@@ -43,20 +43,26 @@ def course_detail(course_id):
 @module.route("/<course_id>/content/<page_id>", methods=["GET"])
 @login_required
 def course_content(course_id, page_id):
-    course = models.Course.objects(id=course_id)
+    course = models.Course.objects.get(id=course_id)
     contents = models.CourseContent.objects(
         course=course_id, status="active"
     ).order_by("index")
+
     if not course:
         return redirect(url_for("course.index"))
 
     current_content = models.CourseContent.objects(
         course=course_id, index=page_id
-    ).first()
-
+    ).first() 
+    form = forms.courses.CourseContentForm(obj=current_content)
+    
     if not current_content:
         return redirect(url_for("course.course_detail", course_id=course_id))
 
+    if current_content.header_image:
+        current_content.header_image_url = url_for('media.download', media_id=current_content.header_image.id, filename=current_content.header_image.file.filename)
+    else:
+        current_content.header_image_url  = '/static/images/example-course-thumbnail.jpg'
     return render_template(
         "courses/content.html",
         course_id=course_id,
@@ -64,6 +70,7 @@ def course_content(course_id, page_id):
         course=course,
         contents=contents,
         current_content=current_content,
+        form=form,
     )
 
 

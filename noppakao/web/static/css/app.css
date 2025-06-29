@@ -3063,6 +3063,9 @@
   .justify-end {
     justify-content: flex-end;
   }
+  .justify-start {
+    justify-content: flex-start;
+  }
   .gap-0 {
     gap: calc(var(--spacing) * 0);
   }
@@ -3355,6 +3358,9 @@
   .bg-\[linear-gradient\(to_right\,\#202020_0\%\,\#202020_46\%\,rgba\(80\,73\,73\,0\)_100\%\)\] {
     background-image: linear-gradient(to right,#202020 0%,#202020 46%,rgba(80,73,73,0) 100%);
   }
+  .bg-\[url\(\'\/media\/685d016cf1ee30a102b08567\/download\/skyrim\.jpg\'\)\] {
+    background-image: url('/media/685d016cf1ee30a102b08567/download/skyrim.jpg');
+  }
   .bg-\[url\(\'\/static\/images\/example-course-thumbnail\.jpg\'\)\] {
     background-image: url('/static/images/example-course-thumbnail.jpg');
   }
@@ -3427,6 +3433,9 @@
   }
   .py-10 {
     padding-block: calc(var(--spacing) * 10);
+  }
+  .pt-0 {
+    padding-top: calc(var(--spacing) * 0);
   }
   .pt-4 {
     padding-top: calc(var(--spacing) * 4);
@@ -3522,6 +3531,9 @@
   }
   .text-ellipsis {
     text-overflow: ellipsis;
+  }
+  .whitespace-pre-wrap {
+    white-space: pre-wrap;
   }
   .checkbox-primary {
     color: var(--color-primary-content);

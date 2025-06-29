@@ -29,7 +29,7 @@ def index():
 
 
 @module.route("/<media_id>/download/<filename>")
-@acl.allow_download(models.Media, "media_id")
+# @acl.allow_download(models.Media, "media_id")
 def download(media_id, filename):
     media = models.Media.objects.get(id=media_id)
 
