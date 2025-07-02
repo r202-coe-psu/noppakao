@@ -3,6 +3,8 @@ import mongoengine as me
 import datetime
 from flask_login import UserMixin, current_user
 
+from flask import url_for
+
 
 class Organization(me.Document):
     meta = {"collection": "organizations"}
@@ -13,7 +15,7 @@ class Organization(me.Document):
 
 class User(me.Document, UserMixin):
     meta = {"collection": "users"}
-
+    avatar = me.FileField()
     display_name = me.StringField(default="", max_length=255)
     first_name = me.StringField(required=True, max_length=128)
     last_name = me.StringField(required=True, max_length=128)
@@ -80,6 +82,17 @@ class User(me.Document, UserMixin):
             if role in self.roles:
                 return True
         return
+
+    def get_avatar_url(self):
+        if self.avatar:
+            return url_for(
+                "accounts.get_avatar",
+                team_id=self.id,
+                filename=self.avatar.filename,
+            )
+        else:
+            return url_for("static", filename="images/hacker.png")
+
 
 class EnrollCourse(me.Document):
     meta = {"collection": "enroll_course"}

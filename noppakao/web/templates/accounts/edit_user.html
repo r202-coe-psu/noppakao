@@ -10,14 +10,18 @@
       </h2>
     </div>
   </div>
-  <form method="post">
+  <form method="post" enctype="multipart/form-data">
     <div class="grid grid-cols-2 gap-2">
       {{ form.csrf_token }}
+      <div class="col-span-2">
+        {{ renderer.file_input(form.uploaded_avatar) }}
+      </div>
       <div class="col-span-2">
         {{ renderer.render_field(form.display_name) }}
       </div>
       {{ renderer.render_field(form.first_name) }}
       {{ renderer.render_field(form.last_name) }}
+      {{ renderer.render_field(form.phone_number) }}
     </div>
     {% if msg_error %}
     <div class="text-error">

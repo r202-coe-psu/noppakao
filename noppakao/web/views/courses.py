@@ -10,6 +10,8 @@ from flask_login import login_user, logout_user, login_required, current_user
 from noppakao import models
 from noppakao.web import forms
 
+import datetime
+
 module = Blueprint("course", __name__, url_prefix="/course")
 
 # TODO: Add authentication
@@ -44,25 +46,29 @@ def course_detail(course_id):
 @login_required
 def course_content(course_id, page_id):
     course = models.Course.objects.get(id=course_id)
-    contents = models.CourseContent.objects(
-        course=course_id, status="active"
-    ).order_by("index")
+    contents = models.CourseContent.objects(course=course_id, status="active").order_by(
+        "index"
+    )
 
     if not course:
         return redirect(url_for("course.index"))
 
     current_content = models.CourseContent.objects(
         course=course_id, index=page_id
-    ).first() 
+    ).first()
     form = forms.courses.CourseContentForm(obj=current_content)
-    
+
     if not current_content:
         return redirect(url_for("course.course_detail", course_id=course_id))
 
     if current_content.header_image:
-        current_content.header_image_url = url_for('media.download', media_id=current_content.header_image.id, filename=current_content.header_image.file.filename)
+        current_content.header_image_url = url_for(
+            "media.download",
+            media_id=current_content.header_image.id,
+            filename=current_content.header_image.file.filename,
+        )
     else:
-        current_content.header_image_url  = '/static/images/example-course-thumbnail.jpg'
+        current_content.header_image_url = "/static/images/example-course-thumbnail.jpg"
     return render_template(
         "courses/content.html",
         course_id=course_id,
@@ -107,3 +113,74 @@ def enroll(course_id):
     enroll.save()
 
     return redirect(url_for("course.course_detail", course_id=course_id))
+
+
+@module.route(
+    "/<course_id>/course_refs/<page_id>/submit_challenge",
+    methods=["GET", "POST"],
+)
+@login_required
+def submit_challenge(course_id, page_id):
+    course = models.Course.objects(id=course_id).first()
+
+    current_content = models.CourseContent.objects(
+        course=course_id, index=page_id
+    ).first()
+
+    if current_content.type == "question":
+        transaction = models.TransactionCourse.objects(
+            course=course,
+            course_content=current_content,
+            status__in=["success"],
+            type="question",
+        ).first()
+    else:
+        transaction = models.TransactionCourse.objects(
+            course=course,
+            course_content=current_content,
+            status__in=["success"],
+            type="section",
+        ).first()
+
+    if transaction:
+        return redirect(
+            url_for("course.course_content", course_id=course.id, page_id=course_ref_id)
+        )
+
+    answer = request.args.get("answer")
+
+    if not transaction:
+        transaction = models.TransactionCourse()
+        if current_content.type == "question":
+            if answer == current_content.course_question.answer:
+                transaction.type = "question"
+                transaction.course = course
+                transaction.course_question = current_content.course_question
+                transaction.course_content = current_content
+                transaction.exp_ = 0
+                transaction.created_by = current_user
+            else:
+                return redirect(
+                    url_for(
+                        "course.course_content",
+                        course_id=course.id,
+                        page_id=page_id,
+                        dialog_state="fail",
+                    )
+                )
+        else:
+            transaction.type = "section"
+            transaction.course = course
+            transaction.course_content = current_content
+            transaction.exp_ = 0
+            transaction.created_by = current_user
+
+    transaction.save()
+    return redirect(
+        url_for(
+            "course.course_content",
+            course_id=course.id,
+            page_id=page_id,
+            dialog_state="success",
+        )
+    )

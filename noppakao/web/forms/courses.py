@@ -72,7 +72,7 @@ BaseCourseQuestionForm = model_form(
 BaseCourseHeaderForm = model_form(
     models.CourseContent,
     FlaskForm,
-     exclude=[
+    exclude=[
         "create_date",
         "created_by",
         "updated_date",
@@ -90,7 +90,7 @@ BaseCourseHeaderForm = model_form(
         "header_image": {"label": "รูปภาพหัวข้อ"},
         "content": {"label": "เนื้อหา"},
     },
-)   
+)
 
 
 class CourseForm(BaseCourseForm):
@@ -120,6 +120,7 @@ class CourseSectionForm(BaseCourseSectionForm):
     exp_ = fields.IntegerField("ประสบการณ์ที่ได้รับ", validators=[validators.DataRequired()])
     content = fields.StringField("เนื้อหา")
 
+
 class CourseQuestionForm(BaseCourseQuestionForm):
     header = fields.StringField("หัวข้อคำถาม", validators=[validators.DataRequired()])
     header_description = fields.TextAreaField(
@@ -131,6 +132,7 @@ class CourseQuestionForm(BaseCourseQuestionForm):
     )
     exp_ = fields.IntegerField("ประสบการณ์ที่ได้รับ", validators=[validators.DataRequired()])
 
+
 class CourseHeaderForm(FlaskForm):
     header = fields.StringField("หัวข้อ", validators=[validators.DataRequired()])
     header_description = fields.TextAreaField(
@@ -139,6 +141,7 @@ class CourseHeaderForm(FlaskForm):
     header_image = file.FileField("รูปภาพหัวข้อ")
     exp_ = fields.IntegerField("ประสบการณ์ที่ได้รับ", validators=[validators.DataRequired()])
     content = fields.StringField("เนื้อหา")
+
 
 class CourseContentForm(FlaskForm):
     content = fields.StringField("เนื้อหา")

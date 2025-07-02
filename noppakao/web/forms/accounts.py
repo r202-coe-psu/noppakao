@@ -112,6 +112,13 @@ class SetupUser(FlaskForm):
 
 
 class EditUserForm(FlaskForm):
-    display_name = fields.StringField("display_name")
+    uploaded_avatar = file.FileField(
+        "Upload team image (png or jpg) , Recommended image size: 250(px) x 230(px)",
+        validators=[
+            file.FileAllowed(["png", "jpg", "jpeg"], "You can use only jpg , png"),
+        ],
+    )
+    display_name = fields.StringField("Display name")
     first_name = fields.StringField("ชื่อ")
     last_name = fields.StringField("นามสกุล")
+    phone_number = fields.StringField("หมายเลขโทรศัพท์")

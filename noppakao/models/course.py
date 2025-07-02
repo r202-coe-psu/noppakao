@@ -4,6 +4,7 @@ import datetime
 
 STATUS_CHOICES = ["active", "disactive"]
 
+
 class Course(me.Document):
     meta = {"collection": "course"}
     name = me.StringField()  # ชื่อ course
@@ -21,9 +22,7 @@ class Course(me.Document):
     created_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
     )  # เวลาการสร้าง
-    status = me.StringField(
-        default="active", choices=STATUS_CHOICES, required=True
-    )  
+    status = me.StringField(default="active", choices=STATUS_CHOICES, required=True)
 
 
 class CourseType(me.Document):
@@ -35,16 +34,15 @@ class CourseType(me.Document):
     created_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
     )  # เวลาการสร้าง
-    status = me.StringField(
-        default="active", choices=STATUS_CHOICES, required=True
-    )  
+    status = me.StringField(default="active", choices=STATUS_CHOICES, required=True)
+
 
 class CourseContent(me.Document):
     meta = {"collection": "course_content"}
     course = me.ReferenceField("Course", dbref=True, required=True)
     type = me.StringField(
         choices=["header", "section", "question"], required=True
-    )  # ประเภทของ content มี section หรือ question 
+    )  # ประเภทของ content มี section หรือ question
     exp_ = me.IntField()  # จำนวน exp ที่ได้จากการทำ content นี้
 
     index = me.IntField()  # ลำดับของ content ใน course
@@ -55,7 +53,7 @@ class CourseContent(me.Document):
     header_image = me.ReferenceField("Media", dbref=True)  # รูปภาพของ header
 
     # section data
-    content = me.StringField()  # เนื้อหาของ section 
+    content = me.StringField()  # เนื้อหาของ section
 
     # question data
     course_question = me.ReferenceField("Challenge", dbref=True)  # คำถาม
@@ -68,24 +66,29 @@ class CourseContent(me.Document):
     create_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
     )  # เวลาการสร้าง
-    status = me.StringField(
-        default="active", choices=STATUS_CHOICES, required=True
-    )
+    status = me.StringField(default="active", choices=STATUS_CHOICES, required=True)
+
+    def check_question(self):
+        transaction_course = TransactionCourse.objects(
+            course_content=self, type="question"
+        ).first()
+        if transaction_course:
+            return True
+        return False
+
+        """Check if the content is a question type."""
+
 
 class TransactionCourse(me.Document):
     meta = {"collection": "transaction_course"}
+    type = me.StringField(choices=["section", "question"], required=True)
     course = me.ReferenceField("Course", dbref=True, required=True)
-    course_section = me.ReferenceField("CourseSection", dbref=True, required=True)
-    course_question = me.ReferenceField("Challenge", dbref=True, required=True)
+    course_content = me.ReferenceField("CourseContent", dbref=True, required=True)
+    course_question = me.ReferenceField("Challenge", dbref=True)
     exp_ = me.IntField()
 
     created_by = me.ReferenceField("User", dbref=True, required=True)
-    updated_date = me.DateTimeField(
-        required=True, default=datetime.datetime.now, auto_now=True
-    )  # เวลาการสร้างหรืออัพเดตล่าสุด
     create_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
     )  # เวลาการสร้าง
-    status = me.StringField(
-        default="active", choices=STATUS_CHOICES, required=True
-    )  
+    status = me.StringField(default="active", choices=STATUS_CHOICES, required=True)

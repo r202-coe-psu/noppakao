@@ -99,8 +99,8 @@
               {% endif %}
             </div>
             <div class="mt-4">
-              {% if now >= event.register_started_date and now <= event.register_ended_date %} <form
-                action="{{ url_for('events.join', event_id=event.id) }}" class="space-y-4">
+              {% if now >= event.register_started_date and now <= event.register_ended_date %} 
+              <form action="{{ url_for('events.join', event_id=event.id) }}" class="space-y-4">
                 <input type="text" id="code" name="code" placeholder="Enter Code" class="input input-bordered w-full">
                 <button type="submit" class="btn bg-[#CDDFEF] w-full">
                   <i class="add circle icon"></i> Enroll

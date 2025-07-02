@@ -1,36 +1,79 @@
 {% extends "/base/default-page-user.html" %}
 {% block content %}
 
-<div class="justify-center items-center flex min-h-[65vh]">
-  <div class="card max-w-[550px] w-full rounded-xl border-1 shadow-lg border-gray-200">
-    <div class="card-body flex flex-col gap-0">
-      <div class="card-title text-[#324e9c] justify-between">
-        <div class="flex flex-row items-center ">
-          <i class="ph ph-identification-card text-6xl"></i>
-          <h1 class="text-4xl translate-y-0.5">PROFILE</h1>
+<div class="flex justify-center items-start min-h-[65vh] p-6 bg-gray-50">
+  <div class="w-full max-w-[1000px] bg-white rounded-xl shadow p-6">
+    <div class="flex flex-col md:flex-row gap-6">
+
+      <!-- รูปและปุ่ม -->
+      <div class="w-full md:w-1/3 flex flex-col items-center gap-4">
+        <div class="w-36 h-36 rounded-full overflow-hidden">
+          <img src="{{ current_user.get_avatar_url() }}" class="w-full h-full object-cover">
         </div>
-        <div>
-          <a href="{{ url_for('accounts.edit_user') }}">
-            <i class="ph-bold ph-pencil-simple-line"></i>
-          </a>
+        <div class="text-center">
+          <h2 class="text-2xl font-bold">{{ current_user.first_name }} {{ current_user.last_name }}</h2>
         </div>
       </div>
-      <div class="divider"></div>
-      <div class="flex flex-col gap-1 text-2xl">
-        <div class="flex flex-row items-center gap-2">
-          <i class="ph-bold ph-user"></i>
-          <div class="font-semibold">Name : </div>
-          {{ current_user.first_name }} {{ current_user.last_name }}
+
+      <!-- ข้อมูลโปรไฟล์ -->
+      <div class="w-full md:w-2/3">
+        <div class="bg-gray-50 rounded p-4 border border-gray-200">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-3 text-sm">
+            <div class="text-gray-600">Full Name</div>
+            <div>{{ current_user.first_name }} {{ current_user.last_name }}</div>
+            <div class="text-gray-600">Email</div>
+            <div>{{ current_user.email }}</div>
+            <div class="text-gray-600">Phone</div>
+            <div>{{ current_user.phone_number }}</div>
+          </div>
+          <div class="mt-4 flex justify-end">
+            <a href="{{ url_for('accounts.edit_user') }}"
+              class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Edit</a>
+          </div>
         </div>
-        <div class="flex flex-row items-center gap-2">
-          <i class="ph-bold ph-envelope"></i>
-          <div class="font-semibold">Email : </div>
-          {{ current_user.email }}
-        </div>
+      </div>
+
+    </div>
+
+    <!-- Divider -->
+    <div class="border-t border-gray-300 my-6"></div>
+
+    <!-- ตารางประวัติ + Progress -->
+    <div>
+      <h2 class="text-2xl font-bold mb-2 text-[#324e9c]">ประวัติ</h2>
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-left border border-gray-300">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="border-b border-gray-300 px-4 py-2">ลำดับ</th>
+              <th class="border-b border-gray-300 px-4 py-2">กิจกรรม</th>
+              <th class="border-b border-gray-300 px-4 py-2">วันที่</th>
+              <th class="border-b border-gray-300 px-4 py-2">สถานะ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- ตัวอย่างข้อมูล สามารถวนลูปข้อมูลจริง -->
+            <tr class="hover:bg-gray-50">
+              <td class="border-b border-gray-300 px-4 py-2">1</td>
+              <td class="border-b border-gray-300 px-4 py-2">คอร์ด CTF</td>
+              <td class="border-b border-gray-300 px-4 py-2">2025-06-28</td>
+              <td class="border-b border-gray-300 px-4 py-2 text-green-600">สำเร็จ</td>
+            </tr>
+            <tr class="hover:bg-gray-50">
+              <td class="border-b border-gray-300 px-4 py-2">2</td>
+              <td class="border-b border-gray-300 px-4 py-2">การป้องกัน</td>
+              <td class="border-b border-gray-300 px-4 py-2">2025-06-20</td>
+              <td class="border-b border-gray-300 px-4 py-2 text-green-600">สำเร็จ</td>
+            </tr>
+            <!-- เพิ่มข้อมูลประวัติจริงตามต้องการ -->
+          </tbody>
+        </table>
       </div>
     </div>
+
   </div>
 </div>
+
 
 
 {% endblock %}

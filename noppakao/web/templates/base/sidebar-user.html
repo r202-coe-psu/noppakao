@@ -1,75 +1,75 @@
 <div id="toggleBtn" class="fixed left-68 top-22 w-7 h-7 bg-[#E4E4E4] rounded-sm cursor-pointer transition-all z-10">
-    <i class="absolute inset-0 flex items-center justify-center ph-bold ph-caret-left text-xl transition-transform"
-        id="toggleIcon"></i>
+  <i class="absolute inset-0 flex items-center justify-center ph-bold ph-caret-left text-xl transition-transform"
+    id="toggleIcon"></i>
 </div>
 <nav id="sidebar"
-    class="h-screen sticky self-start top-0 px-5 py-7 bg-[#F3EFEE] justify-between flex flex-col transition-all w-72 overflow-hidden text-nowrap">
-    <div class="flex flex-col gap-16">
-        <header>
-            <div class="inline-flex items-center gap-4">
-                <img class="w-11" src="{{ url_for('static', filename='images/coe-no-text.png') }}" alt="psu-coe-logo">
+  class="h-screen sticky self-start top-0 px-5 py-7 bg-[#F3EFEE] justify-between flex flex-col transition-all w-72 overflow-hidden text-nowrap">
+  <div class="flex flex-col gap-16">
+    <header>
+      <div class="inline-flex items-center gap-4">
+        <img class="w-11" src="{{ url_for('static', filename='images/coe-no-text.png') }}" alt="psu-coe-logo">
 
-                <div class="font-bold text-2xl text-[#313131] sidebar-text transition-all">
-                    COE CTF
-                </div>
-            </div>
-        </header>
-        <main id="sidebar-menu">
-            <ul class="flex flex-col gap-2 text-[#494949] font-semibold text-lg">
-                <li class="h-12">
-                    <a href="{{ url_for('course.dashboard') }}"
-                        class="{{ 'bg-[#B6C0CF] text-primary' if request.path == '/course/dashboard' else 'hover:bg-[#e7e7e7]' }} flex items-center gap-4 p-2 h-full rounded-md  transition-colors">
-                        <i class="ph-bold ph-layout text-2xl"></i>
-                        <span class="sidebar-text transition-opacity">Dashboard</span>
-                    </a>
-                </li>
-                <li class="h-12">
-                    <a href="{{ url_for('course.index') }}"
-                        class="{{ 'bg-[#B6C0CF] text-primary' if request.path == '/course/' else 'hover:bg-[#e7e7e7]' }} flex items-center gap-4 p-2 h-full rounded-md transition-colors">
-                        <i class="ph-fill ph-book text-2xl"></i>
-                        <span class="sidebar-text transition-opacity">Courses</span>
-                    </a>
-                </li>
-                <li class="h-12">
-                    <a href="{{ url_for('course.leaderboard') }}"
-                        class="{{ 'bg-[#B6C0CF] text-primary' if request.path == '/course/leaderboard' else 'hover:bg-[#e7e7e7]' }} flex items-center gap-4 p-2 h-full rounded-md transition-colors">
-                        <i class="ph-fill ph-ranking text-2xl"></i>
-                        <span class="sidebar-text transition-opacity">Leaderboard</span>
-                    </a>
-                </li>
-            </ul>
-            <div class="divider"></div>
-            <ul class="flex flex-col gap-2 text-[#494949] font-bold text-lg">
-                <li class="h-12">
-                    <a href="#"
-                        class="flex items-center gap-4 p-2 h-full rounded-md hover:bg-[#e7e7e7] transition-colors">
-                        <i class="ph-fill ph-barbell text-2xl"></i>
-                        <span class="sidebar-text transition-opacity">Challenges</span>
-                    </a>
-                </li>
-                <li class="h-12">
-                    <a href="{{ url_for('events.index') }}"
-                        class="flex items-center gap-4 p-2 h-full rounded-md hover:bg-[#e7e7e7] transition-colors">
-                        <i class="ph-fill ph-flag-checkered text-2xl"></i>
-                        <span class="sidebar-text transition-opacity">Competition</span>
-                    </a>
-                </li>
-            </ul>
-        </main>
-    </div>
-    <footer>
-        <a href="{{ url_for('accounts.index')}}">
-            <div class="sidebar-text flex flex-col mb-2 font-bold p-2 transition-all text-[#494949] cursor-pointer hover:bg-[#e7e7e7] rounded-md">
-                <p class="text-[#494949]  text-lg truncate">{{ current_user.first_name }} {{ current_user.last_name }}</p>
-                <p class="text-[#878787] text-md font-semibold truncate">
-                    {{ current_user.email }}
-                </p>
-            </div>
-        </a>
-        <a href="{{ url_for('accounts.logout') }}"
-            class="flex flex-row items-center font-semibold text-lg p-2 gap-2 text-[#494949] cursor-pointer hover:bg-[#e7e7e7] transition-colors rounded-md">
-            <i class="ph-bold ph-sign-out text-2xl"></i>
-            <div class="sidebar-text transition-opacity">Log Out</div>
-        </a>
-    </footer>
+        <div class="font-bold text-2xl text-[#313131] sidebar-text transition-all">
+          COE CTF
+        </div>
+      </div>
+    </header>
+    <main id="sidebar-menu">
+      <ul class="flex flex-col gap-2 text-[#494949] font-semibold text-lg">
+        <li class="h-12">
+          <a href="{{ url_for('course.dashboard') }}"
+            class="{{ 'bg-[#B6C0CF] text-primary' if request.path == '/course/dashboard' else 'hover:bg-[#e7e7e7]' }} flex items-center gap-4 p-2 h-full rounded-md  transition-colors">
+            <i class="ph-bold ph-layout text-2xl"></i>
+            <span class="sidebar-text transition-opacity">Dashboard</span>
+          </a>
+        </li>
+        <li class="h-12">
+          <a href="{{ url_for('course.index') }}"
+            class="{{ 'bg-[#B6C0CF] text-primary' if request.path == '/course/' else 'hover:bg-[#e7e7e7]' }} flex items-center gap-4 p-2 h-full rounded-md transition-colors">
+            <i class="ph-fill ph-book text-2xl"></i>
+            <span class="sidebar-text transition-opacity">Courses</span>
+          </a>
+        </li>
+        <li class="h-12">
+          <a href="{{ url_for('course.leaderboard') }}"
+            class="{{ 'bg-[#B6C0CF] text-primary' if request.path == '/course/leaderboard' else 'hover:bg-[#e7e7e7]' }} flex items-center gap-4 p-2 h-full rounded-md transition-colors">
+            <i class="ph-fill ph-ranking text-2xl"></i>
+            <span class="sidebar-text transition-opacity">Leaderboard</span>
+          </a>
+        </li>
+      </ul>
+      <div class="divider"></div>
+      <ul class="flex flex-col gap-2 text-[#494949] font-bold text-lg">
+        <li class="h-12">
+          <a href="#" class="flex items-center gap-4 p-2 h-full rounded-md hover:bg-[#e7e7e7] transition-colors">
+            <i class="ph-fill ph-barbell text-2xl"></i>
+            <span class="sidebar-text transition-opacity">Challenges</span>
+          </a>
+        </li>
+        <li class="h-12">
+          <a href="{{ url_for('events.index') }}"
+            class="flex items-center gap-4 p-2 h-full rounded-md hover:bg-[#e7e7e7] transition-colors">
+            <i class="ph-fill ph-flag-checkered text-2xl"></i>
+            <span class="sidebar-text transition-opacity">Competition</span>
+          </a>
+        </li>
+      </ul>
+    </main>
+  </div>
+  <footer>
+    <a href="{{ url_for('accounts.index')}}">
+      <div
+        class="sidebar-text flex flex-col mb-2 font-bold p-2 transition-all text-[#494949] cursor-pointer hover:bg-[#e7e7e7] rounded-md">
+        <p class="text-[#494949]  text-lg truncate">{{ current_user.first_name }} {{ current_user.last_name }}</p>
+        <p class="text-[#878787] text-md font-semibold truncate">
+          {{ current_user.email }}
+        </p>
+      </div>
+    </a>
+    <a href="{{ url_for('accounts.logout') }}"
+      class="flex flex-row items-center font-semibold text-lg p-2 gap-2 text-[#494949] cursor-pointer hover:bg-[#e7e7e7] transition-colors rounded-md">
+      <i class="ph-bold ph-sign-out text-2xl"></i>
+      <div class="sidebar-text transition-opacity">Log Out</div>
+    </a>
+  </footer>
 </nav>

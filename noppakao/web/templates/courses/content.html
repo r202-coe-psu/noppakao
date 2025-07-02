@@ -1,8 +1,22 @@
 {% extends "base/default-page-user.html" %}
 {% import "/base/editor-renderer.html" as editor_renderer %}
 {% import "/base/html-renderer-refactor.html" as renderer %}
+{% from '/components/dialog_state.html' import FailDialog , SuccessDialog  %}
+
 
 {% block content %}
+
+{% if request.args.get('dialog_state') == "fail" %}
+{{ FailDialog(url_for("course.course_content",
+            course_id=course.id,
+            page_id=page_id)) }}
+{% endif %}
+{% if request.args.get('dialog_state') == "success" %}
+{{ SuccessDialog(url_for("course.course_content",
+            course_id=course.id,
+            page_id=page_id)) }}
+{% endif %}
+
 <div>
     <div class="breadcrumbs">
         <ul class="text-lg font-semibold">
@@ -25,12 +39,93 @@
                             max="100"></progress>
                     </div>
                 </div>
+                {% if current_content.type == "question" %}
+                <div class="p-3 pt-0">
+                    <p class="text-lg font-semibold">Question</p>
+                    <div>
+                        <div class="p-4">
+                          <p>{{ current_content.course_question.description }}</p>
+                          {% if current_content.course_question.answer_type == 'plaintext' %}
+                          {% else %}
+                          <p>Example Submit: <span class="text-gray-500 italic">{{ current_content.course_question.flag_prefix
+                              }}{Answer}</span></p>
+                          {% endif %}
+    
+                          {% if current_content.course_question.challenge_url %}
+                          <p>
+                            Link URL: <a href="{{ current_content.course_question.challenge_url }}" class="text-primary">{{
+                                current_content.course_question.challenge_url }}</a>
+                          </p>
+                          {% endif %}
+    
+                          {% if current_content.course_question.get_challenge_resources() %}
+                          <p>Files:</p>
+                          {% for challenge_resource in current_content.course_question.get_challenge_resources() %}
+                          <p>
+                            <a href="{{ url_for('challenges.download', challenge_resource_id=challenge_resource.id) }}"
+                              target="_blank" class="group flex flex-row items-center text-primary">
+    
+                              <i class="ph-fill ph-box-arrow-down mr-2 text-primary"></i>
+    
+                              <span class="group-hover:underline">
+                                {{ challenge_resource.file.filename }}
+                              </span>
+    
+                              <span class="text-blue-600 group-hover:underline">
+                                ({{ '%0.2f' | format(challenge_resource.file.length / 1024) }}
+                                KB)
+                              </span>
+                            </a>
+                          </p>
+                          {% endfor %}
+                          {% endif %}
+                        </div>
+                        <div id="hintbtn-{{ current_content.course_question.id }}" class="w-full flex justify-center items-center"
+                      onclick="ClickHint('{{current_content.course_question.id}}')">
+                      <div class="visible w-full">
+                        <button
+                          class="btn btn-primary w-full text-white relative overflow-hidden group transition-all duration-300 ease-in-out">
+                          <i id="eye-icon"
+                            class="ph-fill ph-eye absolute transform group-hover:-translate-y-10 transition-transform duration-300 ease-in-out"></i>
+                          <p id="hintbtn-text-{{ current_content.course_question.id }}"
+                            class="transform translate-y-10 group-hover:translate-y-0 transition-transform duration-300 ease-in-out">
+                            <span id="show-hint-text">Show hint</span>
+                          </p>
+                          <div id="loader-{{ current_content.course_question.id }}" class="w-full text-center mt-2"
+                            style="display: none;">
+                            <div class="flex items-center justify-center space-x-2">
+                              <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-white">
+                              </div>
+                              <span class="text-white font-medium">Loading hint...</span>
+                            </div>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                    <div id="response-{{current_content.course_question.id }}" class="response"></div>
+                    </div>
+                    {% if current_content.check_question() %}
+                    <div class="flex flex-row gap-2 mt-2">
+                        <input disabled type="text" class="input w-full" value="{{current_content.course_question.answer}}" placeholder="Enter your answer...">
+                    </div>
+                    {% else %}
+                    <form method="GET" action="{{ url_for('course.submit_challenge', course_id=course_id, page_id=page_id) }}">
+                        <div class="flex flex-row gap-2 mt-2">
+                            <input type="text" class="input w-full" id="answer" name="answer" placeholder="Enter your answer...">
+                            <button type="submit" class="btn btn-primary">
+                                Submit
+                            </button>
+                        </div>
+                    </form>
+                    {% endif %}
+                </div>
+                {% endif %}
                 <div class="p-6 pt-0 flex flex-col gap-4">
-
+                    {% if current_content.type != "question" %}
                     <div class="overflow-y-auto p-4 text-wrap w-full whitespace-pre-wrap break-words">
                         {{ current_content.content | safe }}
                     </div>
-                    
+                    {% endif %}
                     <div class="flex flex-row justify-end gap-4">
                         {% if current_content.index > 1 %}
                         <a href="{{ url_for('course.course_content', course_id=course_id, page_id=current_content.index - 1) }}"
@@ -69,4 +164,37 @@
 {{ editor_renderer.config_editor() }}
 
 {{ editor_renderer.render_readonly_editor('content') }}
+<script>
+    function ClickHint(course_id) {
+        if (!course_id ) return;
+        const loader = document.getElementById("loader-" + course_id);
+        const hintbtn = document.getElementById("hintbtn-" + course_id);
+        const responseDiv = document.getElementById("response-" + course_id);
+        const eyeIcon = document.getElementById("eye-icon")
+        const showHintText = document.getElementById("show-hint-text")
+
+        loader.style.display = "block";
+        responseDiv.style.display = "none";
+        responseDiv.innerHTML = "";
+        eyeIcon.style.display = "none";
+        showHintText.style.display = "none";
+
+        setTimeout(function () {
+        $.ajax({
+            url: `/api/courses/${course_id}`,
+            type: 'GET',
+            success: function (response) {
+            console.log(response.hint);
+            responseDiv.innerHTML = `<div class="p-4 mb-4 bg-base-100 border border-gray-300 rounded-lg border-t-2 border-t-primary">${response.hint}</div>`;
+            responseDiv.style.display = "block";
+            },
+            complete: function () {
+            console.log("complete");
+            loader.style.display = "none";
+            hintbtn.style.display = "none";
+            }
+        });
+        }, 1000);
+  }
+</script>
 {% endblock %}

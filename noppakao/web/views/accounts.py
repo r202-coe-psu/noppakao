@@ -8,12 +8,14 @@ from flask import (
     request,
     session,
     redirect,
+    Response,
+    send_file
 )
 
 from flask_login import login_user, logout_user, login_required, current_user
 
 from noppakao import models
-from noppakao.web import forms
+from noppakao.web import forms, acl
 from .. import oauth2
 
 from flask_bcrypt import Bcrypt
@@ -205,8 +207,23 @@ def edit_user():
     form = forms.accounts.EditUserForm(obj=user)
     if not form.validate_on_submit():
         return render_template("/accounts/edit_user.html", form=form)
+    
+    if form.uploaded_avatar.data:
+        if not user.avatar:
+            user.avatar.put(
+                form.uploaded_avatar.data,
+                filename=form.uploaded_avatar.data.filename,
+                content_type=form.uploaded_avatar.data.content_type,
+            )
+        else:
+            user.avatar.replace(
+                form.uploaded_avatar.data,
+                filename=form.uploaded_avatar.data.filename,
+                content_type=form.uploaded_avatar.data.content_type,
+            )
     user.display_name = form.display_name.data
     user.first_name = form.first_name.data
+    user.phone_number = form.phone_number.data
     user.last_name = form.last_name.data
     user.save()
     return redirect(url_for("accounts.index"))
@@ -237,3 +254,17 @@ def setup_user():
     user.save()
 
     return redirect(url_for("index.index"))
+
+@module.route("/avatar/<filename>")
+@login_required
+def get_avatar(filename=""):
+    response = Response()
+    response.status_code = 404
+    user = current_user._get_current_object()
+    if user.avatar:
+        response = send_file(
+            user.avatar,
+            download_name=user.avatar.filename,
+            mimetype=user.avatar.content_type,
+        )
+    return response
