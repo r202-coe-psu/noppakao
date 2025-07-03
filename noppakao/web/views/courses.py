@@ -70,13 +70,10 @@ def course_content(course_id, page_id=None):
         enroll_course.index = int(page_id)
         enroll_course.save()
 
-    print("Page ID:", page_id)
     current_content = models.CourseContent.objects(
         course=course_id, index=page_id
     ).first()
     
-    print("\n\nCurrent Content:", current_content)
-    print("============")
     form = forms.courses.CourseContentForm(obj=current_content)
 
     if not current_content:
