@@ -42,20 +42,41 @@ def course_detail(course_id):
     )
 
 
+@module.route("/<course_id>/content", methods=["GET"])
 @module.route("/<course_id>/content/<page_id>", methods=["GET"])
 @login_required
-def course_content(course_id, page_id):
-    course = models.Course.objects.get(id=course_id)
+def course_content(course_id, page_id=None):
+    course = models.Course.objects(id=course_id).first()
+    if not course:
+        return redirect(url_for("course.index"))
+
+    enroll_course = models.EnrollCourse.objects(
+        course=course, user=current_user._get_current_object()
+    ).first()
+
     contents = models.CourseContent.objects(course=course_id, status="active").order_by(
         "index"
     )
 
-    if not course:
+    if not enroll_course:
         return redirect(url_for("course.index"))
 
+    # when enter from dashboard or course detail, page_id is None
+    if page_id is None:
+        page_id = enroll_course.index
+
+    # remember the last page visited
+    if page_id is not None:
+        enroll_course.index = int(page_id)
+        enroll_course.save()
+
+    print("Page ID:", page_id)
     current_content = models.CourseContent.objects(
         course=course_id, index=page_id
     ).first()
+    
+    print("\n\nCurrent Content:", current_content)
+    print("============")
     form = forms.courses.CourseContentForm(obj=current_content)
 
     if not current_content:
@@ -158,10 +179,10 @@ def submit_question(course_id, page_id):
         transaction.created_by = current_user
         if answer == current_content.course_question.answer:
             transaction.exp_ = current_content.exp_
-            transaction.result="failed"
+            transaction.result = "failed"
             transaction.save()
         else:
-            transaction.result="success"
+            transaction.result = "success"
             transaction.save()
             return redirect(
                 url_for(
@@ -178,5 +199,44 @@ def submit_question(course_id, page_id):
             course_id=course.id,
             page_id=page_id,
             dialog_state="success",
+        )
+    )
+
+
+@module.route("/<course_id>/complete/<page_id>", methods=["GET"])
+@login_required
+def complete_content(course_id, page_id):
+    current_content = models.CourseContent.objects(
+        course=course_id, index=page_id
+    ).first()
+
+    if not current_content:
+        return redirect(url_for("course.course_detail", course_id=course_id))
+
+    next_content_number = int(page_id) + 1
+
+    if current_content.type != "section":
+        return redirect(
+            url_for(
+                "course.course_content",
+                course_id=course_id,
+                page_id=next_content_number,
+            )
+        )
+
+    course = models.Course.objects(id=course_id).first()
+    transaction = models.TransactionCourse(
+        type="section",
+        course=course,
+        course_content=current_content,
+        created_by=current_user,
+        exp_=current_content.exp_,
+        result="success",
+    )
+    transaction.save()
+
+    return redirect(
+        url_for(
+            "course.course_content", course_id=course.id, page_id=next_content_number
         )
     )

@@ -98,5 +98,6 @@ class EnrollCourse(me.Document):
     meta = {"collection": "enroll_course"}
     user = me.ReferenceField("User", dbref=True, required=True)
     course = me.ReferenceField("Course", dbref=True, required=True)
+    index = me.IntField(required=True, default=1) 
     created_date = me.DateTimeField(required=True, default=datetime.datetime.now)
     updated_date = me.DateTimeField(required=True, default=datetime.datetime.now)

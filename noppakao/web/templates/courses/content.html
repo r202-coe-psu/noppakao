@@ -134,7 +134,7 @@ page_id=page_id)) }}
             {% endif %}
 
             {% if current_content.index < contents|length %} <a
-              href="{{ url_for('course.course_content', course_id=course_id, page_id=current_content.index + 1) }}"
+              href="{{ url_for('course.complete_content', course_id=course_id, page_id=current_content.index) }}"
               class="btn btn-primary w-40">Next</a>
               {% endif %}
 
