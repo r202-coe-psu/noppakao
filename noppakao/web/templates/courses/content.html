@@ -148,10 +148,16 @@ page_id=page_id)) }}
       <p class="font-semibold text-[#494949] mb-6">Outline</p>
       <ul class="flex flex-col gap-4 font-medium text-[#494949]">
         {% for content in contents %}
-        <li class="hover:underline cursor-pointer  {{ 'text-black font-bold' if content.index == current_content.index else '' }}">
-          <a href="{{ url_for('course.course_content', course_id=course_id, page_id=content.index) }}">
+    
+        <li class="cursor-pointer {{ 'text-black font-bold' if content.index == current_content.index else '' }}">
+            <a class="" href="{{ url_for('course.course_content', course_id=course_id, page_id=content.index) }}">
+              {% if content.is_completed %}
+              <i class="ph-fill ph-check-circle mr-2 self-end"></i>
+              {% else %}
+              <i class="ph ph-circle-plus mr-2 self-end"></i>
+              {% endif %}
             {{ content.header }}
-          </a>
+            </a>
         </li>
         {% endfor %}
       </ul>

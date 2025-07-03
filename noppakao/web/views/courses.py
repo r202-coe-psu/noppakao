@@ -87,6 +87,21 @@ def course_content(course_id, page_id=None):
         )
     else:
         current_content.header_image_url = "/static/images/example-course-thumbnail.jpg"
+    
+    # check is content completed
+    for content in contents:
+        transaction = models.TransactionCourse.objects(
+            course=course,
+            course_content=content,
+            created_by=current_user._get_current_object(),
+            result="success",
+        ).first()
+
+        if transaction:
+            content.is_completed = True
+        else:
+            content.is_completed = False
+
     return render_template(
         "courses/content.html",
         course_id=course_id,
@@ -175,11 +190,10 @@ def submit_question(course_id, page_id):
         transaction.course_content = current_content
         transaction.created_by = current_user
         if answer == current_content.course_question.answer:
-            transaction.exp_ = current_content.exp_
-            transaction.result = "failed"
+            transaction.result = "success"
             transaction.save()
         else:
-            transaction.result = "success"
+            transaction.result = "failed"
             transaction.save()
             return redirect(
                 url_for(
@@ -227,7 +241,6 @@ def complete_content(course_id, page_id):
         course=course,
         course_content=current_content,
         created_by=current_user,
-        exp_=current_content.exp_,
         result="success",
     )
     transaction.save()

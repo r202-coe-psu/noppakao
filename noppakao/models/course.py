@@ -71,7 +71,7 @@ class CourseContent(me.Document):
     # Check if the content is a question type
     def check_question(self):
         transaction_course = TransactionCourse.objects(
-            course_content=self, type="question"
+            course_content=self, type="question", result="success", status="active"
         ).first()
         if transaction_course:
             return True
@@ -85,7 +85,7 @@ class TransactionCourse(me.Document):
     course = me.ReferenceField("Course", dbref=True, required=True)
     course_content = me.ReferenceField("CourseContent", dbref=True, required=True)
     course_question = me.ReferenceField("Challenge", dbref=True)
-    exp_ = me.IntField()
+    # exp_ = me.IntField()
 
     created_by = me.ReferenceField("User", dbref=True, required=True)
     create_date = me.DateTimeField(
