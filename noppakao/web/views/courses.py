@@ -120,62 +120,58 @@ def enroll(course_id):
     methods=["GET", "POST"],
 )
 @login_required
-def submit_challenge(course_id, page_id):
-    course = models.Course.objects(id=course_id).first()
-
+def submit_question(course_id, page_id):
     current_content = models.CourseContent.objects(
         course=course_id, index=page_id
     ).first()
 
-    if current_content.type == "question":
-        transaction = models.TransactionCourse.objects(
-            course=course,
-            course_content=current_content,
-            status__in=["success"],
-            type="question",
-        ).first()
-    else:
-        transaction = models.TransactionCourse.objects(
-            course=course,
-            course_content=current_content,
-            status__in=["success"],
-            type="section",
-        ).first()
-
-    if transaction:
+    if current_content.type != "question":
         return redirect(
-            url_for("course.course_content", course_id=course.id, page_id=course_ref_id)
+            url_for(
+                "course.course_content",
+                course_id=course_id,
+                page_id=page_id,
+                dialog_state="fail",
+            )
+        )
+    course = models.Course.objects(id=course_id).first()
+    success_transaction = models.TransactionCourse.objects(
+        course=course,
+        course_content=current_content,
+        result="success",
+        type="question",
+    ).first()
+
+    if success_transaction:
+        return redirect(
+            url_for("course.course_content", course_id=course_id, page_id=page_id)
         )
 
     answer = request.args.get("answer")
 
-    if not transaction:
+    if not success_transaction:
         transaction = models.TransactionCourse()
-        if current_content.type == "question":
-            if answer == current_content.course_question.answer:
-                transaction.type = "question"
-                transaction.course = course
-                transaction.course_question = current_content.course_question
-                transaction.course_content = current_content
-                transaction.exp_ = 0
-                transaction.created_by = current_user
-            else:
-                return redirect(
-                    url_for(
-                        "course.course_content",
-                        course_id=course.id,
-                        page_id=page_id,
-                        dialog_state="fail",
-                    )
-                )
+        transaction.type = "question"
+        transaction.course = course
+        transaction.course_question = current_content.course_question
+        transaction.course_content = current_content
+        transaction.created_by = current_user
+        if answer == current_content.course_question.answer:
+            transaction.exp_ = current_content.exp_
+            transaction.result="failed"
+            transaction.save()
         else:
-            transaction.type = "section"
-            transaction.course = course
-            transaction.course_content = current_content
-            transaction.exp_ = 0
-            transaction.created_by = current_user
+            transaction.result="success"
+            transaction.save()
+            return redirect(
+                url_for(
+                    "course.course_content",
+                    course_id=course.id,
+                    page_id=page_id,
+                    dialog_state="fail",
+                )
+            )
 
-    transaction.save()
     return redirect(
         url_for(
             "course.course_content",

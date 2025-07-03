@@ -68,6 +68,7 @@ class CourseContent(me.Document):
     )  # เวลาการสร้าง
     status = me.StringField(default="active", choices=STATUS_CHOICES, required=True)
 
+    # Check if the content is a question type
     def check_question(self):
         transaction_course = TransactionCourse.objects(
             course_content=self, type="question"
@@ -76,7 +77,6 @@ class CourseContent(me.Document):
             return True
         return False
 
-        """Check if the content is a question type."""
 
 
 class TransactionCourse(me.Document):
@@ -91,4 +91,6 @@ class TransactionCourse(me.Document):
     create_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
     )  # เวลาการสร้าง
+
+    result = me.StringField(choices=["success", "failed"], default="success")
     status = me.StringField(default="active", choices=STATUS_CHOICES, required=True)

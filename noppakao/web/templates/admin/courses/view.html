@@ -113,6 +113,9 @@
     </div>
     <div class="mt-3">
         {% for content in contents %}
+        <div>
+            index: {{ content.index }}
+        </div>
         {% if content.type == "section" %}
         {{ section_card(content) }}
         {% elif content.type == "question" %}
