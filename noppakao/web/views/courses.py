@@ -6,6 +6,8 @@ from flask import (
     session,
     redirect,
 )
+from bson import ObjectId
+
 from flask_login import login_user, logout_user, login_required, current_user
 from noppakao import models
 from noppakao.web import forms
@@ -13,7 +15,7 @@ from noppakao.web import forms
 import datetime
 
 module = Blueprint("course", __name__, url_prefix="/course")
-
+from mongoengine.queryset.visitor import Q
 # TODO: Add authentication
 
 
@@ -73,7 +75,7 @@ def course_content(course_id, page_id=None):
     current_content = models.CourseContent.objects(
         course=course_id, index=page_id
     ).first()
-    
+
     form = forms.courses.CourseContentForm(obj=current_content)
 
     if not current_content:
@@ -87,7 +89,7 @@ def course_content(course_id, page_id=None):
         )
     else:
         current_content.header_image_url = "/static/images/example-course-thumbnail.jpg"
-    
+
     # check is content completed
     for content in contents:
         transaction = models.TransactionCourse.objects(
@@ -116,9 +118,34 @@ def course_content(course_id, page_id=None):
 @module.route("/dashboard", methods=["GET"])
 @login_required
 def dashboard():
+    #TODO: refactor as pipeline
+    enrolled_courses = list(models.EnrollCourse.objects(
+        user=current_user, status="active"
+    ).order_by("-last_accessed"))
+    for course in enrolled_courses:
+        course.total_exp = 0
+        course.current_exp = 0
+        contents = list(models.CourseContent.objects(
+            course=course.course.id, status="active"
+        ).order_by("index"))
+
+        for content in contents:
+            course.total_exp += content.exp_
+
+            transaction = models.TransactionCourse.objects(
+                course=course.course,
+                course_content=content,
+                created_by=current_user._get_current_object(),
+                result="success",
+            ).first()
+
+            if transaction:
+                course.current_exp += content.exp_
+
+
     return render_template(
         "courses/dashboard.html",
-        courses=[],
+        enrolled_courses=enrolled_courses,
     )
 
 

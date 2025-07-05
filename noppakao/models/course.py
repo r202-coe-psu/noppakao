@@ -85,7 +85,6 @@ class TransactionCourse(me.Document):
     course = me.ReferenceField("Course", dbref=True, required=True)
     course_content = me.ReferenceField("CourseContent", dbref=True, required=True)
     course_question = me.ReferenceField("Challenge", dbref=True)
-    # exp_ = me.IntField()
 
     created_by = me.ReferenceField("User", dbref=True, required=True)
     create_date = me.DateTimeField(

@@ -101,3 +101,7 @@ class EnrollCourse(me.Document):
     index = me.IntField(required=True, default=1) 
     created_date = me.DateTimeField(required=True, default=datetime.datetime.now)
     updated_date = me.DateTimeField(required=True, default=datetime.datetime.now)
+    last_accessed = me.DateTimeField(
+        default=datetime.datetime.now, auto_now=True
+    )
+    status = me.StringField(default="active", choices=["active", "disactive"], required=True)

@@ -1,4 +1,38 @@
 {% extends "base/default-page-user.html" %}
+
+{% macro render_course_card(course) %}
+<div
+   class="w-full bg-[#EFEEEE] rounded-md flex flex-col @min-[850px]:flex-row shadow-md h-auto @min-[850px]:h-44 relative">
+   <img src="{{ url_for('static', filename='images/example-course-thumbnail.jpg') }}" alt="Course Thumbnail"
+      class="w-full @min-[850px]:w-56 h-44 @min-[850px]:h-full object-cover rounded-t-md @min-[850px]:rounded-l-md @min-[850px]:rounded-t-none" />
+   <div
+      class="flex flex-col @min-[850px]:flex-row w-full h-full p-4 @min-[850px]:p-6 justify-between items-start @min-[850px]:items-center gap-4">
+      <div class="flex flex-col justify-between w-full @min-[850px]:max-w-[70%] gap-4">
+         <div>
+            <p class="font-semibold text-xl">{{ course.course.name }}</p>
+            <p class="text-xs text-[#494949] mt-1 text-balance line-clamp-3 ">
+              {{ course.course.description if course.course.description else "No description available." }}
+            </p>
+         </div>
+         <div class="flex items-center gap-4">
+            <p class="font-semibold">Progress:</p>
+            <progress class="progress progress-primary w-full h-1" value="{{ course.current_exp }}" max="{{ course.total_exp }}"></progress>
+         </div>
+      </div>
+
+      <div
+         class="w-full flex flex-row @min-[850px]:w-auto @min-[850px]:flex-col justify-between items-start @min-[850px]:items-end gap-2 h-full">
+         <div
+            class="badge badge-soft badge-primary absolute top-4 right-4 @min-[850px]:relative @min-[850px]:top-0 @min-[850px]:left-0">
+            {{ course.course.type.name }}</div>
+         <a class="btn btn-primary w-full" href="{{ url_for('course.course_content', course_id=course.course.id, page_id=None) }}">
+            Continue
+         </a>
+      </div>
+   </div>
+</div>
+{% endmacro %}
+
 {% block content %}
 <div class="flex flex-col gap-7">
    <p class="font-bold text-2xl">Dashboard</p>
@@ -37,39 +71,8 @@
       <div class="@container ">
          <div
             class="grid grid-cols-1 @lg:grid-cols-2 @min-[850px]:flex @min-[850px]:flex-col rounded-md border-2 border-[#EFEEEE] min-h-96 p-6 gap-6 @min-[850]:gap-4">
-            {% for i in range(3) %}
-            <div
-               class="w-full bg-[#EFEEEE] rounded-md flex flex-col @min-[850px]:flex-row shadow-md h-auto @min-[850px]:h-44 relative">
-               <img src="{{ url_for('static', filename='images/example-course-thumbnail.jpg') }}" alt="Course Thumbnail"
-                  class="w-full @min-[850px]:w-56 h-44 @min-[850px]:h-full object-cover rounded-t-md @min-[850px]:rounded-l-md @min-[850px]:rounded-t-none" />
-
-               <div
-                  class="flex flex-col @min-[850px]:flex-row w-full h-full p-4 @min-[850px]:p-6 justify-between items-start @min-[850px]:items-center gap-4">
-                  <div class="flex flex-col justify-between w-full @min-[850px]:max-w-[70%] gap-4">
-                     <div>
-                        <p class="font-semibold text-xl">Introduction to Capture the Flag (CTF)</p>
-                        <p class="text-xs text-[#494949] mt-1 text-balance line-clamp-3 ">
-                           This course provides an introductory yet comprehensive overview of Capture the Flag (CTF)
-                           competitions, which are widely used in the cybersecurity community to develop and assess
-                           skills.
-                        </p>
-                     </div>
-                     <div class="flex items-center gap-4">
-                        <p class="font-semibold">Progress:</p>
-                        <progress class="progress progress-primary w-full h-1" value="70" max="100"></progress>
-                     </div>
-                  </div>
-
-                  <div
-                     class="w-full flex flex-row @min-[850px]:w-auto @min-[850px]:flex-col justify-between items-start @min-[850px]:items-end gap-2 h-full">
-                     <div
-                        class="badge badge-soft badge-primary absolute top-4 right-4 @min-[850px]:relative @min-[850px]:top-0 @min-[850px]:left-0">
-                        fundamental</div>
-                     <button class="btn btn-primary w-full">Continue</button>
-                  </div>
-               </div>
-            </div>
-
+            {% for course in enrolled_courses %}
+               {{ render_course_card(course) }}
             {% endfor %}
          </div>
       </div>
