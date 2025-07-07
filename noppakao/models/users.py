@@ -138,12 +138,11 @@ class User(me.Document, UserMixin):
         
         # Count the streak starting from the reference day
         streak = 1  # Start with 1 for the reference day
-        day = 1
         
         # Check each previous day until we find a gap
         while True:
-            prev_day_start = today_start - datetime.timedelta(days=day)
-            prev_day_end = today_end - datetime.timedelta(days=day)
+            prev_day_start = today_start - datetime.timedelta(days=streak)
+            prev_day_end = today_end - datetime.timedelta(days=streak)
             
             activity = models.TransactionCourse.objects(
                 status="active",
@@ -156,7 +155,6 @@ class User(me.Document, UserMixin):
                 break
                 
             streak += 1
-            day += 1
             
         return streak
 
