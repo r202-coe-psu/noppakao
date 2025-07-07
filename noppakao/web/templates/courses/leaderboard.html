@@ -13,17 +13,22 @@
                 </tr>
             </thead>
             <tbody>
-                {% for i in range(1,21) %}
+                {% for user in pagination.data %}
                 <tr>
-                    <th class="text-center">{{i}}</th>
-                    <td>0xDisplayName</td>
-                    <td class="text-center">{{21-i}}</td>
-                    <td><progress class="progress progress-primary w-full" value="{{21-i}}" max="100"></progress>
+                    <th class="text-center">{{ loop.index }}</th>
+                    <td>{{ user['display_name'] }}</td>
+                    <td class="text-center">{{ user['level'] }}</td>
+                    <td><progress class="progress progress-primary w-full" value="{{ user['percentage'] }}" max="100"></progress>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+    <div class="mt-4">
+    {% with redirect=url_for("course.leaderboard") %}
+    {% include "base/pagination.html" %}
+    {% endwith %}
+      </div>
 </div>
 {% endblock %}

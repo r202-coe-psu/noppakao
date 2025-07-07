@@ -11,11 +11,13 @@ from bson import ObjectId
 from flask_login import login_user, logout_user, login_required, current_user
 from noppakao import models
 from noppakao.web import forms
+from . import paginations
 
 import datetime
 
 module = Blueprint("course", __name__, url_prefix="/course")
 from mongoengine.queryset.visitor import Q
+
 # TODO: Add authentication
 
 
@@ -118,15 +120,19 @@ def course_content(course_id, page_id=None):
 @module.route("/dashboard", methods=["GET"])
 @login_required
 def dashboard():
-    enrolled_courses = list(models.EnrollCourse.objects(
-        user=current_user, status="active"
-    ).order_by("-last_accessed"))
+    enrolled_courses = list(
+        models.EnrollCourse.objects(user=current_user, status="active").order_by(
+            "-last_accessed"
+        )
+    )
     for course in enrolled_courses:
         course.total_exp = 0
         course.current_exp = 0
-        contents = list(models.CourseContent.objects(
-            course=course.course.id, status="active"
-        ).order_by("index"))
+        contents = list(
+            models.CourseContent.objects(
+                course=course.course.id, status="active"
+            ).order_by("index")
+        )
 
         for content in contents:
             course.total_exp += content.exp_
@@ -140,7 +146,7 @@ def dashboard():
 
             if transaction:
                 course.current_exp += content.exp_
-    
+
     user_progress = current_user.get_course_progress()
 
     return render_template(
@@ -153,7 +159,55 @@ def dashboard():
 @module.route("/leaderboard", methods=["GET"])
 @login_required
 def leaderboard():
-    return render_template("courses/leaderboard.html")
+    users = models.User.objects(status="active", roles__nin=["admin"])
+    pagination = paginations.get_paginate(data=users, items_per_page=20)
+
+    pipeline = [
+        {
+            "$match": {
+                "result": "success",
+                "type": "question",
+            }
+        },
+        {
+            "$lookup": {
+                "from": "course_content",
+                "localField": "course_content.$id",
+                "foreignField": "_id",
+                "as": "course_content_doc",
+            }
+        },
+        {"$unwind": "$course_content_doc"},
+        {
+            "$group": {
+                "_id": "$created_by.$id",
+                "total_exp": {"$sum": "$course_content_doc.exp_"},
+            }
+        },
+        {"$sort": {"total_exp": -1}},  # Sort by total_exp in descending order
+    ]
+
+    transactions = list(
+        models.TransactionCourse.objects(created_by__in=users).aggregate(pipeline)
+    )
+
+    users = []
+    for transaction in transactions:
+        user = models.User.objects(id=transaction["_id"]).first()
+        course_progress_user = user.get_course_progress()
+        users.append(
+            {
+                "display_name": user.display_name,
+                "level": course_progress_user["level"],
+                "percentage": course_progress_user["percentage"],
+            }
+        )
+
+    pagination = paginations.get_paginate(data=users, items_per_page=20)
+    return render_template(
+        "courses/leaderboard.html",
+        pagination=pagination,
+    )
 
 
 @module.route("/enroll/<course_id>", methods=["POST"])
@@ -201,6 +255,7 @@ def submit_question(course_id, page_id):
         course_content=current_content,
         result="success",
         type="question",
+        created_by=current_user._get_current_object(),
     ).first()
 
     if success_transaction:

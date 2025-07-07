@@ -1,5 +1,6 @@
 import mongoengine as me
 import datetime
+from flask_login import current_user
 
 
 STATUS_CHOICES = ["active", "disactive"]
@@ -71,12 +72,16 @@ class CourseContent(me.Document):
     # Check if the content is a question type
     def check_question(self):
         transaction_course = TransactionCourse.objects(
-            course_content=self, type="question", result="success", status="active"
+            course_content=self,
+            type="question",
+            result="success",
+            status="active",
+            created_by=current_user._get_current_object(),
         ).first()
         if transaction_course:
             return True
-        return False
 
+        return False
 
 
 class TransactionCourse(me.Document):
