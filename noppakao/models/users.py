@@ -107,31 +107,58 @@ class User(me.Document, UserMixin):
     
     def get_course_streak(self):
         today = datetime.datetime.now()
-
-        count = 0
-        # Get today's date with time set to midnight for proper day comparison
         today_start = datetime.datetime.combine(today.date(), datetime.time.min)
         today_end = datetime.datetime.combine(today.date(), datetime.time.max)
         
-        # Query transactions created today
+        # Check if there's activity today
         is_today_activity = models.TransactionCourse.objects(
             status="active",
             created_by=self,
             create_date__gte=today_start,
             create_date__lte=today_end
         ).first()
-        if is_today_activity:
-            count += 1
         
-        while models.TransactionCourse.objects(
-            status="active",
-            created_by=self,
-            create_date__gte=today_start - datetime.timedelta(days=count + 1),
-            create_date__lte=today_end - datetime.timedelta(days=count + 1)
-        ).first():
-            count += 1
-
-        return count
+        # If no activity today, check if there was activity yesterday to continue the streak
+        if not is_today_activity:
+            yesterday_start = today_start - datetime.timedelta(days=1)
+            yesterday_end = today_end - datetime.timedelta(days=1)
+            is_yesterday_activity = models.TransactionCourse.objects(
+                status="active",
+                created_by=self,
+                create_date__gte=yesterday_start,
+                create_date__lte=yesterday_end
+            ).first()
+            
+            # If no activity yesterday either, return 0
+            if not is_yesterday_activity:
+                return 0
+            
+            today_start = yesterday_start
+            today_end = yesterday_end
+        
+        # Count the streak starting from the reference day
+        streak = 1  # Start with 1 for the reference day
+        day = 1
+        
+        # Check each previous day until we find a gap
+        while True:
+            prev_day_start = today_start - datetime.timedelta(days=day)
+            prev_day_end = today_end - datetime.timedelta(days=day)
+            
+            activity = models.TransactionCourse.objects(
+                status="active",
+                created_by=self,
+                create_date__gte=prev_day_start,
+                create_date__lte=prev_day_end
+            ).first()
+            
+            if not activity:
+                break
+                
+            streak += 1
+            day += 1
+            
+        return streak
 
     def check_team_event(self, event_id):
         from noppakao import models
