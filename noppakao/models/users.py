@@ -22,7 +22,7 @@ class User(me.Document, UserMixin):
 
     username = me.StringField(required=True, unique=True, max_length=64)
     password = me.BinaryField(required=True, default=b"")
-    email = me.StringField(required=True)
+    email = me.StringField(required=True, unique=True, max_length=128)
     phone_number = me.StringField(max_length=10, default="")
     status = me.StringField(default="active")
     roles = me.ListField(me.StringField(), default=["user"])
@@ -36,6 +36,39 @@ class User(me.Document, UserMixin):
     last_login_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
     )
+
+    def get_exp(self):
+        from noppakao import models
+
+        pipeline = [
+            {
+                "$match": {
+                    "result": "success",
+                    "type": "question",
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "course_content",
+                    "localField": "course_content.$id",
+                    "foreignField": "_id",
+                    "as": "course_content_doc",
+                }
+            },
+            {"$unwind": "$course_content_doc"},
+            {
+                "$group": {
+                    "_id": "$created_by",
+                    "total_exp": {"$sum": "$course_content_doc.exp_"},
+                }
+            },
+        ]
+
+        transactions = list(
+            models.TransactionCourse.objects(created_by=self).aggregate(pipeline)
+        )
+
+        return transactions[0]["total_exp"] if transactions else 0
 
     def check_team_event(self, event_id):
         from noppakao import models
@@ -98,10 +131,10 @@ class EnrollCourse(me.Document):
     meta = {"collection": "enroll_course"}
     user = me.ReferenceField("User", dbref=True, required=True)
     course = me.ReferenceField("Course", dbref=True, required=True)
-    index = me.IntField(required=True, default=1) 
+    index = me.IntField(required=True, default=1)
     created_date = me.DateTimeField(required=True, default=datetime.datetime.now)
     updated_date = me.DateTimeField(required=True, default=datetime.datetime.now)
-    last_accessed = me.DateTimeField(
-        default=datetime.datetime.now, auto_now=True
+    last_accessed = me.DateTimeField(default=datetime.datetime.now, auto_now=True)
+    status = me.StringField(
+        default="active", choices=["active", "disactive"], required=True
     )
-    status = me.StringField(default="active", choices=["active", "disactive"], required=True)
