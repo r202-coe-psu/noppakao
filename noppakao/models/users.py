@@ -104,6 +104,34 @@ class User(me.Document, UserMixin):
                 / user_progress["total_exp_progress"]
             ) * 100 if user_progress["total_exp_progress"] > 0 else 0
         return user_progress
+    
+    def get_course_streak(self):
+        today = datetime.datetime.now()
+
+        count = 0
+        # Get today's date with time set to midnight for proper day comparison
+        today_start = datetime.datetime.combine(today.date(), datetime.time.min)
+        today_end = datetime.datetime.combine(today.date(), datetime.time.max)
+        
+        # Query transactions created today
+        is_today_activity = models.TransactionCourse.objects(
+            status="active",
+            created_by=self,
+            create_date__gte=today_start,
+            create_date__lte=today_end
+        ).first()
+        if is_today_activity:
+            count += 1
+        
+        while models.TransactionCourse.objects(
+            status="active",
+            created_by=self,
+            create_date__gte=today_start - datetime.timedelta(days=count + 1),
+            create_date__lte=today_end - datetime.timedelta(days=count + 1)
+        ).first():
+            count += 1
+
+        return count
 
     def check_team_event(self, event_id):
         from noppakao import models

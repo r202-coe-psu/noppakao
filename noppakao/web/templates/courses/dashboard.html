@@ -1,5 +1,5 @@
 {% extends "base/default-page-user.html" %}
-
+{% set strike = current_user.get_course_streak() %}
 {% macro render_course_card(course) %}
 <div
    class="w-full bg-[#EFEEEE] rounded-md flex flex-col @min-[850px]:flex-row shadow-md h-auto @min-[850px]:h-44 relative">
@@ -62,7 +62,11 @@
       <div class="bg-white rounded-md w-[112px] h-full flex flex-col items-center justify-center gap-2">
          <p class="font-semibold text-xl text-[#494949]">Streak</p>
          <div class="text-primary flex flex-row gap-1 text-4xl">
-            <i class="ph-bold ph-fire-simple translate-y-"></i><span class="font-medium"> 5</span>
+            {% if strike > 0 %}
+               <i class="ph-bold ph-fire text-4xl"></i> <span>{{ strike }}</span>
+            {% else %}
+               <i class="ph-bold ph-fire text-4xl text-gray-400"></i>  <span class="text-gray-400">0</span>
+            {% endif %}
          </div>
       </div>
    </div>
