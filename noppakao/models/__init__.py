@@ -9,6 +9,7 @@ from .organizations import Organization
 from .course import Course, CourseType, CourseContent, TransactionCourse
 from .media import Media
 from .utils import save_to_file_field
+from .config import LevelConfig
 from .oauth2 import OAuth2Token
 
 db = MongoEngine()
