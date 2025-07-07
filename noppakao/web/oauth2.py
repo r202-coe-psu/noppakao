@@ -34,6 +34,10 @@ oauth2_client = OAuth()
 
 def create_user_google(user_info, user=None):
     if not user:
+        user = models.User.objects(email=user_info.get("email")).first()
+        return user
+
+    if not user:
         user = models.User(
             username=user_info.get("email"),
             picture_url=user_info.get("picture"),
@@ -49,7 +53,6 @@ def create_user_google(user_info, user=None):
         user.last_name = user_info.get("family_name", "").title()
         user.email = user_info.get("email")
         user.picture_url = user_info.get("picture")
-
     user.save()
     return user
 
@@ -248,8 +251,10 @@ def handle_authorized_oauth2(remote, token):
             user = create_user_engpsu(user_info, user)
         elif remote.name == "psu":
             user = create_user_psu(user_info)
-
+    if not user:
+        return redirect(url_for("accounts.login", error="ไม่พบผู้ใช้งาน กรุณาลองใหม่อีกครั้ง"))
     login_user(user)
+
     user.resources[remote.name] = user_info
     user.last_login_date = datetime.datetime.now()
     user.save()
