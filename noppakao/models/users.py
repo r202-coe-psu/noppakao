@@ -2,6 +2,7 @@ from email.policy import default
 import mongoengine as me
 import datetime
 from flask_login import UserMixin, current_user
+from noppakao import models
 
 from flask import url_for
 
@@ -37,14 +38,11 @@ class User(me.Document, UserMixin):
         required=True, default=datetime.datetime.now, auto_now=True
     )
 
-    def get_exp(self):
-        from noppakao import models
-
+    def get_course_progress(self):
         pipeline = [
             {
                 "$match": {
                     "result": "success",
-                    "type": "question",
                 }
             },
             {
@@ -68,7 +66,44 @@ class User(me.Document, UserMixin):
             models.TransactionCourse.objects(created_by=self).aggregate(pipeline)
         )
 
-        return transactions[0]["total_exp"] if transactions else 0
+        total_exp = transactions[0]["total_exp"] if transactions else 0
+
+
+        level_config = models.LevelConfig.objects.first()
+        user_progress = {
+            "exp": total_exp,
+            "level": 0,
+            "current_exp_progress": 0,
+            "total_exp_progress": 100,
+            "percentage": 0,
+        }
+        if not level_config:
+            return user_progress
+        
+        for level, exp in level_config.level_exp_table.items():
+            if total_exp < int(exp):
+                user_progress["level"] = int(level) - 1
+                user_progress["current_exp_progress"] = total_exp - int(level_config.level_exp_table.get(str(int(level) - 1), 0))
+                user_progress["total_exp_progress"] = int(exp) - int(level_config.level_exp_table.get(str(int(level) - 1), 0))
+                user_progress["percentage"] = (
+                    user_progress["current_exp_progress"]
+                    / user_progress["total_exp_progress"]
+                ) * 100 if user_progress["total_exp_progress"] > 0 else 0
+                return user_progress
+        else:
+            # case when total_exp is greater than the last level's exp
+            user_progress["level"] = len(level_config.level_exp_table)
+            user_progress["current_exp_progress"] = total_exp - int(
+                level_config.level_exp_table.get(
+                    str(user_progress["level"]), 0
+                )
+            )
+            user_progress["total_exp_progress"] = 100  # Assuming 100% for the last level
+            user_progress["percentage"] = (
+                user_progress["current_exp_progress"]
+                / user_progress["total_exp_progress"]
+            ) * 100 if user_progress["total_exp_progress"] > 0 else 0
+        return user_progress
 
     def check_team_event(self, event_id):
         from noppakao import models

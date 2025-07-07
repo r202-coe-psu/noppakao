@@ -4,7 +4,7 @@ import datetime
 class LevelConfig(me.Document):
     meta = {"collection": "configs"}
     config_id = me.StringField(required=True, unique=True, default="level_config")
-    levelExpTable = me.DictField(required=True, default={
+    level_exp_table = me.DictField(required=True, default={
         1: 100,
         2: 200,
         3: 300,

@@ -7,7 +7,7 @@ def create_exp_table():
     
     LevelConfig(
         config_id="level_config",
-        levelExpTable={
+        level_exp_table={
             '1': 100,
             '2': 200,
             '3': 300,

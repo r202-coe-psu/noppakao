@@ -118,7 +118,6 @@ def course_content(course_id, page_id=None):
 @module.route("/dashboard", methods=["GET"])
 @login_required
 def dashboard():
-    #TODO: refactor as pipeline
     enrolled_courses = list(models.EnrollCourse.objects(
         user=current_user, status="active"
     ).order_by("-last_accessed"))
@@ -141,11 +140,13 @@ def dashboard():
 
             if transaction:
                 course.current_exp += content.exp_
-
+    
+    user_progress = current_user.get_course_progress()
 
     return render_template(
         "courses/dashboard.html",
         enrolled_courses=enrolled_courses,
+        user_progress=user_progress,
     )
 
 

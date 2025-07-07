@@ -48,15 +48,15 @@
                <div class="font-semibold">
                   <div class="inline-flex items-center gap-2">
                      <p class="text-[#878787]">Level</p>
-                     <p class="text-primary">9</p>
+                     <p class="text-primary">{{ user_progress.level }}</p>
                   </div>
                   <div class="inline-flex items-center gap-2">
                      <p class="text-[#878787]">Exp:</p>
-                     <p class="text-primary">9999</p>
+                     <p class="text-primary">{{ user_progress.exp }}</p>
                   </div>
                </div>
-               <progress class="progress progress-primary w-full h-1" value="56" max="100"></progress>
             </div>
+            <progress class="progress progress-primary w-full h-1" value="{{ user_progress.current_exp_progress }}" max="{{ user_progress.total_exp_progress }}"></progress>
          </div>
       </div>
       <div class="bg-white rounded-md w-[112px] h-full flex flex-col items-center justify-center gap-2">
