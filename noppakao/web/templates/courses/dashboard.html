@@ -1,5 +1,5 @@
 {% extends "base/default-page-user.html" %}
-
+{% set strike = current_user.get_course_streak() %}
 {% macro render_course_card(course) %}
 <div
    class="w-full bg-[#EFEEEE] rounded-md flex flex-col @min-[850px]:flex-row shadow-md h-auto @min-[850px]:h-44 relative">
@@ -37,7 +37,7 @@
 <div class="flex flex-col gap-7">
    <p class="font-bold text-2xl">Dashboard</p>
    <div class="w-full h-40 bg-[#EFEEEE] rounded-md p-6 flex flex-row items-center justify-between">
-      <div class="flex flex-row gap-10 min-w-[50%] items-center h-full">
+      <div class="flex flex-row gap-10 min-w-[50%] w-full items-center h-full">
          <img class="w-24 h-24 rounded-full" src="{{ url_for('static', filename='images/hacker.png') }}" alt="Profile">
          <div class="flex flex-col justify-between w-full h-full">
             <div>
@@ -56,13 +56,17 @@
                   </div>
                </div>
             </div>
-            <progress class="progress progress-primary w-full h-1" value="{{ user_progress.current_exp_progress }}" max="{{ user_progress.total_exp_progress }}"></progress>
+            <progress class="progress progress-primary w-11/12 h-3" value="{{ user_progress.current_exp_progress }}" max="{{ user_progress.total_exp_progress }}"></progress>
          </div>
       </div>
       <div class="bg-white rounded-md w-[112px] h-full flex flex-col items-center justify-center gap-2">
          <p class="font-semibold text-xl text-[#494949]">Streak</p>
          <div class="text-primary flex flex-row gap-1 text-4xl">
-            <i class="ph-bold ph-fire-simple translate-y-"></i><span class="font-medium"> 5</span>
+            {% if strike > 0 %}
+               <i class="ph-bold ph-fire text-4xl"></i> <span>{{ strike }}</span>
+            {% else %}
+               <i class="ph-bold ph-fire text-4xl text-gray-400"></i>  <span class="text-gray-400">0</span>
+            {% endif %}
          </div>
       </div>
    </div>

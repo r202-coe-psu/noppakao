@@ -104,6 +104,59 @@ class User(me.Document, UserMixin):
                 / user_progress["total_exp_progress"]
             ) * 100 if user_progress["total_exp_progress"] > 0 else 0
         return user_progress
+    
+    def get_course_streak(self):
+        today = datetime.datetime.now()
+        today_start = datetime.datetime.combine(today.date(), datetime.time.min)
+        today_end = datetime.datetime.combine(today.date(), datetime.time.max)
+        
+        # Check if there's activity today
+        is_today_activity = models.TransactionCourse.objects(
+            status="active",
+            created_by=self,
+            create_date__gte=today_start,
+            create_date__lte=today_end
+        ).first()
+        
+        # If no activity today, check if there was activity yesterday to continue the streak
+        if not is_today_activity:
+            yesterday_start = today_start - datetime.timedelta(days=1)
+            yesterday_end = today_end - datetime.timedelta(days=1)
+            is_yesterday_activity = models.TransactionCourse.objects(
+                status="active",
+                created_by=self,
+                create_date__gte=yesterday_start,
+                create_date__lte=yesterday_end
+            ).first()
+            
+            # If no activity yesterday either, return 0
+            if not is_yesterday_activity:
+                return 0
+            
+            today_start = yesterday_start
+            today_end = yesterday_end
+        
+        # Count the streak starting from the reference day
+        streak = 1  # Start with 1 for the reference day
+        
+        # Check each previous day until we find a gap
+        while True:
+            prev_day_start = today_start - datetime.timedelta(days=streak)
+            prev_day_end = today_end - datetime.timedelta(days=streak)
+            
+            activity = models.TransactionCourse.objects(
+                status="active",
+                created_by=self,
+                create_date__gte=prev_day_start,
+                create_date__lte=prev_day_end
+            ).first()
+            
+            if not activity:
+                break
+                
+            streak += 1
+            
+        return streak
 
     def check_team_event(self, event_id):
         from noppakao import models

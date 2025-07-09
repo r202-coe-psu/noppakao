@@ -319,6 +319,16 @@ def complete_content(course_id, page_id):
         )
 
     course = models.Course.objects(id=course_id).first()
+    if transaction := models.TransactionCourse.objects(
+        course=course,
+        course_content=current_content,
+        created_by=current_user._get_current_object(),
+        result="success",
+    ).first():
+        # Already completed this section
+        return redirect(
+            url_for("course.course_content", course_id=course.id, page_id=next_content_number)
+        )
     transaction = models.TransactionCourse(
         type="section",
         course=course,
