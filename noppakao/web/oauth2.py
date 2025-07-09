@@ -33,9 +33,11 @@ oauth2_client = OAuth()
 
 
 def create_user_google(user_info, user=None):
+
     if not user:
         user = models.User.objects(email=user_info.get("email")).first()
-        return user
+        if user:
+            return user
 
     if not user:
         user = models.User(
