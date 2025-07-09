@@ -1,3 +1,3 @@
-from . import accounts, categories, challenges, teams, events, organizations
+from . import accounts, categories, challenges, teams, events, organizations, courses
 
-__all__ = [accounts, categories, challenges, teams, events, organizations]
+__all__ = [accounts, categories, challenges, teams, events, organizations, courses]

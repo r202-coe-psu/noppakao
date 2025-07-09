@@ -15,7 +15,7 @@ from flask import (
 from flask_login import login_user, logout_user, login_required, current_user
 
 from noppakao import models
-from .. import forms, acl, oauth
+from .. import forms, acl, oauth2
 
 module = Blueprint("organizations", __name__, url_prefix="/organizations")
 

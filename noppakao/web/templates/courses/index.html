@@ -1,0 +1,57 @@
+{% extends "base/default-page-user.html" %}
+
+{% macro course_card(course) %}
+<div class="card bg-base-100 h-80 shadow-sm">
+    <figure class="relative h-32 flex-shrink-0 overflow-hidden">
+        <img src="{{ url_for('static', filename='images/example-course-thumbnail.jpg') }}" alt="course thumbnail"
+            class="w-full h-full object-cover" />
+
+        {% if course.type %}
+        <div class="badge badge-soft badge-primary badge-sm absolute top-4 right-4">
+            {{ course.type.name }}
+        </div>
+        {% endif %}
+
+    </figure>
+    <div class="card-body">
+        <h2 class="card-title font-semibold">{{ course.name }}</h2>
+        <p class="text-xs text-[#494949] ">{{ course.description[:100] }}{% if course.description|length > 100 %}...{%
+            endif %}</p>
+        <div class="card-actions w-full mt-6">
+            {% if not course.is_enrolled %}
+            <form class="w-full" method="post" action="{{ url_for('course.enroll', course_id=course.id) }}">
+                <button class="btn btn-primary w-full" type="submit"></i>Enroll</button>
+            </form>
+            {% else %}
+            <form class="w-full" method="get" action="{{ url_for('course.course_content', course_id=course.id, page_id=None) }}">
+                <button class="btn btn-neutral w-full" type="submit">Enrolled</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{% block content %}
+<div class="flex flex-col gap-7">
+    <p class="font-bold text-2xl">Courses</p>
+    <div class="flex flex-row items-center gap-4">
+        <label class="input w-[70%] xl:w-[80%]">
+            <i class="ph-bold ph-magnifying-glass text-[#898888]"></i>
+            <input type="search" class="grow" placeholder="Search" />
+        </label>
+        <select class="select w-[30%] xl:w-[20%]">
+            <option disabled selected>Enrollment</option>
+            <option>Enrolled</option>
+            <option>Not Enrolled</option>
+        </select>
+    </div>
+    <div class="@container ">
+        <div class="grid grid-cols-1 @xl:grid-cols-2 @4xl:grid-cols-3 @6xl:grid-cols-4  min-h-96 gap-6">
+            {% for course in courses %}
+            {{ course_card(course) }}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "/base/base-layout.html" %}
+
+{% block body %}
+<div class="grid grid-cols-[auto_1fr] bg-[#F3EFEE]">
+  {% include "/base/sidebar-user.html" %}
+  <div class="md:px-16 min-h-screen px-12 py-7 rounded-xl bg-[#FCFBFC]">
+    {% block content %}{% endblock content %}
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='/js/sidebar-toggle.js')}}"></script>
+{% endblock body %}

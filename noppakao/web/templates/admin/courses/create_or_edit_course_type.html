@@ -1,0 +1,36 @@
+{% extends "base/default-page.html" %}
+{% import '/base/html-renderer-refactor.html' as renderer %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4">
+  <div class="card bg-base-100 border-1 border-gray-300 mb-6">
+    <div class="card-body">
+      <h2 class="card-title text-2xl">
+        {% if 'create' in request.path %}
+        Create Course Type
+        {% else %}
+        Edit Course Type
+        {% endif %}
+      </h2>
+    </div>
+  </div>
+
+  <form class="form-control" method="post">
+    {{ form.csrf_token }}
+
+    <div class="mb-4">
+      {{ renderer.render_field(form.name) }}
+    </div>
+
+    <div class="flex justify-end mt-6 mb-6">
+      <button class="btn btn-primary" type="submit">
+        <i class="ph ph-floppy-disk"></i>
+        Save
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block additional_js %}
+{% endblock additional_js %}

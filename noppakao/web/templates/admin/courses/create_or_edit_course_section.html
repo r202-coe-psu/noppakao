@@ -1,0 +1,57 @@
+{% extends "base/default-page.html" %}
+{% import '/base/html-renderer-refactor.html' as renderer %}
+{% import '/base/editor-renderer.html' as editor_renderer %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4">
+  <div class="card bg-base-100 border-1 border-gray-300 mb-6">
+    <div class="card-body">
+      <h2 class="card-title text-2xl">
+        {% if 'create' in request.path %}
+        Create Course Section
+        {% else %}
+        Edit Course Section
+        {% endif %}
+      </h2>
+    </div>
+  </div>
+
+  <form id="course-form" class="form-control" method="POST" enctype="multipart/form-data">
+    {{ form.csrf_token }}
+
+    <div class="mb-4">
+      {{ renderer.render_field(form.header) }}
+    </div>
+
+    <div class="mb-4">
+      {{ renderer.render_text_area_field(form.header_description) }}
+    </div>
+
+    <div class="mb-4">
+      {{ renderer.render_field(form.exp_) }}
+    </div>
+
+    <div class="mb-4">
+      {{ renderer.file_input(form.header_image) }}
+    </div>
+
+    <div class="mb-4">
+      {{ renderer.render_editor(form.content) }}
+    </div>
+
+    <div class="flex justify-end mt-6 mb-6">
+      <button class="btn btn-primary" type="submit">
+        <i class="ph ph-floppy-disk"></i>
+        Save
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block additional_js %}
+{{ editor_renderer.add_editor_library() }}
+{{ editor_renderer.config_editor() }}
+
+{{ editor_renderer.render_editor('course-form','content') }}
+{% endblock %}

@@ -9,7 +9,7 @@ from .. import models
 from . import views
 from . import acl
 from . import caches
-from . import oauth
+from . import oauth2
 
 app = Flask(__name__)
 
@@ -27,7 +27,7 @@ def create_app():
     views.register_blueprint(app)
     acl.init_acl(app)
     caches.init_cache(app)
-    oauth.init_oauth(app)
+    oauth2.init_oauth(app)
 
     return app
 

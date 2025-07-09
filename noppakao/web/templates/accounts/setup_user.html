@@ -1,0 +1,40 @@
+{% include "base/base-layout.html" %}
+{% import '/base/html-renderer-refactor.html' as renderer %}
+
+{% block content %}
+<div class="justify-center items-center flex min-h-screen">
+  <div class="card max-w-[550px] w-full rounded-xl border-1 shadow-lg border-gray-200">
+    <div class="card-body">
+      <h2 class="card-title">
+        <i class="ph ph-user-plus text-4xl"></i>Setup User
+      </h2>
+      <div class="gap-4 flex flex-col mt-4">
+        {% if form.errors %}
+        <div role="alert" class="alert alert-error alert-soft">
+          {{ form.errors }}
+        </div>
+        {% endif %}
+        {% if msg_error %}
+        <div role="alert" class="alert alert-error alert-soft">
+          <div class="header">{{ msg_error }}</div>
+        </div>
+        {% endif %}
+        <form method="POST" class="gap-4 flex flex-col">
+          {{form.csrf_token }}
+          <div class="field">
+            <label class="input w-full">
+              <i class="ph ph-user text-lg"></i>
+              {{ form.display_name(class="prompt", placeholder="Display Name") }}
+            </label>
+            {{ renderer.render_select_field(form.organization) }}
+          </div>
+          <div>
+            <button type="submit" class="btn btn-primary w-full">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div>{% include "/base/footer.html" %}</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "/base/default-page-user.html" %}
+{% import '/base/html-renderer-refactor.html' as renderer %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto ">
+  <div class="card bg-base-100 border-1 border-gray-300 mb-6">
+    <div class="card-body">
+      <h2 class="card-title text-2xl">
+        {{ "Edit" if "edit" in request.path else "Create" }} User
+      </h2>
+    </div>
+  </div>
+  <form method="post" enctype="multipart/form-data">
+    <div class="grid grid-cols-2 gap-2">
+      {{ form.csrf_token }}
+      <div class="col-span-2">
+        {{ renderer.file_input(form.uploaded_avatar) }}
+      </div>
+      <div class="col-span-2">
+        {{ renderer.render_field(form.display_name) }}
+      </div>
+      {{ renderer.render_field(form.first_name) }}
+      {{ renderer.render_field(form.last_name) }}
+      {{ renderer.render_field(form.phone_number) }}
+    </div>
+    {% if msg_error %}
+    <div class="text-error">
+      <div class="header">{{ msg_error }}</div>
+    </div>
+    {% endif %}
+    <div style="display: flex;justify-content: flex-end;">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

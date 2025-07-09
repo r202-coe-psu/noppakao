@@ -16,7 +16,7 @@ import json
 from flask_login import login_user, logout_user, login_required, current_user
 from .. import paginations
 
-from noppakao.web import oauth, forms, models, acl
+from noppakao.web import forms, models, acl, oauth2
 
 module = Blueprint("events", __name__, url_prefix="/events")
 
@@ -272,7 +272,6 @@ def view_transactions(event_id, event_challenge_id):
     pagination_event_history = paginations.get_paginate(
         data=transactions, items_per_page=8
     )
-    print(pagination_event_history)
     return render_template(
         "/admin/events/view_transactions.html",
         event=event,

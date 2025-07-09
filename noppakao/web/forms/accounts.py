@@ -102,3 +102,23 @@ class AccountForm(BaseRegistrationForm):
         "Email", validators=[validators.Email(), validators.DataRequired()]
     )
     roles = fields.SelectField("Role", choices=[("user", "User"), ("admin", "Admin")])
+
+
+class SetupUser(FlaskForm):
+    organization = fields.SelectField("Organization")
+    display_name = fields.StringField(
+        "Display Name", validators=[validators.InputRequired()]
+    )
+
+
+class EditUserForm(FlaskForm):
+    uploaded_avatar = file.FileField(
+        "Upload team image (png or jpg) , Recommended image size: 250(px) x 230(px)",
+        validators=[
+            file.FileAllowed(["png", "jpg", "jpeg"], "You can use only jpg , png"),
+        ],
+    )
+    display_name = fields.StringField("Display name")
+    first_name = fields.StringField("ชื่อ")
+    last_name = fields.StringField("นามสกุล")
+    phone_number = fields.StringField("หมายเลขโทรศัพท์")

@@ -8,13 +8,15 @@ from flask import (
     request,
     session,
     redirect,
+    Response,
+    send_file
 )
 
 from flask_login import login_user, logout_user, login_required, current_user
 
 from noppakao import models
-from noppakao.web import forms
-from .. import oauth
+from noppakao.web import forms, acl
+from .. import oauth2
 
 from flask_bcrypt import Bcrypt
 
@@ -44,33 +46,31 @@ def login():
 
     form = forms.accounts.LoginForm()
 
-    if form.validate_on_submit():
-        username = form.username.data
-        user = models.User.objects(username=username).first()
-        events = models.Event.objects()
-        if user:
-            if user.status == "unregistered" and oauth.handle_authorized_user(form):
-                return redirect(url_for("accounts.setup_password", user_id=user.id))
-            elif user.status == "disactive":
-                messages = ["บัญชีถูกระงับ กรุณาติดต่อผู้ดูแลระบบ"]
-                return render_template(
-                    "/accounts/login.html", form=form, messages=messages
-                )
-            elif user and oauth.handle_authorized_user(form):
-                if "admin" in current_user.roles:
-                    return redirect(url_for("admin.events.index"))
-                return redirect(url_for("events.index"))
+    if not form.validate_on_submit():
+        return render_template("accounts/login.html", form=form)
 
-            else:
-                messages = ["Username หรือ Passwords ไม่ถูกต้องกรุณากรอกใหม่"]
-                return render_template(
-                    "/accounts/login.html", form=form, messages=messages
-                )
-        else:
-            messages = ["Username หรือ Passwords ไม่ถูกต้องกรุณากรอกใหม่"]
-            return render_template("/accounts/login.html", form=form, messages=messages)
+    user = models.User.objects(username=form.username.data).first()
 
-    return render_template("accounts/login.html", form=form)
+    if not user or not bcrypt.check_password_hash(
+        user.password.decode("utf-8"), form.password.data
+    ):
+        messages = ["Username หรือ Passwords ไม่ถูกต้องกรุณากรอกใหม่"]
+        return render_template("accounts/login.html", form=form, messages=messages)
+
+    if user.status == "unregistered":
+        return redirect(url_for("accounts.setup_password", user_id=user.id))
+    elif user.status == "disactive":
+        messages = ["บัญชีถูกระงับ กรุณาติดต่อผู้ดูแลระบบ"]
+        return render_template("accounts/login.html", form=form, messages=messages)
+
+    login_user(user)
+    user.last_login_date = datetime.datetime.now()
+    user.save()
+
+    if "admin" in user.roles:
+        return redirect(url_for("admin.events.index"))
+
+    return redirect(url_for("events.index"))
 
 
 @module.route(
@@ -149,3 +149,122 @@ def setup_password(user_id):
     user.save()
 
     return redirect(url_for("accounts.login"))
+
+
+@module.route("/login/<name>")
+def login_oauth(name):
+    client = oauth2.oauth2_client
+
+    scheme = request.environ.get("HTTP_X_FORWARDED_PROTO", "http")
+
+    redirect_uri = url_for(
+        "accounts.authorized_oauth", name=name, _external=True, _scheme=scheme
+    )
+    response = None
+    if name == "google":
+        response = client.google.authorize_redirect(redirect_uri)
+    elif name == "facebook":
+        response = client.facebook.authorize_redirect(redirect_uri)
+    elif name == "line":
+        response = client.line.authorize_redirect(redirect_uri)
+
+    elif name == "psu":
+        response = client.psu.authorize_redirect(redirect_uri)
+    elif name == "engpsu":
+        response = client.engpsu.authorize_redirect(redirect_uri)
+    return response
+
+
+@module.route("/auth/<name>")
+def authorized_oauth(name):
+    client = oauth2.oauth2_client
+    remote = None
+    try:
+        if name == "google":
+            remote = client.google
+        elif name == "facebook":
+            remote = client.facebook
+        elif name == "line":
+            remote = client.line
+        elif name == "psu":
+            remote = client.psu
+        elif name == "engpsu":
+            remote = client.engpsu
+
+        token = remote.authorize_access_token()
+
+    except Exception as e:
+        print("autorize access error =>", e)
+        return redirect(url_for("accounts.login"))
+
+    session["oauth_provider"] = name
+    return oauth2.handle_authorized_oauth2(remote, token)
+
+
+@module.route("/edit_user", methods=["GET", "POST"])
+def edit_user():
+    user = current_user._get_current_object()
+    form = forms.accounts.EditUserForm(obj=user)
+    if not form.validate_on_submit():
+        return render_template("/accounts/edit_user.html", form=form)
+    
+    if form.uploaded_avatar.data:
+        if not user.avatar:
+            user.avatar.put(
+                form.uploaded_avatar.data,
+                filename=form.uploaded_avatar.data.filename,
+                content_type=form.uploaded_avatar.data.content_type,
+            )
+        else:
+            user.avatar.replace(
+                form.uploaded_avatar.data,
+                filename=form.uploaded_avatar.data.filename,
+                content_type=form.uploaded_avatar.data.content_type,
+            )
+    user.display_name = form.display_name.data
+    user.first_name = form.first_name.data
+    user.phone_number = form.phone_number.data
+    user.last_name = form.last_name.data
+    user.save()
+    return redirect(url_for("accounts.index"))
+
+
+@module.route("/setup_user", methods=["GET", "POST"])
+def setup_user():
+    form = forms.accounts.SetupUser()
+    user = current_user
+    msg_error = ""
+    form.organization.choices = [("", "ไม่เลือก")] + [
+        (f"{organization.id}", f"{organization.name}")
+        for organization in models.Organization.objects(status="active")
+    ]
+    if form.display_name.data:
+        if models.User.objects(display_name=form.display_name.data).first():
+            msg_error = "Can't use display name"
+
+    if msg_error or not form.validate_on_submit():
+        return render_template(
+            "/accounts/setup_user.html", form=form, msg_error=msg_error
+        )
+    if form.organization.data:
+        organization = models.Organization.objects(id=form.organization.data).first()
+        user.organization = organization
+
+    user.display_name = form.display_name.data
+    user.save()
+
+    return redirect(url_for("index.index"))
+
+@module.route("/avatar/<filename>")
+@login_required
+def get_avatar(filename=""):
+    response = Response()
+    response.status_code = 404
+    user = current_user._get_current_object()
+    if user.avatar:
+        response = send_file(
+            user.avatar,
+            download_name=user.avatar.filename,
+            mimetype=user.avatar.content_type,
+        )
+    return response
