@@ -17,6 +17,7 @@ def process_content_index(course):
     latest_section = (
         models.CourseContent.objects(course=course, status="active")
         .order_by("-index")
+        .first()
     )
     if not latest_section:
         return 1
@@ -192,12 +193,16 @@ def create_or_edit_course_section(course_id, section_id=None):
 
     form.populate_obj(section)
     if form.header_image.data:
-        file = form.header_image.data[0] if isinstance(form.header_image.data, list) else form.header_image.data
+        file = (
+            form.header_image.data[0]
+            if isinstance(form.header_image.data, list)
+            else form.header_image.data
+        )
         media = models.Media(
-        name=file.filename,
-        type="image",
-        owner=current_user._get_current_object(),
-        ip_address=request.headers.get("X-Forwarded-For", request.remote_addr),
+            name=file.filename,
+            type="image",
+            owner=current_user._get_current_object(),
+            ip_address=request.headers.get("X-Forwarded-For", request.remote_addr),
         )
         media.file.put(file, content_type=file.content_type, filename=file.filename)
 
@@ -208,7 +213,6 @@ def create_or_edit_course_section(course_id, section_id=None):
     if not section.index:
         section.index = process_content_index(course)
     section.updated_by = current_user._get_current_object()
-
 
     section.save()
 
@@ -271,12 +275,15 @@ def delete_course_content(course_id, content_id):
     section.updated_by = current_user._get_current_object()
     section.save()
 
-    remaining_contents = models.CourseContent.objects(course=course, status="active").order_by("index")
+    remaining_contents = models.CourseContent.objects(
+        course=course, status="active"
+    ).order_by("index")
     for index, content in enumerate(remaining_contents):
         content.index = index + 1
         content.save()
 
     return redirect(url_for("admin.courses.view", course_id=course_id))
+
 
 @module.route("/<course_id>/section/<content_id>/up", methods=["POST"])
 def move_content_up(course_id, content_id):
@@ -288,11 +295,10 @@ def move_content_up(course_id, content_id):
     if not content:
         return redirect(url_for("admin.courses.view", course_id=course_id))
 
-    previous_content = (
-        models.CourseContent.objects(course=course, index=content.index - 1)
-        .first()
-    )
-    
+    previous_content = models.CourseContent.objects(
+        course=course, index=content.index - 1
+    ).first()
+
     if previous_content:
         content.index -= 1
         previous_content.index += 1
@@ -300,6 +306,7 @@ def move_content_up(course_id, content_id):
         previous_content.save()
 
     return redirect(url_for("admin.courses.view", course_id=course_id))
+
 
 @module.route("/<course_id>/section/<content_id>/down", methods=["POST"])
 def move_content_down(course_id, content_id):
@@ -311,11 +318,10 @@ def move_content_down(course_id, content_id):
     if not content:
         return redirect(url_for("admin.courses.view", course_id=course_id))
 
-    next_content = (
-        models.CourseContent.objects(course=course, index=content.index + 1)
-        .first()
-    )
-    
+    next_content = models.CourseContent.objects(
+        course=course, index=content.index + 1
+    ).first()
+
     if next_content:
         content.index += 1
         next_content.index -= 1
