@@ -28,3 +28,6 @@ COPY noppakao/web/static/package.json noppakao/web/static/package-lock.json nopp
 RUN npm install --prefix noppakao/web/static
 COPY . /app
 ENV NOPPHAKAO_SETTINGS=/app/noppakao-development.cfg
+
+RUN npm --prefix noppakao/web/static run tw:minify
+RUN npm install --prefix noppakao/web/static
