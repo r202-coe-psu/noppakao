@@ -166,7 +166,6 @@ def leaderboard():
         {
             "$match": {
                 "result": "success",
-                "type": "question",
             }
         },
         {
@@ -327,7 +326,11 @@ def complete_content(course_id, page_id):
     ).first():
         # Already completed this section
         return redirect(
-            url_for("course.course_content", course_id=course.id, page_id=next_content_number)
+            url_for(
+                "course.course_content",
+                course_id=course.id,
+                page_id=next_content_number,
+            )
         )
     transaction = models.TransactionCourse(
         type="section",
