@@ -27,15 +27,24 @@ page_id=page_id)) }}
   <div class="mt-4 grid-cols-12 gap-4 grid">
     <div class="@container col-span-10">
       <div class="rounded-md border-2 border-[#EFEEEE] min-h-96 gap-6">
-        <div
-          class="h-44 w-full bg-[url('{{ current_content.header_image_url }}')] rounded-t-md bg-cover bg-center relative">
+        <div class="relative h-44 w-full rounded-t-md overflow-hidden">
+          <!-- ภาพพื้นหลัง -->
+          <img
+            src="{{ current_content.get_image() }}"
+            alt="Header Image"
+            class="h-full w-full object-cover rounded-t-md"
+          />
+
+          <!-- overlay + text -->
           <div
-            class="text-white absolute inset-0 bg-[linear-gradient(to_right,#202020_0%,#202020_46%,rgba(80,73,73,0)_100%)] rounded-t-md">
+            class="absolute inset-0 text-white bg-[linear-gradient(to_right,#202020_0%,#202020_46%,rgba(80,73,73,0)_100%)] rounded-t-md">
             <div class="w-[70%] p-8">
               <p class="font-semibold text-lg">{{ current_content.header }}</p>
               <p class="text-sm">{{ current_content.header_description }}</p>
             </div>
-            <progress class="progress progress-primary w-full bottom-0 absolute bg-[#EFEEEE]" value="50"
+            <progress
+              class="progress progress-primary w-full bottom-0 absolute bg-[#EFEEEE]"
+              value="50"
               max="100"></progress>
           </div>
         </div>

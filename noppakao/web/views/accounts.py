@@ -9,7 +9,7 @@ from flask import (
     session,
     redirect,
     Response,
-    send_file
+    send_file,
 )
 
 from flask_login import login_user, logout_user, login_required, current_user
@@ -207,7 +207,7 @@ def edit_user():
     form = forms.accounts.EditUserForm(obj=user)
     if not form.validate_on_submit():
         return render_template("/accounts/edit_user.html", form=form)
-    
+
     if form.uploaded_avatar.data:
         if not user.avatar:
             user.avatar.put(
@@ -254,6 +254,7 @@ def setup_user():
     user.save()
 
     return redirect(url_for("index.index"))
+
 
 @module.route("/avatar/<filename>")
 @login_required

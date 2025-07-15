@@ -1,6 +1,7 @@
 import mongoengine as me
 import datetime
 from flask_login import current_user
+from flask import url_for
 
 
 STATUS_CHOICES = ["active", "disactive"]
@@ -82,6 +83,16 @@ class CourseContent(me.Document):
             return True
 
         return False
+
+    def get_image(self):
+        if self.header_image:
+            return url_for(
+                "course.get_image",
+                course_id=self.id,
+                filename=self.header_image.file.filename,
+            )
+        else:
+            return url_for("static", filename="images/example-course-thumbnail.jpg")
 
 
 class TransactionCourse(me.Document):
