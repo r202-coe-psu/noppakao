@@ -218,9 +218,8 @@ def enroll(course_id):
     if not course:
         return redirect(url_for("course.index"))
 
-    if course in current_user.enrolled_course:
-        # Already enrolled
-        return redirect(url_for("course.course_detail", course_id=course_id))
+    if models.EnrollCourse.objects(user=current_user, course=course):
+        return redirect(url_for("course.index"))
 
     enroll = models.EnrollCourse(
         user=current_user,
@@ -228,7 +227,7 @@ def enroll(course_id):
     )
     enroll.save()
 
-    return redirect(url_for("course.course_detail", course_id=course_id))
+    return redirect(url_for("course.index", course_id=course_id))
 
 
 @module.route(
