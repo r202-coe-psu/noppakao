@@ -178,27 +178,31 @@
 </script>
 
 <script>
-  function insertVideoByUrl() {
+  function insertVideoThumbnailByUrl() {
     const editor = this.quill;
     const range = editor.getSelection();
-    const url = prompt("กรอก URL ของวิดีโอ (YouTube, Vimeo ฯลฯ)");
+    const url = prompt("กรอก URL ของวิดีโอ (YouTube เท่านั้นในเวอร์ชันนี้)");
 
     if (url) {
-      let embedUrl = url;
+      let videoId = null;
       if (url.includes("youtube.com/watch")) {
         const match = url.match(/v=([^&]+)/);
-        if (match) embedUrl = `https://www.youtube.com/embed/${match[1]}`;
+        if (match) videoId = match[1];
       } else if (url.includes("youtu.be/")) {
         const match = url.match(/youtu\.be\/([^?]+)/);
-        if (match) embedUrl = `https://www.youtube.com/embed/${match[1]}`;
+        if (match) videoId = match[1];
       }
-
-      editor.insertEmbed(range.index, 'iframe', embedUrl);
+      if (videoId) {
+        const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+        editor.insertEmbed(range.index, 'image', thumbnailUrl);
+      } else {
+        alert("ไม่สามารถตรวจจับ Video ID จาก URL ได้");
+      }
     }
   }
-
-  {{ element_id }}_editor_quill.getModule("toolbar").addHandler("video", insertVideoByUrl);
+  {{ element_id }}_editor_quill.getModule("toolbar").addHandler("iframe", insertVideoThumbnailByUrl);
 </script>
+
 {%- endmacro %}
 
 
