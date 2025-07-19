@@ -185,30 +185,31 @@ def create_or_edit_course_section(course_id, section_id=None):
         section.course = course
 
     if not form.validate_on_submit():
-        form.header_image.data = None
-        print(form.errors)
         return render_template(
             "/admin/courses/create_or_edit_course_section.html", form=form
         )
 
     form.populate_obj(section)
+
     if form.header_image.data:
         file = (
             form.header_image.data[0]
             if isinstance(form.header_image.data, list)
             else form.header_image.data
         )
-        media = models.Media(
-            name=file.filename,
-            type="image",
-            owner=current_user._get_current_object(),
-            ip_address=request.headers.get("X-Forwarded-For", request.remote_addr),
-        )
-        media.file.put(file, content_type=file.content_type, filename=file.filename)
 
-        media.save()
-        media.reload()
-        section.header_image = media
+        # Ensure it's a FileStorage object
+        if hasattr(file, "filename") and file.filename:
+            media = models.Media(
+                name=file.filename,
+                type="image",
+                owner=current_user._get_current_object(),
+                ip_address=request.headers.get("X-Forwarded-For", request.remote_addr),
+            )
+            media.file.put(file, content_type=file.content_type, filename=file.filename)
+            media.save()
+            media.reload()
+            section.header_image = media
     section.type = "section"
     if not section.index:
         section.index = process_content_index(course)

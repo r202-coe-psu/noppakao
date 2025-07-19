@@ -16,9 +16,9 @@ from noppakao.web import forms
 from . import paginations
 
 import datetime
+from mongoengine.queryset.visitor import Q
 
 module = Blueprint("course", __name__, url_prefix="/course")
-from mongoengine.queryset.visitor import Q
 
 # TODO: Add authentication
 
@@ -218,7 +218,7 @@ def enroll(course_id):
     if not course:
         return redirect(url_for("course.index"))
 
-    if models.EnrollCourse.objects(user=current_user, course=course):
+    if models.EnrollCourse.objects(user=current_user, course=course, status="active"):
         return redirect(url_for("course.index"))
 
     enroll = models.EnrollCourse(

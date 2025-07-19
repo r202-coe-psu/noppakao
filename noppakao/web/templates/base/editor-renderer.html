@@ -1,148 +1,112 @@
 {% macro add_editor_library() -%}
-
 <!-- highlightjs -->
-<link
-  href="{{ url_for('static', filename='node_modules/@highlightjs/cdn-assets/styles/atom-one-dark.min.css') | add_date_url }}"
-  rel="stylesheet"
-/>
+<link href="{{ url_for('static', filename='node_modules/@highlightjs/cdn-assets/styles/atom-one-dark.min.css') | add_date_url }}" rel="stylesheet" />
 <script src="{{ url_for('static', filename='node_modules/@highlightjs/cdn-assets/highlight.min.js') | add_date_url }}"></script>
 
 <!-- Katex -->
 <script src="{{ url_for('static', filename='node_modules/katex/dist/katex.min.js') | add_date_url }}"></script>
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='node_modules/katex/dist/katex.min.css') | add_date_url }}"
-/>
+<link rel="stylesheet" href="{{ url_for('static', filename='node_modules/katex/dist/katex.min.css') | add_date_url }}" />
 
 <!-- Quill -->
 <script src="{{ url_for('static', filename='node_modules/quill/dist/quill.js') | add_date_url }}"></script>
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='node_modules/quill/dist/quill.snow.css') | add_date_url }}"
-/>
+<link rel="stylesheet" href="{{ url_for('static', filename='node_modules/quill/dist/quill.snow.css') | add_date_url }}" />
 
 <!-- quill-blot-formatter2 -->
 <script src="{{ url_for('static', filename='node_modules/@enzedonline/quill-blot-formatter2/dist/js/quill-blot-formatter2.min.js') | add_date_url }}"></script>
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='node_modules/@enzedonline/quill-blot-formatter2/dist/css/quill-blot-formatter2.css') | add_date_url }}"
-/>
+<link rel="stylesheet" href="{{ url_for('static', filename='node_modules/@enzedonline/quill-blot-formatter2/dist/css/quill-blot-formatter2.css') | add_date_url }}" />
 
 <!-- quill-image-drop-and-paste -->
 <script src="{{ url_for('static', filename='node_modules/quill-image-drop-and-paste/dist/quill-image-drop-and-paste.min.js') | add_date_url }}"></script>
 
 <!-- JQuery -->
 <script src="{{ url_for('static', filename='node_modules/jquery/dist/jquery.min.js') | add_date_url }}"></script>
-
-{%- endmacro %} 
+{%- endmacro %}
 
 
 {% macro config_editor() -%}
-<script type="text/javascript">
-  
+<script>
+  const toolbarOptions = [
+    [{ 'size': ['small', false, 'large', 'huge'] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    ['blockquote', 'code-block'],
+    ['link', 'image', 'video', 'formula'],
+    [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'list': 'check' }],
+    [{ 'script': 'sub' }, { 'script': 'super' }],
+    [{ 'indent': '-1' }, { 'indent': '+1' }],
+    [{ 'direction': 'rtl' }],
+    ['clean']
+  ];
+
   function selectLocalImage() {
-    editor = this.quill;
+    const editor = this.quill;
     const input = document.createElement('input');
-    const max_size_in_mb = 5; // 5 MB
-    const max_size = max_size_in_mb * 1024 * 1024;
     input.setAttribute('type', 'file');
-    input.setAttribute('accept', 'image/*')
+    input.setAttribute('accept', 'image/*');
     input.click();
 
     input.onchange = () => {
       const file = input.files[0];
+      const max_size_in_mb = 5;
+      const max_size = max_size_in_mb * 1024 * 1024;
       if (file && file.size <= max_size) {
         if (/^image\//.test(file.type)) {
           upload(file, editor);
-          console.log('upload image')
         } else {
-          console.warn('You could only upload images.');
+          alert('อนุญาตให้เฉพาะรูปภาพเท่านั้น');
         }
-      }else {
-        alert('รูปที่อัปโหลดต้องมีขนาดไม่เกิน '+ max_size_in_mb + ' MB');
+      } else {
+        alert('รูปภาพต้องมีขนาดไม่เกิน ' + max_size_in_mb + ' MB');
       }
     };
   }
 
   async function upload(file, editor) {
-      const fd = new FormData();
-      fd.append('image', file);
+    const fd = new FormData();
+    fd.append('image', file);
+
+    try {
       const response = await fetch("{{ url_for('media.upload', type=request.args.get('type', 'normal')) }}", {
         method: "POST",
-        body: fd,
-      }).then(function (response) {
-        if (response.status === 200) {
-          return response;
-        }
-      }).catch(err => console.error('upload error ->', err));;
-      const jsonResponse = await response.json();
-      console.log(jsonResponse);
-      insertImageToEditor(jsonResponse["media_url"], editor)
-  }
+        body: fd
+      });
 
-  function insertImageToEditor(url, editor) {
-    {# const media_url = window.location.origin + url; #}
-    const media_url = url;
-    const range = editor.getSelection();
-    editor.insertEmbed(range.index, 'image', media_url);
-  }
+      if (!response.ok) throw new Error("Upload failed");
 
-{#
-  function pasteImage(editor, e){
-    const clipboardData = e.clipboardData || window.clipboardData;
-
-    // support cut by software & copy image file directly
-    const isImage = clipboardData.types.length && clipboardData.types.join('').includes('Files');
-    if (!isImage) {
-      return;
-    }
-
-    let imgTags = editor.root.getElementsByTagName('img');
-    console.log(imgTags, imgTags.length);
-    for(let i =0; i<  clipboardData.files.length; i++){
-      const file = clipboardData.files[0];
-      upload(file, editor);
+      const json = await response.json();
+      insertImageToEditor(json.media_url, editor);
+    } catch (err) {
+      console.error("Upload error:", err);
+      alert("เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ");
     }
   } 
-#}
+  
 
+  function insertImageToEditor(url, editor) {
+    const range = editor.getSelection();
+    const media_url = url;
+    if (range) {
+      editor.insertEmbed(range.index, 'image', url);
+    }
+  }
 
   function imageDropAndPasteHandler(imageDataUrl, type, imageData) {
-    const blob = imageData.toBlob();
     const file = imageData.toFile();
-    // upload image to your server
     upload(file, this.quill);
   }
 
-
   Quill.register('modules/blotFormatter2', QuillBlotFormatter2.default);
-  Quill.register('modules/imageDropAndPaste', QuillImageDropAndPaste.default)
-
-
-  const toolbarOptions = [
-    [{ 'size': ['small', false, 'large', 'huge'] }],  // {# custom dropdown #}
-    ['bold', 'italic', 'underline', 'strike'],        // {# toggled buttons #}
-    ['blockquote', 'code-block'],
-    ['link', 'image', 'video', 'formula'],
-    [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'list': 'check' }],
-    [{ 'script': 'sub' }, { 'script': 'super' }],      // {# superscript/subscript #}
-    [{ 'indent': '-1' }, { 'indent': '+1' }],          // {# outdent/indent #}
-    [{ 'direction': 'rtl' }],                          // {# text direction #}
-    {#-
-      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-      [{ 'color': [] }, { 'background': [] }],          //  dropdown with defaults from theme
-      [{ 'font': [] }],
-      [{ 'align': [] }],
-    #}
-
-    ['clean']                                           // {# remove formatting button #}
-  ];
+  Quill.register('modules/imageDropAndPaste', QuillImageDropAndPaste.default);
 </script>
-
 
 <style>
   .ql-editor {
     min-height: 200px;
+  }
+
+  .resizable-iframe iframe {
+    width: 100%;
+    height: 400px;
+    border: none;
   }
 
   select.ql-ui {
@@ -165,15 +129,9 @@
         handler: imageDropAndPasteHandler,
       },
       blotFormatter2: {
-        align: {
-          allowAligning: true,
-        },
-        resize: {
-          allowResizing: true,
-        },
-        delete: {
-          allowKeyboardDelete: true,
-        },
+        align: { allowAligning: true, },
+        resize: { allowResizing: true, },
+        delete: { allowKeyboardDelete: true, },
         image: {
           allowAltTitleEdit: true,
           allowCompressor: true
@@ -184,23 +142,64 @@
   });
 
   {{ element_id }}_editor_quill.getModule("toolbar").addHandler("image", selectLocalImage);
-  {# 
-  {{ element_id }}_editor_quill.root.addEventListener('paste', pasteImage.bind(null, {{ element_id }}_editor_quill)); 
-  #}
-
   {{ element_id }}_editor_quill.clipboard.dangerouslyPasteHTML($("#{{ element_id }}").val());
 
   {{ element_id }}_editor_quill.on('selection-change', (delta, oldDelta, source) => {
-    $("#{{ element_id }}").val({{ element_id }}_editor_quill.getSemanticHTML());
+    $("#{{ element_id }}").val({{ element_id }}_editor_quill.root.innerHTML);
   });
 
   $("#{{ form_id }}").on("submit", function () {
-    $("#{{ element_id }}").val({{ element_id }}_editor_quill.getSemanticHTML());
-    console.log("Form submitted with data:");
+    $("#{{ element_id }}").val({{ element_id }}_editor_quill.root.innerHTML);
   });
+
 </script>
 
-{%- endmacro %} 
+<script>
+  const BlockEmbed = Quill.import('blots/block/embed');
+
+  class IframeBlot extends BlockEmbed {
+    static create(value) {
+      const iframe = document.createElement('iframe');
+      iframe.setAttribute('src', value);
+      iframe.setAttribute('frameborder', '0');
+      iframe.setAttribute('allowfullscreen', false);
+      return iframe;
+    }
+
+    static value(node) {
+      return node.getAttribute('src');
+    }
+  }
+
+  IframeBlot.blotName = 'iframe';
+  IframeBlot.tagName = 'iframe';  // ให้บันทึกตรงๆ
+  Quill.register(IframeBlot);
+
+</script>
+
+<script>
+  function insertVideoByUrl() {
+    const editor = this.quill;
+    const range = editor.getSelection();
+    const url = prompt("กรอก URL ของวิดีโอ (YouTube, Vimeo ฯลฯ)");
+
+    if (url) {
+      let embedUrl = url;
+      if (url.includes("youtube.com/watch")) {
+        const match = url.match(/v=([^&]+)/);
+        if (match) embedUrl = `https://www.youtube.com/embed/${match[1]}`;
+      } else if (url.includes("youtu.be/")) {
+        const match = url.match(/youtu\.be\/([^?]+)/);
+        if (match) embedUrl = `https://www.youtube.com/embed/${match[1]}`;
+      }
+
+      editor.insertEmbed(range.index, 'iframe', embedUrl);
+    }
+  }
+
+  {{ element_id }}_editor_quill.getModule("toolbar").addHandler("video", insertVideoByUrl);
+</script>
+{%- endmacro %}
 
 
 {% macro render_readonly_editor(element_id) -%}
@@ -213,6 +212,8 @@
     },
     theme: 'bubble'
   });
+
+  const content = document.getElementById("{{ element_id }}").value;
+  {{ element_id }}_editor_quill.clipboard.dangerouslyPasteHTML(content);
 </script>
 {%- endmacro %}
-

@@ -11,7 +11,9 @@
     "jquery": "^3.7.1",
     "katex": "^0.16.22",
     "quill": "^2.0.3",
+    "quill-better-table": "^1.2.10",
     "quill-image-drop-and-paste": "^2.0.1",
+    "quill-image-resize-module": "^3.0.0",
     "tailwindcss": "^4.0.15"
   },
   "name": "static",

@@ -132,8 +132,10 @@ page_id=page_id)) }}
         {% endif %}
         <div class="p-6 pt-0 flex flex-col gap-4">
           {% if current_content.type == "section" %}
-          <div class="overflow-y-auto p-4 text-wrap w-full whitespace-pre-wrap break-words">
-            {{ current_content.content | safe }}
+          <div id="editor-container" class="ql-snow">
+            <div id="editor" class="ql-editor overflow-y-auto p-4 text-wrap w-full whitespace-pre-wrap break-words">
+              {{ current_content.content  | safe }}
+            </div>
           </div>
           {% endif %}
           <div class="flex flex-row justify-end gap-4">
@@ -213,4 +215,7 @@ page_id=page_id)) }}
     }, 1000);
   }
 </script>
+{{ editor_renderer.add_editor_library() }}
+{{ editor_renderer.config_editor() }}
+{{ editor_renderer.render_editor('article-form','editor') }}
 {% endblock %}
