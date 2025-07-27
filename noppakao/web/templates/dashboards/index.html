@@ -1,4 +1,8 @@
-{% extends "base/default-page-user.html" %}
+{% if 'admin' in current_user.roles %}
+{% extends "base/default-page.html" %}
+{% else %}
+{% extends "/base/default-page-user.html" %}
+{% endif %}
 
 {% block title %}{{event.name}} Event Leaderboard{% endblock %}
 
