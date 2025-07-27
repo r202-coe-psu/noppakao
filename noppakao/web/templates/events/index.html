@@ -39,15 +39,20 @@
               {% endif %}
             </div>
             <div class="card-actions mt-4">
-              {% if now < event.started_date %} <button class="btn w-full">
+              {% if event.type == "team" %}
+              {% if now < event.ended_date %}
+              <a href="{{ url_for('events.joiner', event_id=event.id) }}" class="btn btn-primary w-full">
+                <i class="trophy icon"></i> Challenge
+              </a>
+              {% endif %}
+              {% endif %}
+              {% if now < event.started_date and not event.type == "team" %} 
+              <button class="btn w-full">
                 <i class="trophy icon"></i> Coming Soon...
                 </button>
-                {% elif now < event.ended_date and event.started_date < event.ended_date %} {% if
-                  current_user.check_join_event(event.id) %} {% if event.type=="team" %} <a
-                  href="{{ url_for('events.joiner', event_id=event.id) }}" class="btn btn-primary w-full">
-                  <i class="trophy icon"></i> Challenge
-                  </a>
-                  {% else %}
+                {% elif now < event.ended_date and event.started_date < event.ended_date %} 
+                {% if current_user.check_join_event(event.id) %} 
+                  {% if event.type=="solo" %} 
                   <a href="{{ url_for('events.challenge', event_id=event.id) }}" class="btn btn-primary w-full">
                     <i class="trophy icon"></i> Challenge
                   </a>

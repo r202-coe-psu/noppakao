@@ -54,7 +54,8 @@ def index():
 def joiner(event_id):
     event = models.Event.objects.get(id=event_id)
     teams = models.Team.objects(event=event)
-    return render_template("events/joiner.html", event=event, teams=teams)
+    now = datetime.datetime.now()
+    return render_template("events/joiner.html", event=event, teams=teams, now=now)
 
 
 @module.route("/<event_id>/create_team", methods=["GET", "POST"])
@@ -104,6 +105,20 @@ def join(event_id):
     event_role.save()
 
     return redirect(url_for("events.index", msg=msg))
+
+
+@module.route("/<event_id>/teams/<team_id>/leave_team", methods=["GET", "POST"])
+@login_required
+def leave_team(event_id, team_id):
+    team = models.Team.objects.get(id=team_id)
+
+    current_user_obj = current_user._get_current_object()
+
+    if current_user_obj in team.members:
+        team.members.remove(current_user_obj)
+        team.save()
+
+    return redirect(url_for("events.joiner", event_id=event_id))
 
 
 @module.route("/<event_id>/teams/<team_id>/join_team", methods=["GET", "POST"])

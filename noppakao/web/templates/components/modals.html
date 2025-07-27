@@ -20,3 +20,27 @@
   </div>
 </dialog>
 {% endmacro %}
+
+
+{% macro ModalLeaveTeam(modal_id, redirect_url ) %}
+<dialog id="{{ modal_id }}" class="modal">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg text-error text-center">
+      แจ้งเตือน !
+    </h3>
+    <p class="py-4 text-center">
+      ยืนยันการออกจากทีม
+    </p>
+    <form method="dialog">
+      <div class="grid grid-cols-2 gap-4 mt-4">
+        <button class="btn">
+          ยกเลิก
+        </button>
+        <a href="{{ redirect_url }}" class="btn bg-red-500 hover:bg-red-700 text-white">
+          ตกลง
+        </a>
+      </div>
+    </form>
+  </div>
+</dialog>
+{% endmacro %}
