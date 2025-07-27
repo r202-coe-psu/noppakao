@@ -1,4 +1,4 @@
-{% extends "base/default-page.html" %}
+{% extends "base/default-page-user.html" %}
 {% from '/components/dialog_state.html' import FailDialog , SuccessDialog , FirstBloodDialog %}
 
 {% block content %}
@@ -18,15 +18,11 @@
   <div class="flex-1 flex flex-wrap gap-4">
     {% if event.type == 'team' %}
     <div class="text-xl">Team Score: {{ event.team_score() }}</div>
-    <span class="text-xl font-semibold">|</span>
     <div class="text-xl">Team Rank: {{ event.team_rank() }}</div>
-    <span class="text-xl font-semibold">|</span>
     <div class="text-xl">Individual Score: {{ event.competitor_score() }}</div>
-    <span class="text-xl font-semibold">|</span>
     <div class="text-xl">Individual Rank: {{ event.competitor_rank() }}</div>
     {% else %}
     <div class="text-xl">Individual Score: {{ event.competitor_score() }}</div>
-    <span class="text-xl font-semibold">|</span>
     <div class="text-xl">Individual Rank: {{ event.competitor_rank() }}</div>
     {% endif %}
   </div>
@@ -154,11 +150,13 @@
                       <div class="visible w-full">
                         <button
                           class="btn btn-primary w-full text-white relative overflow-hidden group transition-all duration-300 ease-in-out">
-                          <i
+                          <i id="eye-icon"
                             class="ph-fill ph-eye absolute transform group-hover:-translate-y-10 transition-transform duration-300 ease-in-out"></i>
                           <p id="hintbtn-text-{{ event_challenge.id }}"
                             class="transform translate-y-10 group-hover:translate-y-0 transition-transform duration-300 ease-in-out">
-                            Show hint
+                            <span id="show-hint-text">
+                              Show hint
+                            </span> 
                           </p>
                           <div id="loader-{{ event_challenge.id }}" class="w-full text-center mt-2"
                             style="display: none;">
@@ -240,10 +238,14 @@
     const loader = document.getElementById("loader-" + event_challenge_id);
     const hintbtn = document.getElementById("hintbtn-" + event_challenge_id);
     const responseDiv = document.getElementById("response-" + event_challenge_id);
+    const eyeIcon = document.getElementById("eye-icon")
+    const showHintText = document.getElementById("show-hint-text")
 
     loader.style.display = "block";
     responseDiv.style.display = "none";
     responseDiv.innerHTML = "";
+    eyeIcon.style.display = "none";
+    showHintText.style.display = "none";
 
     setTimeout(function () {
       $.ajax({
