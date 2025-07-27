@@ -40,10 +40,12 @@
             </div>
             <div class="card-actions mt-4">
               {% if event.type == "team" %}
+              {% if current_user.check_join_event(event.id) %} 
               {% if now < event.ended_date %}
               <a href="{{ url_for('events.joiner', event_id=event.id) }}" class="btn btn-primary w-full">
                 <i class="trophy icon"></i> Challenge
               </a>
+              {% endif %}
               {% endif %}
               {% endif %}
               {% if now < event.started_date and not event.type == "team" %} 
