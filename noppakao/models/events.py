@@ -295,7 +295,9 @@ class EventChallenge(me.Document):
         from noppakao import models
 
         solve_challenges = models.Transaction.objects(
-            event_challenge=self, status__in=["success", "first_blood"]
+            event_challenge=self,
+            status__in=["success", "first_blood"],
+            event=self.event,
         )
 
         return len(solve_challenges)
@@ -305,13 +307,13 @@ class EventChallenge(me.Document):
 
         if self.event.type == "team":
             team = models.Team.objects(
-                members__in=[current_user], status="active"
+                members__in=[current_user], status="active", event=self.event
             ).first()
-
             solve_challenges = models.Transaction.objects(
                 event_challenge=self,
                 status__in=["success", "first_blood"],
                 team=team,
+                event=self.event,
             )
         else:
             solve_challenges = models.Transaction.objects(

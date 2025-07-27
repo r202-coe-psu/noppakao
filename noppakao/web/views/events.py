@@ -150,6 +150,7 @@ def challenge(event_id):
         users=users,
         dialog_state=dialog_state,
         challenge_resources=challenge_resources,
+        event_id=event_id,
     )
 
 
@@ -160,7 +161,7 @@ def challenge(event_id):
 def submit_challenge(event_id, challenge_id):
     event_challenge = models.EventChallenge.objects(id=challenge_id).first()
 
-    event = models.Event.objects(id=event_id).first()
+    event = models.Event.objects.get(id=event_id)
     transaction = models.Transaction.objects(
         event_challenge=event_challenge, status__in=["success", "first_blood"]
     )
@@ -181,7 +182,7 @@ def submit_challenge(event_id, challenge_id):
         transaction.user = current_user
         if event.type == "team":
             team = models.Team.objects(
-                members__in=[current_user], status="active"
+                members__in=[current_user], status="active", event=event
             ).first()
             transaction.team = team
         transaction.save()
@@ -192,7 +193,9 @@ def submit_challenge(event_id, challenge_id):
     transaction = models.Transaction()
 
     if event.type == "team":
-        team = models.Team.objects(members__in=[current_user], status="active").first()
+        team = models.Team.objects(
+            members__in=[current_user], status="active", event=event
+        ).first()
         transaction.team = team
         if event_challenge.solve_challenge():
             return redirect(
@@ -214,7 +217,6 @@ def submit_challenge(event_id, challenge_id):
         return redirect(
             url_for("events.challenge", event_id=event.id, dialog_state="fail")
         )
-
     transaction.type = "answer"
     transaction.status = "success"
     transaction.score = event_challenge.success_score
