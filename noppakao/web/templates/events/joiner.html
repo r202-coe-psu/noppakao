@@ -13,9 +13,15 @@
       </button>
     </a>
     {% else %}
-    <a class="btn btn-primary" href="{{ url_for('events.challenge', event_id=event.id) }}">
-      Go To Challenge
-    </a>
+      {% if event.started_date <= now and event.ended_date >= now %}
+        <a class="btn btn-primary" href="{{ url_for('events.challenge', event_id=event.id) }}">
+          Go To Challenge
+        </a>
+      {% else %}
+        <button disabled class="btn btn-primary">
+          Waiting to Challenge... 
+        </button>
+      {% endif %}
     {% endif %}
   </div>
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -41,6 +47,13 @@
             Join Team
           </button>
         </div>
+        {% endif %}
+        {% if current_user.check_team_event(event.id) %}
+          {{ render_modal.ModalLeaveTeam("modal_" + (team.id|string), url_for('events.leave_team', event_id=event.id,
+            team_id=team.id)) }}
+            <button class="btn btn-error w-full btn-outline" onclick="modal_{{ team.id }}.showModal()">
+              Leave Team
+            </button>
         {% endif %}
       </div>
     </div>
