@@ -1,4 +1,8 @@
+{% if 'admin' in current_user.roles %}
+{% extends "base/default-page.html" %}
+{% else %}
 {% extends "/base/default-page-user.html" %}
+{% endif %}
 {% block content %}
 
 <div class="flex justify-center items-start min-h-[65vh] p-6 bg-gray-50">
