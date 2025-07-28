@@ -93,8 +93,8 @@ BaseCourseHeaderForm = model_form(
 )
 
 class CourseSearchForm(FlaskForm):
-    name = fields.SearchField("name")
-    enrollment = fields.SelectField("enrollment")
+    name = fields.SearchField("Name")
+    enrollment = fields.SelectField("Enrollment")
 
 class CourseForm(BaseCourseForm):
     name = fields.StringField("ชื่อ Course", validators=[validators.DataRequired()])
