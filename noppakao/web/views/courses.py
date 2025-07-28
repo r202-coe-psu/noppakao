@@ -26,15 +26,39 @@ module = Blueprint("course", __name__, url_prefix="/course")
 @module.route("/", methods=["GET"])
 @login_required
 def index():
+    form = forms.courses.CourseSearchForm()
+
+    form.enrollment.choices = [
+        ("all", "All"),
+        ("enrolled", "Enrolled"),
+        ("not_enrolled", "Not Enrolled"),
+    ]
+
+
     courses = models.Course.objects(status="active").order_by("name")
     enrolled_courses = models.EnrollCourse.objects(user=current_user)
-
     enrolled_course_ids = [enrollment.course.id for enrollment in enrolled_courses]
+    
+
+    #Filter by name and enrollment status
+    name = request.args.get("name", type=str)
+    enrollment = request.args.get("enrollment", type=str)
+    if name:
+        form.name.data = name
+        courses = courses.filter(Q(name__icontains=name) | Q(description__icontains=name))
+    if enrollment:
+        form.enrollment.data = enrollment
+        if enrollment == "enrolled":
+            courses = courses.filter(id__in=enrolled_course_ids)
+        elif enrollment == "not_enrolled":
+            courses = courses.filter(Q(id__not__in=enrolled_course_ids))
+       
     for course in courses:
         course.is_enrolled = course.id in enrolled_course_ids
 
     return render_template(
         "courses/index.html",
+        form=form,
         courses=courses,
     )
 
