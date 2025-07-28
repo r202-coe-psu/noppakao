@@ -56,6 +56,7 @@ def course_content(course_id, page_id=None):
     if not course:
         return redirect(url_for("course.index"))
 
+    # Check Enroll
     enroll_course = models.EnrollCourse.objects(
         course=course, user=current_user._get_current_object()
     ).first()
@@ -76,6 +77,7 @@ def course_content(course_id, page_id=None):
         enroll_course.index = int(page_id)
         enroll_course.save()
 
+    # Get current content
     current_content = models.CourseContent.objects(
         course=course_id, index=page_id
     ).first()
@@ -92,10 +94,16 @@ def course_content(course_id, page_id=None):
             filename=current_content.header_image.file.filename,
         )
     else:
-        current_content.header_image_url = "/static/images/example-course-thumbnail.jpg"
+        current_content.header_image_url = url_for("static", filename="images/example-course-thumbnail.jpg")
+
 
     # check is content completed
+    completed_count = 0
+    course.total_exp = 0
+    course.current_exp = 0
+        
     for content in contents:
+        course.total_exp += content.exp_
         transaction = models.TransactionCourse.objects(
             course=course,
             course_content=content,
@@ -104,9 +112,25 @@ def course_content(course_id, page_id=None):
         ).first()
 
         if transaction:
+            course.current_exp += content.exp_
+            completed_count += 1
             content.is_completed = True
         else:
             content.is_completed = False
+            
+    # Check if the last content is completed
+    # Check if before the last content is completed
+    if current_content.index == len(contents) and completed_count == len(contents) - 1:
+        transaction = models.TransactionCourse(
+            type="section",
+            course=course,
+            course_content=current_content,
+            created_by=current_user._get_current_object(),
+            result="success",
+        )
+        transaction.save()
+        contents[current_content.index - 1].is_completed = True
+        
 
     return render_template(
         "courses/content.html",
@@ -300,16 +324,18 @@ def submit_question(course_id, page_id):
 @module.route("/<course_id>/complete/<page_id>", methods=["GET"])
 @login_required
 def complete_content(course_id, page_id):
+    course = models.Course.objects(id=course_id).first()
     current_content = models.CourseContent.objects(
         course=course_id, index=page_id
     ).first()
-
+    
     if not current_content:
         return redirect(url_for("course.course_detail", course_id=course_id))
 
     next_content_number = int(page_id) + 1
 
-    if current_content.type != "section":
+    # Just redirect if type is question
+    if current_content.type == "question":
         return redirect(
             url_for(
                 "course.course_content",
@@ -318,14 +344,14 @@ def complete_content(course_id, page_id):
             )
         )
 
-    course = models.Course.objects(id=course_id).first()
-    if transaction := models.TransactionCourse.objects(
+    transaction_current_content = models.TransactionCourse.objects(
         course=course,
         course_content=current_content,
         created_by=current_user._get_current_object(),
         result="success",
-    ).first():
-        # Already completed this section
+    ).first()
+    # Already completed this section
+    if transaction_current_content:
         return redirect(
             url_for(
                 "course.course_content",
@@ -333,14 +359,15 @@ def complete_content(course_id, page_id):
                 page_id=next_content_number,
             )
         )
-    transaction = models.TransactionCourse(
-        type="section",
-        course=course,
-        course_content=current_content,
-        created_by=current_user,
-        result="success",
-    )
-    transaction.save()
+    else:
+        transaction = models.TransactionCourse(
+            type="section",
+            course=course,
+            course_content=current_content,
+            created_by=current_user,
+            result="success",
+        )
+        transaction.save()
 
     return redirect(
         url_for(
