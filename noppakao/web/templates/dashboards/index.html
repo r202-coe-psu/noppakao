@@ -156,17 +156,20 @@
               <td>{{ loop.index }}</td>
               <td>{{ user.display_name }}</td>
               <td>
-                {% if user.organization_id %}
+                {% if user.organization_image %}
                 <div class="avatar">
                   <div class="w-9 h-9 rounded">
                     <img src="{{ user.organization_image }}" alt="org logo">
                   </div>
                 </div>
+                <span class="ml-2">
+                  {{ user.organization_name }}
+                </span>
                 {% else %}
                 <span class="opacity-70">No Organization</span>
                 {% endif %}
               </td>
-              <td>{{ user.organization_name }}</td>
+              <td></td>
               <td class="text-left">{{ user.total_score if user.total_score else 0 }}</td>
             </tr>
             {% endfor %}
