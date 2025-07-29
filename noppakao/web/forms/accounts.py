@@ -121,6 +121,7 @@ class EditUserForm(FlaskForm):
     display_name = fields.StringField("Display name")
     first_name = fields.StringField("ชื่อ")
     last_name = fields.StringField("นามสกุล")
+    organization = fields.SelectField("Organization")
     phone_number = fields.StringField(
         "หมายเลขโทรศัพท์",
         validators=[

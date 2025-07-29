@@ -23,6 +23,9 @@
         {{ renderer.file_input(form.uploaded_avatar) }}
       </div>
       <div class="col-span-2">
+        {{  renderer.render_select_field(form.organization)}}
+      </div>
+      <div class="col-span-2">
         {{ renderer.render_field(form.display_name) }}
       </div>
       {{ renderer.render_field(form.first_name) }}

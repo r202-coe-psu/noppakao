@@ -205,7 +205,15 @@ def authorized_oauth(name):
 def edit_user():
     user = current_user._get_current_object()
     form = forms.accounts.EditUserForm(obj=user)
+    form.organization.choices = [
+        (f"{organization.id}", f"{organization.name}")
+        for organization in models.Organization.objects(status="active")
+    ]
+
     if not form.validate_on_submit():
+        if current_user.organization:
+            form.organization.data = str(current_user.organization.id)
+
         return render_template("/accounts/edit_user.html", form=form)
 
     if form.uploaded_avatar.data:
@@ -221,6 +229,7 @@ def edit_user():
                 filename=form.uploaded_avatar.data.filename,
                 content_type=form.uploaded_avatar.data.content_type,
             )
+    user.organization = models.Organization.objects.get(id=form.organization.data)
     user.display_name = form.display_name.data
     user.first_name = form.first_name.data
     user.phone_number = form.phone_number.data
