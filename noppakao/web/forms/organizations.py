@@ -29,9 +29,9 @@ BaseOrganizationForm = model_form(
 
 class OrganizationForm(BaseOrganizationForm):
     uploaded_image = fields.FileField(
-        "Image file (.png , .jpg , .jpeg)",
+        "Upload user image (png or jpg) , Recommended image size: 250(px) x 230(px)",
         validators=[
-            file.FileAllowed(["jpg", "png", "jpeg"], "Images only!"),
+            file.FileAllowed(["png", "jpg", "jpeg"], "You can use only jpg , png"),
         ],
     )
 
