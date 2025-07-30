@@ -78,6 +78,7 @@
   <div class="tab-content bg-base-100 border-base-300 p-6">
     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
       {% for event in events %}
+      {% if event.register_started_date < now and event.register_ended_date > now %}
       {% if event.status == "active" and not current_user.check_join_event(event.id) and now < event.publish_ended_date
         and now> event.publish_started_date %}
         <div class="card bg-base-100 shadow-xl">
@@ -121,45 +122,6 @@
         </div>
     </div>
     {% endif %}
-    {% endfor %}
-  </div>
-</div>
-
-<input type="radio" name="tabs_3" class="tab" aria-label="History Events" />
-<div class="tab-content bg-base-100 border-base-300 p-6">
-  <div class="grid">
-    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-      {% for event in events %}
-      {% if event.status == "active" and event.ended_date < now %} <div class="card bg-base-100 shadow-xl">
-        <div class="card-body">
-          <h3 class="card-title">
-            <i class="users icon"></i> {{ event.name }}
-          </h3>
-          <div class="text-sm opacity-70 mt-2">
-            {% if event.started_date == event.ended_date %}
-            <span>
-              <i class="ph ph-calendar-blank"></i>
-              {{ event.started_date.strftime("%d %b %Y") }}
-            </span>
-            {% else %}
-            <span>
-              <i class="ph ph-calendar-blank"></i>
-              {% if event.started_date.strftime("%m") == event.ended_date.strftime("%m") %}
-              {{ event.started_date.strftime("%d") }} - {{ event.ended_date.strftime("%d %b %Y") }}
-              {% else %}
-              {{ event.started_date.strftime("%d %b %Y") }} - {{ event.ended_date.strftime("%d %b %Y") }}
-              {% endif %}
-            </span>
-            {% endif %}
-          </div>
-          <div class="mt-4 text-error">Event time out.</div>
-          <div class="mt-4">
-            <a href="{{ url_for('dashboards.index', event_id=event.id) }}" class="btn btn-primary w-full">
-              <i class="sort amount down icon"></i> Dashboard
-            </a>
-          </div>
-        </div>
-    </div>
     {% endif %}
     {% endfor %}
   </div>
