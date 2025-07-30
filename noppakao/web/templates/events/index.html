@@ -9,7 +9,8 @@
   <div class="tab-content bg-base-100 border-base-300 p-6">
     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
       {% for event in events %}
-      {% if event.status == "active" %}
+      {% if event.status == "active" and current_user.check_join_event(event.id) %}
+      
       {% if now < event.publish_ended_date and now> event.publish_started_date %}
         <div class="card bg-base-100 shadow-xl">
           <div class="card-body">
@@ -111,7 +112,7 @@
               <form action="{{ url_for('events.join', event_id=event.id) }}" class="space-y-4">
                 <input type="text" id="code" name="code" placeholder="Enter Code" class="input input-bordered w-full">
                 <button type="submit" class="btn bg-[#CDDFEF] w-full">
-                  <i class="add circle icon"></i> Enroll
+                  <i class="add circle icon"></i> Join
                 </button>
                 </form>
                 {% elif now < event.register_started_date %} <div>It's not time to register yet.</div>
