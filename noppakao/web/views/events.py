@@ -212,13 +212,14 @@ def submit_challenge(event_id, challenge_id):
             members__in=[current_user], status="active", event=event
         ).first()
         transaction.team = team
-        if event_challenge.solve_challenge():
-            return redirect(
-                url_for(
-                    "events.challenge",
-                    event_id=event.id,
-                )
+
+    if event_challenge.solve_challenge():
+        return redirect(
+            url_for(
+                "events.challenge",
+                event_id=event.id,
             )
+        )
 
     if not event_challenge.check_answer(answer):
         transaction.type = "answer"
@@ -232,6 +233,7 @@ def submit_challenge(event_id, challenge_id):
         return redirect(
             url_for("events.challenge", event_id=event.id, dialog_state="fail")
         )
+
     transaction.type = "answer"
     transaction.status = "success"
     transaction.score = event_challenge.success_score
