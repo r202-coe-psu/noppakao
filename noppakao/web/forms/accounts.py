@@ -125,7 +125,7 @@ class EditUserForm(FlaskForm):
     phone_number = fields.StringField(
         "หมายเลขโทรศัพท์",
         validators=[
-            validators.DataRequired(),
+            validators.Optional(),
             validators.Length(min=10, max=10, message="หมายเลขโทรศัพท์ต้องมี 10 หลัก"),
             validators.Regexp(r"^\d{10}$", message="กรุณากรอกเฉพาะตัวเลข 10 หลักเท่านั้น"),
         ],
