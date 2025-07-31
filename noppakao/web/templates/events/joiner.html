@@ -48,7 +48,7 @@
           </button>
         </div>
         {% endif %}
-        {% if current_user.check_team_event(event.id) %}
+        {% if current_user.check_team_event(event.id,team.id) %}
           {{ render_modal.ModalLeaveTeam("modal_" + (team.id|string), url_for('events.leave_team', event_id=event.id,
             team_id=team.id)) }}
             <button class="btn btn-error w-full btn-outline" onclick="modal_{{ team.id }}.showModal()">
