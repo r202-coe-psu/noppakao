@@ -68,7 +68,6 @@ class User(me.Document, UserMixin):
 
         total_exp = transactions[0]["total_exp"] if transactions else 0
 
-
         level_config = models.LevelConfig.objects.first()
         user_progress = {
             "exp": total_exp,
@@ -79,45 +78,59 @@ class User(me.Document, UserMixin):
         }
         if not level_config:
             return user_progress
-        
+
         for level, exp in level_config.level_exp_table.items():
             if total_exp < int(exp):
                 user_progress["level"] = int(level) - 1
-                user_progress["current_exp_progress"] = total_exp - int(level_config.level_exp_table.get(str(int(level) - 1), 0))
-                user_progress["total_exp_progress"] = int(exp) - int(level_config.level_exp_table.get(str(int(level) - 1), 0))
+                user_progress["current_exp_progress"] = total_exp - int(
+                    level_config.level_exp_table.get(str(int(level) - 1), 0)
+                )
+                user_progress["total_exp_progress"] = int(exp) - int(
+                    level_config.level_exp_table.get(str(int(level) - 1), 0)
+                )
                 user_progress["percentage"] = (
-                    user_progress["current_exp_progress"]
-                    / user_progress["total_exp_progress"]
-                ) * 100 if user_progress["total_exp_progress"] > 0 else 0
+                    (
+                        user_progress["current_exp_progress"]
+                        / user_progress["total_exp_progress"]
+                    )
+                    * 100
+                    if user_progress["total_exp_progress"] > 0
+                    else 0
+                )
                 return user_progress
         else:
             # case when total_exp is greater than the last level's exp
             user_progress["level"] = len(level_config.level_exp_table)
             user_progress["current_exp_progress"] = total_exp - int(
-                level_config.level_exp_table.get(
-                    str(user_progress["level"]), 0
-                )
+                level_config.level_exp_table.get(str(user_progress["level"]), 0)
             )
-            user_progress["total_exp_progress"] = 100  # Assuming 100% for the last level
+            user_progress["total_exp_progress"] = (
+                100  # Assuming 100% for the last level
+            )
             user_progress["percentage"] = (
-                user_progress["current_exp_progress"]
-                / user_progress["total_exp_progress"]
-            ) * 100 if user_progress["total_exp_progress"] > 0 else 0
+                (
+                    user_progress["current_exp_progress"]
+                    / user_progress["total_exp_progress"]
+                )
+                * 100
+                if user_progress["total_exp_progress"] > 0
+                else 0
+            )
         return user_progress
-    
+
     def get_course_streak(self):
         today = datetime.datetime.now()
         today_start = datetime.datetime.combine(today.date(), datetime.time.min)
         today_end = datetime.datetime.combine(today.date(), datetime.time.max)
-        
+
         # Check if there's activity today
         is_today_activity = models.TransactionCourse.objects(
             status="active",
             created_by=self,
             create_date__gte=today_start,
-            create_date__lte=today_end
+            create_date__lte=today_end,
         ).first()
-        
+
         # If no activity today, check if there was activity yesterday to continue the streak
         if not is_today_activity:
             yesterday_start = today_start - datetime.timedelta(days=1)
@@ -126,43 +139,49 @@ class User(me.Document, UserMixin):
                 status="active",
                 created_by=self,
                 create_date__gte=yesterday_start,
-                create_date__lte=yesterday_end
+                create_date__lte=yesterday_end,
             ).first()
-            
+
             # If no activity yesterday either, return 0
             if not is_yesterday_activity:
                 return 0
-            
+
             today_start = yesterday_start
             today_end = yesterday_end
-        
+
         # Count the streak starting from the reference day
         streak = 1  # Start with 1 for the reference day
-        
+
         # Check each previous day until we find a gap
         while True:
             prev_day_start = today_start - datetime.timedelta(days=streak)
             prev_day_end = today_end - datetime.timedelta(days=streak)
-            
+
             activity = models.TransactionCourse.objects(
                 status="active",
                 created_by=self,
                 create_date__gte=prev_day_start,
-                create_date__lte=prev_day_end
+                create_date__lte=prev_day_end,
             ).first()
-            
+
             if not activity:
                 break
-                
+
             streak += 1
-            
+
         return streak
 
-    def check_team_event(self, event_id):
+    def check_team_event(self, event_id, team_id=None):
         from noppakao import models
+        from mongoengine.queryset.visitor import Q
 
+        query = Q(members__in=[self])
         event = models.Event.objects(id=event_id).first()
-        team = models.Team.objects(event=event, members__in=[self]).first()
+        query &= Q(event=event)
+        if team_id:
+            query &= Q(id=team_id)
+
+        team = models.Team.objects(query).first()
         if team:
             return True
 
