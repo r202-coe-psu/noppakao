@@ -79,7 +79,7 @@
   <div class="tab-content bg-base-100 border-base-300 p-6">
     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
       {% for event in events %}
-      {% if event.register_started_date < now and event.register_ended_date > now %}
+      {% if event.register_ended_date > now %}
       {% if event.status == "active" and not current_user.check_join_event(event.id) and now < event.publish_ended_date
         and now> event.publish_started_date %}
         <div class="card bg-base-100 shadow-xl">
@@ -115,7 +115,7 @@
                   <i class="add circle icon"></i> Join
                 </button>
                 </form>
-                {% elif now < event.register_started_date %} <div>It's not time to register yet.</div>
+                {% elif now < event.register_started_date %} <div>Waiting the Competition.</div>
             {% elif now > event.register_started_date %}
             <div>Registration time has expired.</div>
             {% endif %}
