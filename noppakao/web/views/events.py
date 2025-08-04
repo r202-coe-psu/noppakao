@@ -144,6 +144,9 @@ def challenge(event_id):
     if not current_user.check_team_event(event_id) and event.type == "team":
         return redirect(url_for("events.joiner", event_id=event_id))
 
+    if event.started_date > datetime.datetime.now():
+        return redirect(url_for("events.index"))
+
     teams = models.Team.objects(status="active").order_by("-score", "updated_date")
     users = models.User.objects(status="active", roles__ne="admin").order_by(
         "-score", "updated_date"
