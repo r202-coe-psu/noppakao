@@ -34,25 +34,25 @@ def index():
         ("not_enrolled", "Not Enrolled"),
     ]
 
-
     courses = models.Course.objects(status="active").order_by("name")
     enrolled_courses = models.EnrollCourse.objects(user=current_user)
     enrolled_course_ids = [enrollment.course.id for enrollment in enrolled_courses]
-    
 
-    #Filter by name and enrollment status
+    # Filter by name and enrollment status
     name = request.args.get("name", type=str)
     enrollment = request.args.get("enrollment", type=str)
     if name:
         form.name.data = name
-        courses = courses.filter(Q(name__icontains=name) | Q(description__icontains=name))
+        courses = courses.filter(
+            Q(name__icontains=name) | Q(description__icontains=name)
+        )
     if enrollment:
         form.enrollment.data = enrollment
         if enrollment == "enrolled":
             courses = courses.filter(id__in=enrolled_course_ids)
         elif enrollment == "not_enrolled":
             courses = courses.filter(Q(id__not__in=enrolled_course_ids))
-       
+
     for course in courses:
         course.is_enrolled = course.id in enrolled_course_ids
 
@@ -118,14 +118,15 @@ def course_content(course_id, page_id=None):
             filename=current_content.header_image.file.filename,
         )
     else:
-        current_content.header_image_url = url_for("static", filename="images/example-course-thumbnail.jpg")
-
+        current_content.header_image_url = url_for(
+            "static", filename="images/example-course-thumbnail.jpg"
+        )
 
     # check is content completed
     completed_count = 0
     course.total_exp = 0
     course.current_exp = 0
-        
+
     for content in contents:
         course.total_exp += content.exp_
         transaction = models.TransactionCourse.objects(
@@ -141,7 +142,7 @@ def course_content(course_id, page_id=None):
             content.is_completed = True
         else:
             content.is_completed = False
-            
+
     # Check if the last content is completed
     # Check if before the last content is completed
     if current_content.index == len(contents) and completed_count == len(contents) - 1:
@@ -154,7 +155,6 @@ def course_content(course_id, page_id=None):
         )
         transaction.save()
         contents[current_content.index - 1].is_completed = True
-        
 
     return render_template(
         "courses/content.html",
@@ -231,9 +231,10 @@ def leaderboard():
             "$group": {
                 "_id": "$created_by.$id",
                 "total_exp": {"$sum": "$course_content_doc.exp_"},
+                "earliest_created": {"$min": "$create_date"},
             }
         },
-        {"$sort": {"total_exp": -1}},  # Sort by total_exp in descending order
+        {"$sort": {"total_exp": -1, "earliest_created": 1}},
     ]
 
     transactions = list(
@@ -352,7 +353,7 @@ def complete_content(course_id, page_id):
     current_content = models.CourseContent.objects(
         course=course_id, index=page_id
     ).first()
-    
+
     if not current_content:
         return redirect(url_for("course.course_detail", course_id=course_id))
 

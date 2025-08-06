@@ -1,7 +1,44 @@
 {% extends "base/default-page-user.html" %}
 {% block content %}
+
 <div class="flex flex-col gap-7">
     <p class="font-bold text-2xl">Leaderboard</p>
+    {% set page_num = request.args.get('page', 1) | int %}
+    {% if page_num == 1 %}
+    <!-- Podium Section -->
+     <div class="flex items-end justify-center gap-4 w-full max-w-2xl mx-auto">
+        <!-- 2nd Place -->
+        <div class="flex flex-col items-center w-28">
+            <!-- Silver Trophy -->
+            <div class="flex flex-col items-center">
+                <i class="ph ph-trophy text-5xl text-[#C0C0C0]"></i>
+                <span class="text-sm font-semibold text-[#C0C0C0] mt-1 truncate w-24 text-center">{{ pagination.data[1]['display_name'] if pagination.data|length > 1 else '' }}</span>
+                <span class="text-base font-semibold text-[#C0C0C0] mt-1 truncate w-28 text-center"> {{ "Level : " + pagination.data[1]['level']|string if pagination.data|length > 1 else '' }}</span>
+            </div>
+            <div class="bg-[#c0c0c0] text-white rounded-t-lg flex items-center justify-center w-full h-24 text-xl font-bold shadow-md mt-2">2</div>
+        </div>
+        <!-- 1st Place -->
+        <div class="flex flex-col items-center w-32">
+            <!-- Gold Trophy -->
+            <div class="flex flex-col items-center">
+                <i class="ph ph-trophy text-5xl text-[#FFD700]"></i>
+                <span class="text-base font-semibold text-[#FFD700] mt-1 truncate w-28 text-center">{{ pagination.data[0]['display_name'] if pagination.data|length > 0 else '' }}</span>
+                <span class="text-base font-semibold text-[#FFD700] mt-1 truncate w-28 text-center">{{ "Level : " + pagination.data[0]['level']|string if pagination.data|length > 0 else '' }}</span>
+            </div>
+            <div class="bg-[#ffd700] text-white rounded-t-lg flex items-center justify-center w-full h-32 text-2xl font-bold shadow-lg mt-2">1</div>
+        </div>
+        <!-- 3rd Place -->
+        <div class="flex flex-col items-center w-28">
+            <!-- Bronze Trophy -->
+            <div class="flex flex-col items-center">
+                <i class="ph ph-trophy text-5xl text-[#cd7f32]"></i>
+                <span class="text-sm font-semibold text-[#cd7f32] mt-1 truncate w-24 text-center">{{ pagination.data[2]['display_name'] if pagination.data|length > 2 else '' }}</span>
+                <span class="text-base font-semibold text-[#cd7f32] mt-1 truncate w-28 text-center">{{"Level : " + pagination.data[2]['level']|string if pagination.data|length > 2 else '' }}</span>
+            </div>
+            <div class="bg-[#cd7f32] text-white rounded-t-lg flex items-center justify-center w-full h-20 text-lg font-bold shadow-md mt-2">3</div>
+        </div>
+    </div>
+    {% endif %}
     <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
         <table class="table">
             <thead>
@@ -14,13 +51,16 @@
             </thead>
             <tbody>
                 {% for user in pagination.data %}
+                {% set index = (loop.index + ((request.args.get('page', 1) | int - 1) * pagination.items_per_page)) %}
+                {% if index > 3 %}
                 <tr>
-                    <th class="text-center">{{ loop.index + ((request.args.get('page', 1) | int - 1) * pagination.items_per_page) }}</th>
+                    <th class="text-center">{{ index }}</th>
                     <td>{{ user['display_name'] }}</td>
                     <td class="text-center">{{ user['level'] }}</td>
                     <td><progress class="progress progress-primary w-full" value="{{ user['percentage'] }}" max="100"></progress>
                     </td>
                 </tr>
+                {% endif %}
                 {% endfor %}
             </tbody>
         </table>
