@@ -15,7 +15,7 @@
             <tbody>
                 {% for user in pagination.data %}
                 <tr>
-                    <th class="text-center">{{ loop.index }}</th>
+                    <th class="text-center">{{ loop.index + ((request.args.get('page', 1) | int - 1) * pagination.items_per_page) }}</th>
                     <td>{{ user['display_name'] }}</td>
                     <td class="text-center">{{ user['level'] }}</td>
                     <td><progress class="progress progress-primary w-full" value="{{ user['percentage'] }}" max="100"></progress>
