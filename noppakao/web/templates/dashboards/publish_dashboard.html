@@ -25,13 +25,13 @@
           </div>
 
           <div class="overflow-x-auto">
-            <table class="table table-zebra w-full">
+            <table class="table table-zebra w-full table-fixed">
               <thead class="bg-primary/80 text-white">
                 <tr>
                   <th class="w-16">Ranking</th>
                   <th class="w-16">Team</th>
-                  <th></th>
-                  <th class="text-left">Score</th>
+                  <th class="w-2/3">Name & Organization</th>
+                  <th class="text-left w-20">Score</th>
                 </tr>
               </thead>
               <tbody>
@@ -55,10 +55,10 @@
                       </div>
                     </div>
                   </td>
-                  <td>
-                    <div class="font-bold break-words">{{ team.team.name }}
+                  <td class="break-words overflow-hidden">
+                    <div class="font-bold break-words overflow-wrap-anywhere">{{ team.team.name }}
                     </div>
-                    <div class="text-sm opacity-70 break-words">{{ team.organizations | join(' / ', attribute='name') }}
+                    <div class="text-sm opacity-70 break-words overflow-wrap-anywhere">{{ team.organizations | join(' / ', attribute='name') }}
                     </div>
                   </td>
                   <td class="text-right">{{ 0 if not team.total_score else team.total_score }}</td>
