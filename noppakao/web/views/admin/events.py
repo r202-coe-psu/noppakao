@@ -17,6 +17,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from .. import paginations
 
 from noppakao.web import forms, models, acl, oauth2
+from mongoengine import Q
 
 module = Blueprint("events", __name__, url_prefix="/events")
 
@@ -256,7 +257,6 @@ def delete_event_challenge(event_challenge_id):
         url_for("admin.events.challenge", event_id=event_challenge.event.id),
     )
 
-
 @module.route(
     "/<event_id>/event_challenges/<event_challenge_id>/view_transactions",
     methods=["GET", "POST"],
@@ -264,18 +264,53 @@ def delete_event_challenge(event_challenge_id):
 @acl.roles_required("admin")
 def view_transactions(event_id, event_challenge_id):
     event = models.Event.objects(id=event_id).first()
+    form = forms.events.SearchTransaction()
+    
+    form.team.choices = [("", "ไม่มี")] + [(str(team.id), team.name) for team in models.Team.objects(event=event, status="active")]
+    form.status.choices = [("", "ไม่มี")] + [("first_blood", "First blood"), ("success", "Success"), ("fail", "Fail"), ("hint", "Hint")]
+    
+    query = Q(event_challenge=event_challenge_id)
+    
+    if request.args.get("team") and request.args.get("team").strip():
+        form.team.data = str(request.args.get("team"))
+        query &= Q(team=form.team.data)
+    
+    if request.args.get("status") and request.args.get("status").strip():
+        form.status.data = str(request.args.get("status"))
+        query &= Q(status=form.status.data)
+    
     event_challenge = models.EventChallenge.objects(id=event_challenge_id).first()
-    transactions = models.Transaction.objects(event_challenge=event_challenge).order_by(
-        "-created_date"
-    )
+    transactions = models.Transaction.objects(query).order_by("-created_date")
 
     pagination_event_history = paginations.get_paginate(
         data=transactions, items_per_page=8
     )
+    
     return render_template(
         "/admin/events/view_transactions.html",
         event=event,
         event_challenge=event_challenge,
         transactions=pagination_event_history["data"],
         pagination=pagination_event_history,
+        form=form,
     )
+
+
+@module.route(
+    "/<event_id>/transactions/<transaction_id>/delete",
+    methods=["GET", "POST"],
+)
+@acl.roles_required("admin")
+def delete_transaction(event_id, transaction_id):
+    transaction = models.Transaction.objects(id=transaction_id).first()
+    if transaction:
+        event_challenge_id = transaction.event_challenge.id
+        transaction.delete()
+        return redirect(
+            url_for(
+                "admin.events.view_transactions",
+                event_id=event_id,
+                event_challenge_id=event_challenge_id,
+            )
+        )
+    return redirect(url_for("admin.events.index"))
