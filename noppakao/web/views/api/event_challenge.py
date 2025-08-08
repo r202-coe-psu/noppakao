@@ -16,7 +16,7 @@ def show_hint(event_id, event_challege_id):
     event_challenge = models.EventChallenge.objects(id=event_challege_id).first()
 
     if event.type == "team":
-        team = models.Team.objects(members__in=[current_user], status="active").first()
+        team = models.Team.objects(members__in=[current_user], status="active", event=event).first()
         trasaction = models.Transaction.objects(
             event_challenge=event_challenge, type="hint", team=team
         ).first()
