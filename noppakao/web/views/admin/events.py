@@ -279,3 +279,23 @@ def view_transactions(event_id, event_challenge_id):
         transactions=pagination_event_history["data"],
         pagination=pagination_event_history,
     )
+
+
+@module.route(
+    "/<event_id>/transactions/<transaction_id>/delete",
+    methods=["GET", "POST"],
+)
+@acl.roles_required("admin")
+def delete_transaction(event_id, transaction_id):
+    transaction = models.Transaction.objects(id=transaction_id).first()
+    if transaction:
+        event_challenge_id = transaction.event_challenge.id
+        transaction.delete()
+        return redirect(
+            url_for(
+                "admin.events.view_transactions",
+                event_id=event_id,
+                event_challenge_id=event_challenge_id,
+            )
+        )
+    return redirect(url_for("admin.events.index"))
