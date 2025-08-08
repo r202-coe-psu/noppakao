@@ -330,7 +330,7 @@ class EventChallenge(me.Document):
         event = models.Event.objects(id=event_id).first()
         if event.type == "team":
             team = models.Team.objects(
-                members__in=[current_user], status="active"
+                members__in=[current_user], status="active",event=event
             ).first()
             trasaction = models.Transaction.objects(
                 event_challenge=self, type="hint", team=team
