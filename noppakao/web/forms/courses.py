@@ -15,6 +15,7 @@ BaseCourseForm = model_form(
         "level": {"label": "ระดับ"},
         "owner": {"label": "เจ้าของ Course"},
         "type": {"label": "ประเภท Course"},
+        "cover_image": {"label": "รูปภาพ Course"},
     },
 )
 
@@ -92,9 +93,11 @@ BaseCourseHeaderForm = model_form(
     },
 )
 
+
 class CourseSearchForm(FlaskForm):
     name = fields.SearchField("Name")
     enrollment = fields.SelectField("Enrollment")
+
 
 class CourseForm(BaseCourseForm):
     name = fields.StringField("ชื่อ Course", validators=[validators.DataRequired()])
@@ -108,6 +111,7 @@ class CourseForm(BaseCourseForm):
     type = fields.SelectField(
         "ประเภท Course", coerce=str, validators=[validators.DataRequired()]
     )
+    cover_image = file.MultipleFileField("รูปภาพ Course")
 
 
 class CourseTypeForm(BaseCourseTypeForm):

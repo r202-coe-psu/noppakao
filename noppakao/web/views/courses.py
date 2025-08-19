@@ -111,16 +111,8 @@ def course_content(course_id, page_id=None):
     if not current_content:
         return redirect(url_for("course.course_detail", course_id=course_id))
 
-    if current_content.header_image:
-        current_content.header_image_url = url_for(
-            "media.download",
-            media_id=current_content.header_image.id,
-            filename=current_content.header_image.file.filename,
-        )
-    else:
-        current_content.header_image_url = url_for(
-            "static", filename="images/example-course-thumbnail.jpg"
-        )
+    # Set header image URL
+    current_content.header_image_url = current_content.get_image()
 
     # check is content completed
     completed_count = 0
@@ -404,14 +396,26 @@ def complete_content(course_id, page_id):
 @module.route("/<course_id>/image/<filename>")
 @login_required
 def get_image(course_id, filename=""):
+    type = request.args.get("type", "course_cover")
     response = Response()
     response.status_code = 404
-    course = models.CourseContent.objects.get(id=course_id)
-    if course.header_image:
-        response = send_file(
-            course.header_image.file,
-            download_name=course.header_image.file.filename,
-            mimetype=course.header_image.file.content_type,
-        )
+    # Check if course or course content
+    if type == "course_cover":
+        course = models.Course.objects.get(id=course_id)
+        if course.cover_image:
+            response = send_file(
+                course.cover_image.file,
+                download_name=course.cover_image.file.filename,
+                mimetype=course.cover_image.file.content_type,
+            )
+
+    if type == "course_content":
+        course = models.CourseContent.objects.get(id=course_id)
+        if course.header_image:
+            response = send_file(
+                course.header_image.file,
+                download_name=course.header_image.file.filename,
+                mimetype=course.header_image.file.content_type,
+            )
 
     return response

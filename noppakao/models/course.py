@@ -16,6 +16,8 @@ class Course(me.Document):
     owner = me.ReferenceField("User", dbref=True, required=True)  # เจ้าของ course
     type = me.ReferenceField("CourseType", dbref=True, required=True)  # Type ของ course
 
+    cover_image = me.ReferenceField("Media", dbref=True)  # รูปภาพของ course
+
     created_by = me.ReferenceField("User", dbref=True, required=True)  # คนสุดท้ายที่กดอัพเดต
     updated_by = me.ReferenceField("User", dbref=True, required=True)  # คนสุดท้ายที่กดอัพเดต
     updated_date = me.DateTimeField(
@@ -25,6 +27,17 @@ class Course(me.Document):
         required=True, default=datetime.datetime.now, auto_now=True
     )  # เวลาการสร้าง
     status = me.StringField(default="active", choices=STATUS_CHOICES, required=True)
+
+    def get_image(self):
+        if self.cover_image:
+            return url_for(
+                "course.get_image",
+                course_id=self.id,
+                type="course_cover",
+                filename=self.cover_image.file.filename,
+            )
+        else:
+            return url_for("static", filename="images/example-course-thumbnail.jpg")
 
 
 class CourseType(me.Document):
@@ -89,6 +102,7 @@ class CourseContent(me.Document):
             return url_for(
                 "course.get_image",
                 course_id=self.id,
+                type="course_content",
                 filename=self.header_image.file.filename,
             )
         else:
