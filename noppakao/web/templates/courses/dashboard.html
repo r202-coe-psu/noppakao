@@ -3,8 +3,16 @@
 {% macro render_course_card(course) %}
 <div
    class="w-full bg-[#EFEEEE] rounded-md flex flex-col @min-[850px]:flex-row shadow-md h-auto @min-[850px]:h-44 relative">
-   <img src="{{ course.course.get_image() }}" alt="Course Thumbnail"
-      class="w-full @min-[850px]:w-56 h-44 @min-[850px]:h-full object-cover rounded-t-md @min-[850px]:rounded-l-md @min-[850px]:rounded-t-none" />
+   <div class="relative w-full @min-[850px]:w-56 h-44 @min-[850px]:h-full shrink-0">
+      <img
+         src="{{ course.course.get_image() }}"
+         alt="Course Thumbnail"
+         class="absolute inset-0 w-full h-full object-cover rounded-t-md @min-[850px]:rounded-l-md @min-[850px]:rounded-t-none"
+         loading="lazy"
+         width="224"
+         height="176"
+      />
+   </div>
    <div
       class="flex flex-col @min-[850px]:flex-row w-full h-full p-4 @min-[850px]:p-6 justify-between items-start @min-[850px]:items-center gap-4">
       <div class="flex flex-col justify-between w-full @min-[850px]:max-w-[70%] gap-4">
