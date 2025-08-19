@@ -23,6 +23,8 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {% for course in courses %}
         <div class="card w-full shadow-sm p-4">
+          <img src="{{ course.get_image()  }}" alt="Course Image"
+            class="w-full h-48 object-cover rounded-md mb-4" />
           <div class="card-body">
             <div class="text-2xl font-bold">
               {{ course.name }}

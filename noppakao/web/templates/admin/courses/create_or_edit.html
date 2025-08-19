@@ -15,7 +15,7 @@
     </div>
   </div>
 
-  <form class="form-control" method="post">
+  <form class="form-control" method="post" enctype="multipart/form-data">
     {{ form.csrf_token }}
 
     <div class="mb-4">
@@ -37,6 +37,11 @@
     <div class="mb-4">
         {{ renderer.render_select_field(form.type) }}
     </div>
+
+    <div class="mb-4">
+      {{ renderer.file_input(form.cover_image) }}
+    </div>
+
 
     <div class="flex justify-end mt-6 mb-6">
       <button class="btn btn-primary" type="submit">

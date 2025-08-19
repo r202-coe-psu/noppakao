@@ -75,10 +75,28 @@ def create_or_edit_course(course_id):
             form.type.data = str(course.type.id)
         return render_template("/admin/courses/create_or_edit.html", form=form)
 
-    course.name = form.name.data
-    course.description = form.description.data
-    course.owner = models.User.objects.get(id=form.owner.data)
+    form.populate_obj(course)
     course.type = models.CourseType.objects.get(id=form.type.data)
+    course.owner = models.User.objects.get(id=form.owner.data)
+
+    if form.cover_image.data:
+        file = (
+            form.cover_image.data[0]
+            if isinstance(form.cover_image.data, list)
+            else form.cover_image.data
+        )
+        # Ensure it's a FileStorage object
+        if hasattr(file, "filename") and file.filename:
+            media = models.Media(
+                name=file.filename,
+                type="image",
+                owner=current_user._get_current_object(),
+                ip_address=request.headers.get("X-Forwarded-For", request.remote_addr),
+            )
+            media.file.put(file, content_type=file.content_type, filename=file.filename)
+            media.save()
+            media.reload()
+            course.cover_image = media
 
     course.updated_by = current_user._get_current_object()
     course.save()
@@ -190,7 +208,6 @@ def create_or_edit_course_section(course_id, section_id=None):
         )
 
     form.populate_obj(section)
-
     if form.header_image.data:
         file = (
             form.header_image.data[0]
