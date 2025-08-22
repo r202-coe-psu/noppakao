@@ -33,10 +33,13 @@ def index(event_id):
 
     event = models.Event.objects.get(id=event_id)
     now = datetime.now()
-
     if event.type == "team":
         pipeline_user = [
-            {"$match": {"event": ObjectId(event_id)}},
+            {
+                "$match": {
+                    "event": ObjectId(event_id),
+                }
+            },
             {
                 "$group": {
                     "_id": {
@@ -44,6 +47,15 @@ def index(event_id):
                         "team": "$team",
                     },
                     "total_score": {"$sum": "$score"},
+                    "last_success_date": {
+                        "$max": {
+                            "$cond": [
+                                {"$in": ["$status", ["success", "first_blood"]]},
+                                None,
+                                "$created_date",
+                            ]
+                        }
+                    },
                 }
             },
             {
@@ -52,7 +64,7 @@ def index(event_id):
                     "localField": "_id.user",
                     "foreignField": "_id",
                     "as": "user_info",
-                },
+                }
             },
             {"$unwind": "$user_info"},
             {
@@ -73,9 +85,15 @@ def index(event_id):
                     "display_name": "$user_info.display_name",
                     "team": "$team_info.name",
                     "team_id": "$_id.team",
+                    "last_success_date": 1,
                 }
             },
-            {"$sort": {"total_score": -1}},
+            {
+                "$sort": {
+                    "total_score": -1,
+                    "last_success_date": 1,
+                }
+            },
         ]
 
         pipeline_team = [
@@ -87,6 +105,15 @@ def index(event_id):
                         "event": ObjectId(event_id),
                     },
                     "total_score": {"$sum": "$score"},
+                    "last_success_date": {
+                        "$max": {
+                            "$cond": [
+                                {"$in": ["$status", ["success", "first_blood"]]},
+                                None,
+                                "$created_date",
+                            ]
+                        }
+                    },
                 }
             },
             {
@@ -106,9 +133,15 @@ def index(event_id):
                     "name": "$team_info.name",
                     "members": "$team_info.members",
                     "team_id": "$_id.team",
+                    "last_success_date": 1,
                 }
             },
-            {"$sort": {"total_score": -1}},
+            {
+                "$sort": {
+                    "total_score": -1,
+                    "last_success_date": 1,  # ถ้าคะแนนเท่ากัน เรียงตามเวลา success/first_blood สุดท้าย
+                }
+            },
         ]
 
         users_transaction = list(models.Transaction.objects.aggregate(pipeline_user))
@@ -153,6 +186,15 @@ def index(event_id):
                         "user": "$user",
                     },
                     "total_score": {"$sum": "$score"},
+                    "last_success_date": {
+                        "$max": {
+                            "$cond": [
+                                {"$in": ["$status", ["success", "first_blood"]]},
+                                None,
+                                "$created_date",
+                            ]
+                        }
+                    },
                 }
             },
             {
@@ -171,9 +213,15 @@ def index(event_id):
                     "total_score": 1,
                     "user_id": "$_id.user",
                     "display_name": "$user_info.display_name",
+                    "last_success_date": 1,
                 }
             },
-            {"$sort": {"total_score": -1}},
+            {
+                "$sort": {
+                    "total_score": -1,
+                    "last_success_date": 1,
+                }
+            },
         ]
 
         users_transaction = list(models.Transaction.objects.aggregate(pipeline_user))
@@ -210,7 +258,11 @@ def publish_dashboard(event_id):
 
     if event.type == "team":
         pipeline_user = [
-            {"$match": {"event": ObjectId(event_id)}},
+            {
+                "$match": {
+                    "event": ObjectId(event_id),
+                }
+            },
             {
                 "$group": {
                     "_id": {
@@ -218,6 +270,15 @@ def publish_dashboard(event_id):
                         "team": "$team",
                     },
                     "total_score": {"$sum": "$score"},
+                    "last_success_date": {
+                        "$max": {
+                            "$cond": [
+                                {"$in": ["$status", ["success", "first_blood"]]},
+                                None,
+                                "$created_date",
+                            ]
+                        }
+                    },
                 }
             },
             {
@@ -226,7 +287,7 @@ def publish_dashboard(event_id):
                     "localField": "_id.user",
                     "foreignField": "_id",
                     "as": "user_info",
-                },
+                }
             },
             {"$unwind": "$user_info"},
             {
@@ -247,9 +308,15 @@ def publish_dashboard(event_id):
                     "display_name": "$user_info.display_name",
                     "team": "$team_info.name",
                     "team_id": "$_id.team",
+                    "last_success_date": 1,
                 }
             },
-            {"$sort": {"total_score": -1}},
+            {
+                "$sort": {
+                    "total_score": -1,
+                    "last_success_date": 1,
+                }
+            },
         ]
 
         pipeline_team = [
