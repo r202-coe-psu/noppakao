@@ -51,8 +51,8 @@ def index(event_id):
                         "$max": {
                             "$cond": [
                                 {"$in": ["$status", ["success", "first_blood"]]},
-                                None,
                                 "$created_date",
+                                None,
                             ]
                         }
                     },
@@ -109,8 +109,8 @@ def index(event_id):
                         "$max": {
                             "$cond": [
                                 {"$in": ["$status", ["success", "first_blood"]]},
-                                None,
                                 "$created_date",
+                                None,
                             ]
                         }
                     },
@@ -190,8 +190,8 @@ def index(event_id):
                         "$max": {
                             "$cond": [
                                 {"$in": ["$status", ["success", "first_blood"]]},
-                                None,
                                 "$created_date",
+                                None,
                             ]
                         }
                     },
