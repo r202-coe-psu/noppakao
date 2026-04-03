@@ -200,12 +200,16 @@ class User(me.Document, UserMixin):
     def set_password(self, password):
         from werkzeug.security import generate_password_hash
 
-        self.password = generate_password_hash(password)
+        self.password = generate_password_hash(password).encode("utf-8")
 
     def check_password(self, password):
         from werkzeug.security import check_password_hash
 
-        if check_password_hash(self.password, password):
+        password_hash = self.password
+        if isinstance(password_hash, bytes):
+            password_hash = password_hash.decode("utf-8")
+
+        if check_password_hash(password_hash, password):
             return True
         return False
 

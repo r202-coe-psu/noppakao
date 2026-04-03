@@ -28,8 +28,8 @@ def create_user_admin():
         phone_number="1234567890",
         email="admin@example.com",
         roles=["user", "admin"],
-        password=bcrypt.generate_password_hash("p@ssw0rd"),
     )
+    user.set_password("p@ssw0rd")
 
     user.save()
     print("finish")
