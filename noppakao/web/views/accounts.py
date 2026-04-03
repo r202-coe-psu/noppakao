@@ -51,9 +51,7 @@ def login():
 
     user = models.User.objects(username=form.username.data).first()
 
-    if not user or not bcrypt.check_password_hash(
-        user.password.decode("utf-8"), form.password.data
-    ):
+    if not user or not user.check_password(form.password.data):
         messages = ["Username หรือ Passwords ไม่ถูกต้องกรุณากรอกใหม่"]
         return render_template("accounts/login.html", form=form, messages=messages)
 

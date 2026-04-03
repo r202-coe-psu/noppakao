@@ -198,20 +198,16 @@ class User(me.Document, UserMixin):
         return None
 
     def set_password(self, password):
-        from werkzeug.security import generate_password_hash
+        from flask_bcrypt import Bcrypt
 
-        self.password = generate_password_hash(password).encode("utf-8")
+        bcrypt = Bcrypt()
+        self.password = bcrypt.generate_password_hash(password)
 
     def check_password(self, password):
-        from werkzeug.security import check_password_hash
+        from flask_bcrypt import Bcrypt
 
-        password_hash = self.password
-        if isinstance(password_hash, bytes):
-            password_hash = password_hash.decode("utf-8")
-
-        if check_password_hash(password_hash, password):
-            return True
-        return False
+        bcrypt = Bcrypt()
+        return bcrypt.check_password_hash(self.password, password)
 
     def check_roles(self, roles: list):
         if set(roles) & set(self.roles):
