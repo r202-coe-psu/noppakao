@@ -205,9 +205,19 @@ class User(me.Document, UserMixin):
 
     def check_password(self, password):
         from flask_bcrypt import Bcrypt
+        from werkzeug.security import check_password_hash
 
         bcrypt = Bcrypt()
-        return bcrypt.check_password_hash(self.password, password)
+        password_hash = self.password
+        if isinstance(password_hash, bytes):
+            try:
+                # Try Bcrypt first
+                return bcrypt.check_password_hash(password_hash, password)
+            except ValueError:
+                # Fallback to Werkzeug if Bcrypt fails (likely legacy salt)
+                password_hash = password_hash.decode("utf-8")
+
+        return check_password_hash(password_hash, password)
 
     def check_roles(self, roles: list):
         if set(roles) & set(self.roles):
