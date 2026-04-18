@@ -9,9 +9,6 @@ then
 	kill -KILL $BRYTHON_ID
 fi
 
-$(pwd)/scripts/auto-build-brython &
+poetry run $(pwd)/scripts/auto-build-brython &
 
-
-
-
-FLASK_DEBUG=true NOPPHAKAO_SETTINGS=$(pwd)/noppakao-development.cfg noppakao-web -H 0.0.0.0 -d
+FLASK_DEBUG=true NOPPHAKAO_SETTINGS=$(pwd)/noppakao-development.cfg poetry run noppakao-web -H 0.0.0.0 -d
