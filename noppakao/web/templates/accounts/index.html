@@ -45,6 +45,10 @@
             <a href="{{ url_for('accounts.edit_user') }}"
               class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Edit</a>
           </div>
+          <div class="mt-4 flex justify-end">
+            <a href="{{ url_for('accounts.change_password') }}"
+              class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Change Password</a>
+          </div>
         </div>
       </div>
 
@@ -53,7 +57,7 @@
     {#<!-- Divider -->
     <div class="border-t border-gray-300 my-6"></div>
 
-     <!-- ตารางประวัติ + Progress -->
+    <!-- ตารางประวัติ + Progress -->
     <div>
       <h2 class="text-2xl font-bold mb-2 text-[#324e9c]">ประวัติ</h2>
       <div class="overflow-x-auto">

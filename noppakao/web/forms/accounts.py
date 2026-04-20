@@ -140,3 +140,22 @@ class FilterUserForm(FlaskForm):
     status = fields.SelectField(
         "Status", choices=[("active", "Active"), ("disactive", "Disactive")]
     )
+
+
+class ChangePasswordForm(FlaskForm):
+    current_password = fields.StringField(
+        "Current Password", validators=[validators.DataRequired()]
+    )
+    new_password = fields.StringField(
+        "New Password", validators=[validators.DataRequired()]
+    )
+    confirm_password = fields.StringField(
+        "Confirm Password",
+        validators=[
+            validators.DataRequired(),
+            validators.EqualTo(
+                "new_password",
+                message="The new password and confirmation password do not match.",
+            ),
+        ],
+    )
