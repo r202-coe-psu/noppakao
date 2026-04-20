@@ -54,7 +54,7 @@ def index():
 @login_required
 def joiner(event_id):
     event = models.Event.objects.get(id=event_id)
-    teams = models.Team.objects(event=event)
+    teams = models.Team.objects(event=event, status="active")
     now = datetime.datetime.now()
     return render_template("events/joiner.html", event=event, teams=teams, now=now)
 
@@ -82,8 +82,9 @@ def create_or_edit_team(event_id, team_id):
         team.updated_by = current_user._get_current_object()
     else:
         team = models.Team()
-        team.members.append(current_user._get_current_object())
+        team.name = form.name.data
         team.event = event
+        team.members.append(current_user._get_current_object())
         team.created_by = current_user._get_current_object()
     team.save()
 
@@ -131,6 +132,10 @@ def leave_team(event_id, team_id):
 
     if current_user_obj in team.members:
         team.members.remove(current_user_obj)
+        team.save()
+
+    if team.members == []:
+        team.status = "disactive"
         team.save()
 
     return redirect(url_for("events.joiner", event_id=event_id))
