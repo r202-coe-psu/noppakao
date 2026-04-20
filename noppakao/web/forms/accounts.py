@@ -130,3 +130,13 @@ class EditUserForm(FlaskForm):
             validators.Regexp(r"^\d{10}$", message="กรุณากรอกเฉพาะตัวเลข 10 หลักเท่านั้น"),
         ],
     )
+
+
+class FilterUserForm(FlaskForm):
+    display_name = fields.StringField("Display Name")
+    name = fields.StringField("Name")
+    email = fields.StringField("Email")
+    phone = fields.SearchField("Phone")
+    status = fields.SelectField(
+        "Status", choices=[("active", "Active"), ("disactive", "Disactive")]
+    )

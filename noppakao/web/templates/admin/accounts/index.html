@@ -1,5 +1,5 @@
 {% extends "/base/default-page.html" %}
-{% import '/base/html-renderer.html' as renderer %}
+{% import '/base/html-renderer-refactor.html' as renderer %}
 
 {% block content %}
 <div class="flex flex-col gap-4">
@@ -12,6 +12,25 @@
       </button>
     </a>
   </div>
+
+  <div class="bg-base-200 p-4 rounded-box border border-base-300">
+    <form method="GET" class="w-full">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        {{ renderer.base_render(form.display_name) }}
+        {{ renderer.base_render(form.name) }}
+        {{ renderer.base_render(form.email) }}
+        {{ renderer.base_render(form.phone) }}
+        {{ renderer.render_select_field(form.status) }}
+      </div>
+      <div class="flex justify-end mt-4">
+        <button type="submit" class="btn btn-primary">
+          <i class="ph-bold ph-funnel mr-2"></i> Filter
+        </button>
+        <a href="{{ url_for('admin.accounts.index') }}" class="btn btn-ghost ml-2">Clear</a>
+      </div>
+    </form>
+  </div>
+
   <div class="overflow-x-auto rounded-box border border-base-300 bg-base-100">
     <table class="table">
       <thead class="bg-base-200 text-gray-800">
@@ -27,8 +46,9 @@
       </thead>
       <tbody>
         {% for user in users %}
+        {% set index = (loop.index + ((request.args.get('page', 1) | int - 1) * pagination.items_per_page)) %}
         <tr class="border-gray-200">
-          <td class="text-center">{{ loop.index }}</td>
+          <td class="text-center">{{ index }}</td>
           <td>{{ user.display_name }}</td>
           <td>{{ user.first_name }} {{ user.last_name }}</td>
           <td>{{ user.email }}</td>
@@ -77,6 +97,11 @@
         {% endfor %}
       </tbody>
     </table>
+  </div>
+  <div class="mt-4">
+    {% with redirect=url_for("admin.accounts.index") %}
+    {% include "base/pagination.html" %}
+    {% endwith %}
   </div>
 </div>
 {% endblock %}
