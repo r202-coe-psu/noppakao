@@ -119,6 +119,9 @@ def create_or_edit_challenge(event_id, event_challenge_id):
         (str(challenge.id), challenge.name) for challenge in challenges
     ]
 
+    if event_challenge_id:
+        form.challenge.data = str(event_challenge.challenge.id)
+
     if not form.validate_on_submit():
         print(form.errors)
         return render_template(
@@ -257,6 +260,7 @@ def delete_event_challenge(event_challenge_id):
         url_for("admin.events.challenge", event_id=event_challenge.event.id),
     )
 
+
 @module.route(
     "/<event_id>/event_challenges/<event_challenge_id>/view_transactions",
     methods=["GET", "POST"],
@@ -265,27 +269,35 @@ def delete_event_challenge(event_challenge_id):
 def view_transactions(event_id, event_challenge_id):
     event = models.Event.objects(id=event_id).first()
     form = forms.events.SearchTransaction()
-    
-    form.team.choices = [("", "ไม่มี")] + [(str(team.id), team.name) for team in models.Team.objects(event=event, status="active")]
-    form.status.choices = [("", "ไม่มี")] + [("first_blood", "First blood"), ("success", "Success"), ("fail", "Fail"), ("hint", "Hint")]
-    
+
+    form.team.choices = [("", "ไม่มี")] + [
+        (str(team.id), team.name)
+        for team in models.Team.objects(event=event, status="active")
+    ]
+    form.status.choices = [("", "ไม่มี")] + [
+        ("first_blood", "First blood"),
+        ("success", "Success"),
+        ("fail", "Fail"),
+        ("hint", "Hint"),
+    ]
+
     query = Q(event_challenge=event_challenge_id)
-    
+
     if request.args.get("team") and request.args.get("team").strip():
         form.team.data = str(request.args.get("team"))
         query &= Q(team=form.team.data)
-    
+
     if request.args.get("status") and request.args.get("status").strip():
         form.status.data = str(request.args.get("status"))
         query &= Q(status=form.status.data)
-    
+
     event_challenge = models.EventChallenge.objects(id=event_challenge_id).first()
     transactions = models.Transaction.objects(query).order_by("-created_date")
 
     pagination_event_history = paginations.get_paginate(
         data=transactions, items_per_page=8
     )
-    
+
     return render_template(
         "/admin/events/view_transactions.html",
         event=event,

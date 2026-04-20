@@ -44,7 +44,7 @@
         <select class="select select-bordered w-full" name="challenge" id="challenge">
           <option disabled selected>Select a challenge</option>
           {% for choice in form.challenge.choices %}
-          <option value="{{ choice[0] }}">{{ choice[1] }}</option>
+          <option value="{{ choice[0] }}" {% if choice[0] == form.challenge.data %}selected{% endif %}>{{ choice[1] }}</option>
           {% endfor %}
         </select>
       </div>
