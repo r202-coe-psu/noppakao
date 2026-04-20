@@ -15,7 +15,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from noppakao import models
 from noppakao.web import forms, acl
 from noppakao.utils import updater_info
-
+from noppakao.web.views import paginations
 from flask_bcrypt import Bcrypt
 
 bcrypt = Bcrypt()
@@ -26,10 +26,35 @@ module = Blueprint("accounts", __name__, url_prefix="/accounts")
 @module.route("/")
 @acl.roles_required("admin")
 def index():
-    users = models.User.objects()
+    form = forms.accounts.FilterUserForm(request.args)
+    form.status.choices = [("", "All Status")] + [
+        ("active", "Active"),
+        ("disactive", "Disactive"),
+    ]
+    query = {}
+    name_query = None
+    if form.display_name.data:
+        query["display_name__icontains"] = form.display_name.data
+    if form.name.data:
+        name_query = me.Q(first_name__icontains=form.name.data) | me.Q(
+            last_name__icontains=form.name.data
+        )
+    if form.email.data:
+        query["email__icontains"] = form.email.data
+    if form.phone.data:
+        query["phone_number__icontains"] = form.phone.data
+    if form.status.data:
+        query["status"] = form.status.data
+
+    users = models.User.objects(**query)
+    if name_query:
+        users = users.filter(name_q)
+    pagination = paginations.get_paginate(data=users, items_per_page=20)
     return render_template(
         "/admin/accounts/index.html",
-        users=users,
+        users=pagination["data"],
+        form=form,
+        pagination=pagination,
     )
 
 
