@@ -154,6 +154,8 @@ def index(event_id):
         for user_info in users_transaction:
             user = models.User.objects(id=user_info["user_id"]).first()
             team = models.Team.objects(id=user_info["team_id"]).first()
+            if not team or team.status != "active":
+                continue
 
             user_info["team_image"] = team.get_logo_url()
 
@@ -232,12 +234,13 @@ def index(event_id):
         users_transaction = list(models.Transaction.objects.aggregate(pipeline_user))
         users_transaction_list = []
         for user_info in users_transaction:
-            user_id = ObjectId(user_info["user_id"])
-            user = models.User.objects.get(id=user_id)
-            # user_info["organization_id"] = user.organization.id
-            if user.organization:
-                user_info["organization_name"] = user.organization.name
-                user_info["organization_image"] = user.organization.get_logo_url()
+            user = models.User.objects(id=user_info["user_id"]).first()
+            team = models.Team.objects(id=user_info["team_id"]).first()
+            if not team or team.status != "active":
+                continue
+
+            user_info["team_image"] = team.get_logo_url()
+
             users_transaction_list.append(user_info)
         users_transaction = users_transaction_list
 
@@ -382,6 +385,8 @@ def publish_dashboard(event_id):
         for user_info in users_transaction:
             user = models.User.objects(id=user_info["user_id"]).first()
             team = models.Team.objects(id=user_info["team_id"]).first()
+            if not team or team.status != "active":
+                continue
 
             user_info["team_image"] = team.get_logo_url()
 
@@ -445,12 +450,13 @@ def publish_dashboard(event_id):
         users_transaction = list(models.Transaction.objects.aggregate(pipeline_user))
         users_transaction_list = []
         for user_info in users_transaction:
-            user_id = ObjectId(user_info["user_id"])
-            user = models.User.objects(id=user_id).first()
+            user = models.User.objects(id=user_info["user_id"]).first()
+            team = models.Team.objects(id=user_info["team_id"]).first()
+            if not team or team.status != "active":
+                continue
 
-            # user_info["organization_id"] = user.organization.id
-            # user_info["organization_name"] = user.organization.name
-            # user_info["organization_image"] = user.organization.get_logo_url()
+            user_info["team_image"] = team.get_logo_url()
+
             users_transaction_list.append(user_info)
         users_transaction = users_transaction_list
 
