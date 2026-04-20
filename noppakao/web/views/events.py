@@ -8,6 +8,7 @@ from flask import (
     request,
     session,
     redirect,
+    flash,
 )
 
 from flask_login import login_user, logout_user, login_required, current_user
@@ -58,14 +59,17 @@ def joiner(event_id):
     return render_template("events/joiner.html", event=event, teams=teams, now=now)
 
 
-@module.route("/<event_id>/create_team", methods=["GET", "POST"])
+@module.route(
+    "/<event_id>/team/create/", methods=["GET", "POST"], defaults={"team_id": None}
+)
+@module.route("/<event_id>/team/<team_id>/edit", methods=["GET", "POST"])
 @login_required
-def create_team(event_id):
+def create_or_edit_team(event_id, team_id):
     event = models.Event.objects.get(id=event_id)
     form = forms.teams.TeamsEventForm()
     if not form.validate_on_submit():
         print(form.errors)
-        return render_template("events/create_team.html", form=form)
+        return render_template("events/create-or-edit-team.html", form=form)
     team = models.Team()
     form.populate_obj(team)
 
