@@ -67,11 +67,25 @@ def joiner(event_id):
 def create_or_edit_team(event_id, team_id):
     event = models.Event.objects.get(id=event_id)
     form = forms.teams.TeamsEventForm()
+
+    if team_id:
+        team = models.Team.objects.get(id=team_id)
+        form = forms.teams.TeamsEventForm(obj=team)
+
     if not form.validate_on_submit():
         print(form.errors)
         return render_template("events/create-or-edit-team.html", form=form)
-    team = models.Team()
-    form.populate_obj(team)
+
+    if team_id:
+        team = models.Team.objects.get(id=team_id)
+        team.name = form.name.data
+        team.updated_by = current_user._get_current_object()
+    else:
+        team = models.Team()
+        team.members.append(current_user._get_current_object())
+        team.event = event
+        team.created_by = current_user._get_current_object()
+    team.save()
 
     if form.uploaded_picture.data:
         if not team.picture:
@@ -81,9 +95,6 @@ def create_or_edit_team(event_id, team_id):
                 content_type=form.uploaded_picture.data.content_type,
             )
 
-    team.members.append(current_user._get_current_object())
-    team.event = event
-    team.save()
     return redirect(url_for("events.joiner", event_id=event.id))
 
 
