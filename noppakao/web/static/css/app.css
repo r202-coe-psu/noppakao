@@ -2750,6 +2750,9 @@
   .flex-shrink-0 {
     flex-shrink: 0;
   }
+  .shrink-0 {
+    flex-shrink: 0;
+  }
   .table-fixed {
     table-layout: fixed;
   }
