@@ -10,6 +10,7 @@ from flask import (
     Response,
     send_file,
     redirect,
+    flash,
 )
 
 from flask_login import login_user, logout_user, login_required, current_user
@@ -39,12 +40,15 @@ def index():
 def create_or_edit(team_id):
     if not current_user.organization:
         error = "Please, choose your organization before create or enroll team."
+        flash(error, "error")
         return redirect(url_for("organizations.information", error=error))
-    team = models.Team.objects(status="active", members__in=[current_user])
+    teams = models.Team.objects(status="active", members__in=[current_user])
 
     # หากมีทีมแล้วห้ามสร้างทีมใหม่
-    if team and not team_id:
+    if teams and not team_id:
+        flash("You have already created a team.", "error")
         return redirect(url_for("teams.index"))
+
     error_msg = request.args.get("error_msg")
     team = None
     form = forms.teams.TeamsForm()

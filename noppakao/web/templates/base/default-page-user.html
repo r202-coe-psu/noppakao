@@ -1,4 +1,5 @@
 {% extends "/base/base-layout.html" %}
+{% from "components/toasts.html" import render_toast %}
 
 {% block body %}
 <div class="grid grid-cols-[auto_1fr] bg-[#F3EFEE]">
@@ -7,7 +8,9 @@
     {% block content %}{% endblock content %}
   </div>
 </div>
-
+{% for category, message in get_flashed_messages(with_categories=true) %}
+  {{ render_toast(message, category) }}
+{% endfor %}
 <script>
 const toggleBtn = document.getElementById('toggleBtn');
 const sidebar = document.getElementById('sidebar');

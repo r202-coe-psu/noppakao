@@ -3,9 +3,16 @@
 
 {% block content %}
 <div class="container mx-auto px-4">
-  <div class="card bg-base-100 shadow-xl mb-4">
-    <div class="card-body">
-      <h1 class="card-title text-2xl">Create TEAM</h1>
+  <div class="card bg-base-100 shadow-md border border-base-300 mb-8">
+    <div class="card-body flex flex-col justify-between">
+      <h1 class="card-title text-2xl">
+      {% if 'edit' in request.path %}
+        Edit: {{ form.name.data }}
+      {% else %}
+        Create Team
+      {% endif %}
+      </h1>
+
     </div>
   </div>
 
@@ -15,8 +22,8 @@
   </div>
   {% endif %}
 
-  <div class="card bg-base-100 shadow-xl">
-    <div class="card-body">
+  <div class="card bg-base-100 shadow-md border border-base-300">
+    <div class="card-body flex flex-col justify-between">
       <form method="POST" enctype="multipart/form-data">
         {{ form.csrf_token }}
 

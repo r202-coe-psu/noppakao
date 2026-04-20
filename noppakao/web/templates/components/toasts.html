@@ -1,0 +1,35 @@
+{% macro render_toast(message, category) %}
+
+<div class="toast toast-end z-50" id="toast-message">
+  {% if category == 'success' %}
+  <div class="alert alert-success rounded-3xl text-white text-base px-8">
+    <i class="ph ph-check-circle"></i>
+    <span>{{ message }}</span>
+  </div>
+  {% elif category == 'error' %}
+  <div class="alert alert-error rounded-3xl text-white text-base px-8">
+    <i class="ph ph-warning"></i>
+    <span>{{ message }}</span>
+  </div>
+  {% elif category == 'pending' %}
+  <div class="alert alert-warning rounded-3xl text-white text-base px-8">
+    <i class="ph ph-hourglass-high"></i>
+    <span>{{ message }}</span>
+  </div>
+  {% else %}
+  <div class="alert alert-info rounded-3xl text-white text-base px-8">
+    <i class="ph ph-info"></i>
+    <span>{{ message }}</span>
+  </div>
+  {% endif %}
+</div>
+
+<script>
+  setTimeout(() => {
+    const toast = document.getElementById('toast-message');
+    if (toast) {
+      $(toast).fadeOut();
+    }
+  }, "{{ category }}" === "success" ? 5000 : 10000);
+</script>
+{% endmacro %}
