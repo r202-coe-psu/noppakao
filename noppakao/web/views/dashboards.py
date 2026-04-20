@@ -126,6 +126,11 @@ def index(event_id):
             },
             {"$unwind": "$team_info"},
             {
+                "$match": {
+                    "team_info.status": "active",
+                }
+            },
+            {
                 "$project": {
                     "_id": 0,
                     "total_score": 1,
@@ -320,7 +325,7 @@ def publish_dashboard(event_id):
         ]
 
         pipeline_team = [
-            {"$match": {"event": ObjectId(event_id)}},
+            {"$match": {"event": ObjectId(event_id), "status": "active"}},
             {
                 "$group": {
                     "_id": {
@@ -328,6 +333,15 @@ def publish_dashboard(event_id):
                         "event": ObjectId(event_id),
                     },
                     "total_score": {"$sum": "$score"},
+                    "last_success_date": {
+                        "$max": {
+                            "$cond": [
+                                {"$in": ["$status", ["success", "first_blood"]]},
+                                "$created_date",
+                                None,
+                            ]
+                        }
+                    },
                 }
             },
             {
@@ -340,6 +354,11 @@ def publish_dashboard(event_id):
             },
             {"$unwind": "$team_info"},
             {
+                "$match": {
+                    "team_info.status": "active",
+                }
+            },
+            {
                 "$project": {
                     "_id": 0,
                     "total_score": 1,
@@ -347,9 +366,15 @@ def publish_dashboard(event_id):
                     "name": "$team_info.name",
                     "members": "$team_info.members",
                     "team_id": "$_id.team",
+                    "last_success_date": 1,
                 }
             },
-            {"$sort": {"total_score": -1}},
+            {
+                "$sort": {
+                    "total_score": -1,
+                    "last_success_date": 1,  # ถ้าคะแนนเท่ากัน เรียงตามเวลา success/first_blood สุดท้าย
+                }
+            },
         ]
 
         users_transaction = list(models.Transaction.objects.aggregate(pipeline_user))
