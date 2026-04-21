@@ -2,7 +2,7 @@ from flask_mongoengine.wtf import model_form
 from flask_wtf import FlaskForm, file
 from wtforms import fields, widgets, validators
 import email_validator
-
+from .fields import TagListField
 import datetime
 
 from noppakao import models
@@ -93,15 +93,15 @@ class SetupPassword(FlaskForm):
 class AccountForm(BaseRegistrationForm):
     password = fields.PasswordField(
         "Password",
-        validators=[validators.DataRequired(), validators.EqualTo("password")],
+        validators=[validators.Optional(), validators.EqualTo("password")],
     )
     confirm_password = fields.PasswordField(
-        validators=[validators.DataRequired(), validators.EqualTo("password")],
+        validators=[validators.Optional(), validators.EqualTo("password")],
     )
     email = fields.StringField(
         "Email", validators=[validators.Email(), validators.DataRequired()]
     )
-    roles = fields.SelectField("Role", choices=[("user", "User"), ("admin", "Admin")])
+    roles = TagListField("Role", default=["user"])
 
 
 class SetupUser(FlaskForm):
