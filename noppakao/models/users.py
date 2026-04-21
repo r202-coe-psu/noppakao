@@ -219,6 +219,12 @@ class User(me.Document, UserMixin):
 
         return check_password_hash(password_hash, password)
 
+    def get_user_by_event(event):
+        event_roles = models.EventRole.objects(event=event)
+        user_ids = [str(event_role.user.id) for event_role in event_roles]
+        users = User.objects(id__in=user_ids)
+        return users
+
     def check_roles(self, roles: list):
         if set(roles) & set(self.roles):
             return True

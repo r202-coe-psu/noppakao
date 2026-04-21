@@ -47,7 +47,11 @@
   <form method="get" class="mb-6">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
       <div class="form-control">
-        {{ renderer.render_select_field(form.team, class_="select select-bordered w-full") }}
+        {% if event.type == "team" %}
+          {{ renderer.render_select_field(form.team, class_="select select-bordered w-full") }}
+        {% elif event.type == "solo" %}
+          {{ renderer.render_select_field(form.user, class_="select select-bordered w-full") }}
+        {% endif %}
       </div>
       <div class="form-control">
         {{ renderer.render_select_field(form.status, class_="select select-bordered w-full") }}

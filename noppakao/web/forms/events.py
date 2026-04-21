@@ -115,9 +115,15 @@ class MultipleChallengesForm(FlaskForm):
         coerce=str,  # แก้จาก int → str
     )
 
+
 class SearchTransaction(FlaskForm):
     team = fields.SelectField(
         "Team",
+        coerce=str,
+        choices=[],
+    )
+    user = fields.SelectField(
+        "User",
         coerce=str,
         choices=[],
     )
@@ -125,4 +131,3 @@ class SearchTransaction(FlaskForm):
         "Status",
         choices=models.transactions.TRANSACTION_STATUS,
     )
-    

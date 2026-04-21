@@ -14,6 +14,8 @@ from flask import (
 import json
 
 from flask_login import login_user, logout_user, login_required, current_user
+
+from noppakao.web.views import teams
 from .. import paginations
 
 from noppakao.web import forms, models, acl, oauth2
@@ -269,10 +271,19 @@ def delete_event_challenge(event_challenge_id):
 def view_transactions(event_id, event_challenge_id):
     event = models.Event.objects(id=event_id).first()
     form = forms.events.SearchTransaction()
+    if event.type == "team":
+        event_teams = models.Team.get_teams_by_event(event)
+        form.team.choices = [("", "ทั้งหมด")] + [
+            (str(team.id), team.name) for team in event_teams
+        ]
+    if event.type == "solo":
+        event_users = models.EventRole.objects(
+            event=event, role="competitor"
+        ).select_related()
+        form.user.choices = [("", "ทั้งหมด")] + [
+            (str(er.user.id), er.user.get_fullname()) for er in event_users
+        ]
 
-    form.team.choices = [("", "ไม่มี")] + [
-        (str(team.id), team.name) for team in models.Team.objects(status="active")
-    ]
     form.status.choices = [("", "ไม่มี")] + [
         ("first_blood", "First blood"),
         ("success", "Success"),
@@ -289,6 +300,10 @@ def view_transactions(event_id, event_challenge_id):
     if request.args.get("status") and request.args.get("status").strip():
         form.status.data = str(request.args.get("status"))
         query &= Q(status=form.status.data)
+
+    if request.args.get("user") and request.args.get("user").strip():
+        form.user.data = str(request.args.get("user"))
+        query &= Q(user=form.user.data)
 
     event_challenge = models.EventChallenge.objects(id=event_challenge_id).first()
     transactions = models.Transaction.objects(query).order_by("-created_date")
