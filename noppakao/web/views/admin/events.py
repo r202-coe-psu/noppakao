@@ -271,8 +271,7 @@ def view_transactions(event_id, event_challenge_id):
     form = forms.events.SearchTransaction()
 
     form.team.choices = [("", "ไม่มี")] + [
-        (str(team.id), team.name)
-        for team in models.Team.objects(event=event, status="active")
+        (str(team.id), team.name) for team in models.Team.objects(status="active")
     ]
     form.status.choices = [("", "ไม่มี")] + [
         ("first_blood", "First blood"),
