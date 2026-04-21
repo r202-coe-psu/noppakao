@@ -65,6 +65,13 @@ def joiner(event_id):
 @module.route("/<event_id>/team/<team_id>/edit", methods=["GET", "POST"])
 @login_required
 def create_or_edit_team(event_id, team_id):
+    # check if user is in team
+    if team_id:
+        team = models.Team.objects.get(id=team_id)
+        if current_user._get_current_object() not in team.members:
+            flash("You are not a member of this team")
+            return redirect(url_for("events.joiner", event_id=event_id))
+
     event = models.Event.objects.get(id=event_id)
     form = forms.teams.TeamsEventForm()
 

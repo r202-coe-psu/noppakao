@@ -60,7 +60,7 @@
               Leave Team
             </button>
         {% endif %}
-        {% if current_user.id == team.created_by.id %}
+        {% if current_user.check_team_event(event.id,team.id) %}
         <div class="card-actions justify-end">
           <a href="{{ url_for('events.create_or_edit_team', event_id=event.id, team_id=team.id) }}" class="btn btn-primary w-full">
             Edit Team
