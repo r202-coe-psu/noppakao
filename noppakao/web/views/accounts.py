@@ -10,6 +10,7 @@ from flask import (
     redirect,
     Response,
     send_file,
+    flash,
 )
 
 from flask_login import login_user, logout_user, login_required, current_user
@@ -276,3 +277,20 @@ def get_avatar(filename=""):
             mimetype=user.avatar.content_type,
         )
     return response
+
+
+@module.route("/change_password", methods=["GET", "POST"])
+@login_required
+def change_password():
+    form = forms.accounts.ChangePasswordForm()
+    user = current_user
+    if not form.validate_on_submit():
+        return render_template("/accounts/change_password.html", form=form)
+    if not bcrypt.check_password_hash(user.password, form.current_password.data):
+        form.current_password.errors.append("The current password is incorrect")
+        return render_template("/accounts/change_password.html", form=form)
+    user.password = bcrypt.generate_password_hash(form.new_password.data)
+    user.save()
+    # ถ้าเพิ่ม flash มาใน web เเล้ว uncommented ได้เลยนะ
+    # flash("รหัสผ่านใหม่ของคุณถูกตั้งค่าเรียบร้อยแล้ว", "success")
+    return redirect(url_for("accounts.login"))
