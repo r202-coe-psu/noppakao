@@ -93,7 +93,6 @@ def create_or_edit_team(event_id, team_id):
         team.event = event
         team.members.append(current_user._get_current_object())
         team.created_by = current_user._get_current_object()
-    team.save()
 
     if form.uploaded_picture.data:
         if not team.picture:
@@ -102,6 +101,13 @@ def create_or_edit_team(event_id, team_id):
                 filename=form.uploaded_picture.data.filename,
                 content_type=form.uploaded_picture.data.content_type,
             )
+        else:
+            team.picture.replace(
+                form.uploaded_picture.data,
+                filename=form.uploaded_picture.data.filename,
+                content_type=form.uploaded_picture.data.content_type,
+            )
+    team.save()
 
     return redirect(url_for("events.joiner", event_id=event.id))
 
