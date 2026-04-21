@@ -15,11 +15,8 @@
 
   <div class="bg-base-200 p-4 rounded-box border border-base-300">
     <form method="GET" class="w-full">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        {{ renderer.base_render(form.display_name) }}
-        {{ renderer.base_render(form.name) }}
-        {{ renderer.base_render(form.email) }}
-        {{ renderer.base_render(form.phone) }}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {{ renderer.base_render(form.search, placeholder="Search by display name, email, or phone") }}
         {{ renderer.render_select_field(form.status) }}
       </div>
       <div class="flex justify-end mt-4">

@@ -32,23 +32,19 @@ def index():
         ("disactive", "Disactive"),
     ]
     query = {}
-    name_query = None
-    if form.display_name.data:
-        query["display_name__icontains"] = form.display_name.data
-    if form.name.data:
-        name_query = me.Q(first_name__icontains=form.name.data) | me.Q(
-            last_name__icontains=form.name.data
+    search_query = None
+    if form.search.data:
+        search_query = (
+            me.Q(display_name__icontains=form.search.data)
+            | me.Q(email__icontains=form.search.data)
+            | me.Q(phone_number__icontains=form.search.data)
         )
-    if form.email.data:
-        query["email__icontains"] = form.email.data
-    if form.phone.data:
-        query["phone_number__icontains"] = form.phone.data
     if form.status.data:
         query["status"] = form.status.data
 
     users = models.User.objects(**query)
-    if name_query:
-        users = users.filter(name_q)
+    if search_query:
+        users = users.filter(search_query)
     pagination = paginations.get_paginate(data=users, items_per_page=20)
     return render_template(
         "/admin/accounts/index.html",

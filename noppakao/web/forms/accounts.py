@@ -133,10 +133,7 @@ class EditUserForm(FlaskForm):
 
 
 class FilterUserForm(FlaskForm):
-    display_name = fields.StringField("Display Name")
-    name = fields.StringField("Name")
-    email = fields.StringField("Email")
-    phone = fields.SearchField("Phone")
+    search = fields.StringField("Search")
     status = fields.SelectField(
         "Status", choices=[("active", "Active"), ("disactive", "Disactive")]
     )
