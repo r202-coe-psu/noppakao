@@ -52,7 +52,8 @@
   <l-quantum size="80" speed="1.75" color="#165fd4"></l-quantum>
 </div>
 
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 justify-between mt-2">
+<div class="grid grid-cols-1 gap-4 justify-between mt-2
+{{ 'lg:grid-cols-1' if current_user.has_roles('admin') else 'lg:grid-cols-2' }}">
   {% for challenge_category in event.get_challenge_categories() %}
   <div class="card bg-base-100 shadow-sm border-2 border-base-200">
     <div class="card-body">
