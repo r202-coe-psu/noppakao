@@ -27,7 +27,7 @@ module = Blueprint("events", __name__, url_prefix="/events")
 @module.route("/", methods=["GET", "POST"])
 @acl.roles_required("admin")
 def index():
-    events = models.Event.objects()
+    events = models.Event.objects().order_by("-created_date")
     return render_template("/admin/events/index.html", events=events)
 
 
