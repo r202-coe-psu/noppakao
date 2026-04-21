@@ -18,16 +18,29 @@
     </div>
     <div class="flex items-center gap-3 mt-1">
       <span class="font-bold text-lg">{{ event_challenge.challenge.name }}</span>
-      <span class="badge badge-outline">{{ event_challenge.challenge.answer_type }}</span>
     </div>
-    <div class="flex items-center gap-2 mt-1">
-      <span class="text-sm opacity-60">Answer:</span>
-      {% if event_challenge.challenge.answer_type == 'flag' %}
-      <code class="bg-base-300 px-3 py-1 rounded font-mono text-success">
-        {{ event.flag_prefix }}{{"{"}}{{ event_challenge.challenge.answer }}{{"}"}}</code>
-      {% else %}
-      <code class="bg-base-300 px-3 py-1 rounded font-mono text-success">{{ event_challenge.challenge.answer }}</code>
-      {% endif %}
+    <div class="flex flex-col items-start gap-2 mt-1">
+      <span class="badge badge-primary font-semibold">Type: {{ event_challenge.challenge.answer_type }}</span>
+      <div class="badge badge-success">
+        <span class="text-sm font-bold">Answer:</span>
+        <span
+          onclick="this.style.display='none'; this.nextElementSibling.style.display='inline-block'"
+          class="cursor-pointer text-sm font-medium"
+          >Click to reveal spoiler</span
+        >
+        <span style="display: none">
+          {% if event_challenge.challenge.answer_type == 'flag' %}
+          <code class="bg-base-200 px-3 py-1 rounded font-mono text-success">
+            {{ event.flag_prefix }}{{"{"}}{{ event_challenge.challenge.answer
+            }}{{"}"}}</code
+          >
+          {% else %}
+          <code class="bg-base-300 px-3 py-1 rounded font-mono text-success"
+            >{{ event_challenge.challenge.answer }}</code
+          >
+          {% endif %}
+        </span>
+      </div>
     </div>
   </div>
 
