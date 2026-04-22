@@ -14,6 +14,8 @@ from flask import (
 import json
 
 from flask_login import login_user, logout_user, login_required, current_user
+
+from noppakao.web.views import teams
 from .. import paginations
 
 from noppakao.web import forms, models, acl, oauth2
@@ -25,8 +27,34 @@ module = Blueprint("events", __name__, url_prefix="/events")
 @module.route("/", methods=["GET", "POST"])
 @acl.roles_required("admin")
 def index():
-    events = models.Event.objects()
-    return render_template("/admin/events/index.html", events=events)
+    form = forms.events.SearchEventForm(request.args)
+    form.type.choices = [("", "All")] + [
+        ("solo", "Solo"),
+        ("team", "Team"),
+    ]
+    form.status.choices = [("", "All")] + [
+        ("active", "Active"),
+        ("disactive", "Disactive"),
+    ]
+    query = {}
+    name_query = None
+    if form.name.data:
+        name_query = Q(name__icontains=form.name.data)
+    if form.status.data:
+        query["status"] = form.status.data
+    if form.type.data:
+        query["type"] = form.type.data
+    events = models.Event.objects(**query).order_by("-created_date")
+    if name_query:
+        events = events.filter(name_query)
+    pagination = paginations.get_paginate(data=events, items_per_page=12)
+
+    return render_template(
+        "/admin/events/index.html",
+        events=pagination["data"],
+        pagination=pagination,
+        form=form,
+    )
 
 
 @module.route(
@@ -269,11 +297,19 @@ def delete_event_challenge(event_challenge_id):
 def view_transactions(event_id, event_challenge_id):
     event = models.Event.objects(id=event_id).first()
     form = forms.events.SearchTransaction()
+    if event.type == "team":
+        event_teams = models.Team.get_teams_by_event(event)
+        form.team.choices = [("", "ทั้งหมด")] + [
+            (str(team.id), team.name) for team in event_teams
+        ]
+    if event.type == "solo":
+        event_users = models.EventRole.objects(
+            event=event, role="competitor"
+        ).select_related()
+        form.user.choices = [("", "ทั้งหมด")] + [
+            (str(er.user.id), er.user.get_fullname()) for er in event_users
+        ]
 
-    form.team.choices = [("", "ไม่มี")] + [
-        (str(team.id), team.name)
-        for team in models.Team.objects(event=event, status="active")
-    ]
     form.status.choices = [("", "ไม่มี")] + [
         ("first_blood", "First blood"),
         ("success", "Success"),
@@ -290,6 +326,10 @@ def view_transactions(event_id, event_challenge_id):
     if request.args.get("status") and request.args.get("status").strip():
         form.status.data = str(request.args.get("status"))
         query &= Q(status=form.status.data)
+
+    if request.args.get("user") and request.args.get("user").strip():
+        form.user.data = str(request.args.get("user"))
+        query &= Q(user=form.user.data)
 
     event_challenge = models.EventChallenge.objects(id=event_challenge_id).first()
     transactions = models.Transaction.objects(query).order_by("-created_date")

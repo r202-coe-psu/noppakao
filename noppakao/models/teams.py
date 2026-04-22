@@ -36,3 +36,6 @@ class Team(me.Document):
             )
         else:
             return url_for("static", filename="images/hacker.png")
+
+    def get_teams_by_event(event):
+        return Team.objects(event=event, status="active")

@@ -32,23 +32,19 @@ def index():
         ("disactive", "Disactive"),
     ]
     query = {}
-    name_query = None
-    if form.display_name.data:
-        query["display_name__icontains"] = form.display_name.data
-    if form.name.data:
-        name_query = me.Q(first_name__icontains=form.name.data) | me.Q(
-            last_name__icontains=form.name.data
+    search_query = None
+    if form.search.data:
+        search_query = (
+            me.Q(display_name__icontains=form.search.data)
+            | me.Q(email__icontains=form.search.data)
+            | me.Q(phone_number__icontains=form.search.data)
         )
-    if form.email.data:
-        query["email__icontains"] = form.email.data
-    if form.phone.data:
-        query["phone_number__icontains"] = form.phone.data
     if form.status.data:
         query["status"] = form.status.data
 
     users = models.User.objects(**query)
-    if name_query:
-        users = users.filter(name_q)
+    if search_query:
+        users = users.filter(search_query)
     pagination = paginations.get_paginate(data=users, items_per_page=20)
     return render_template(
         "/admin/accounts/index.html",
@@ -106,10 +102,15 @@ def create_or_edit(user_id):
             msg_error=msg_error,
         )
 
-    check_user = models.User.objects(username=form.username.data)
-    check_email = models.User.objects(email=form.email.data)
+    # first check if username or email is already in use
+    if "edit" in request.path:
+        exists_user = models.User.objects(username=form.username.data, id__ne=user_id)
+        exists_email = models.User.objects(email=form.email.data, id__ne=user_id)
+    elif "create" in request.path:
+        exists_user = models.User.objects(username=form.username.data).first()
+        exists_email = models.User.objects(email=form.email.data).first()
 
-    if check_user and not "edit" in request.path:
+    if exists_user:
         msg_error = "This user is already in use"
         return render_template(
             "/admin/accounts/create_edit.html",
@@ -117,7 +118,7 @@ def create_or_edit(user_id):
             user=user,
             msg_error=msg_error,
         )
-    if check_email and not "edit" in request.path:
+    if exists_email:
         msg_error = "This email is already in use"
         return render_template(
             "/admin/accounts/create_edit.html",
@@ -145,11 +146,17 @@ def create_or_edit(user_id):
             roles=[roles],
         )
     else:
-        form.populate_obj(user)
-        password = bcrypt.generate_password_hash(form.password.data)
-        roles = form.roles.data
-        user.roles = [roles]
-        user.password = password
+        user.display_name = form.display_name.data
+        user.username = form.username.data
+        user.first_name = form.first_name.data
+        user.last_name = form.last_name.data
+        user.email = form.email.data
+        user.roles = form.roles.data
+
+        if form.password.data:
+            user.password = bcrypt.generate_password_hash(form.password.data)
+
+        user.updated_date = datetime.datetime.now()
 
     user.save()
     return redirect(
