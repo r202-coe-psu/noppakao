@@ -131,3 +131,9 @@ class SearchTransaction(FlaskForm):
         "Status",
         choices=models.transactions.TRANSACTION_STATUS,
     )
+
+
+class SearchEventForm(FlaskForm):
+    name = fields.StringField("Name")
+    type = fields.SelectField("Type")
+    status = fields.SelectField("Status")

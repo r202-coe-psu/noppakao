@@ -27,8 +27,34 @@ module = Blueprint("events", __name__, url_prefix="/events")
 @module.route("/", methods=["GET", "POST"])
 @acl.roles_required("admin")
 def index():
-    events = models.Event.objects().order_by("-created_date")
-    return render_template("/admin/events/index.html", events=events)
+    form = forms.events.SearchEventForm(request.args)
+    form.type.choices = [("", "All")] + [
+        ("solo", "Solo"),
+        ("team", "Team"),
+    ]
+    form.status.choices = [("", "All")] + [
+        ("active", "Active"),
+        ("disactive", "Disactive"),
+    ]
+    query = {}
+    name_query = None
+    if form.name.data:
+        name_query = Q(name__icontains=form.name.data)
+    if form.status.data:
+        query["status"] = form.status.data
+    if form.type.data:
+        query["type"] = form.type.data
+    events = models.Event.objects(**query).order_by("-created_date")
+    if name_query:
+        events = events.filter(name_query)
+    pagination = paginations.get_paginate(data=events, items_per_page=12)
+
+    return render_template(
+        "/admin/events/index.html",
+        events=pagination["data"],
+        pagination=pagination,
+        form=form,
+    )
 
 
 @module.route(
