@@ -256,7 +256,7 @@ def index(event_id):
 
 # อันนี้แก้ คำนวณการคิดคะแนนผิด (ตรวจสอบตรงนี้ใหม่) fix
 @module.route("/<event_id>/publish_dashboard", methods=["GET", "POST"])
-@caches.cache.cached(timeout=60)
+# @caches.cache.cached(timeout=60)
 def publish_dashboard(event_id):
     teams = models.Team.objects(status="active")
     users = models.User.objects(status="active")
@@ -451,11 +451,10 @@ def publish_dashboard(event_id):
         users_transaction_list = []
         for user_info in users_transaction:
             user = models.User.objects(id=user_info["user_id"]).first()
-            team = models.Team.objects(id=user_info["team_id"]).first()
-            if not team or team.status != "active":
+            if not user or user.status != "active":
                 continue
 
-            user_info["team_image"] = team.get_logo_url()
+            user_info["team_image"] = user.get_avatar_url()
 
             users_transaction_list.append(user_info)
         users_transaction = users_transaction_list
