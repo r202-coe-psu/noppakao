@@ -175,9 +175,11 @@ def join_team(event_id, team_id):
 def challenge(event_id):
     event = models.Event.objects(id=event_id).first()
     if not current_user.check_team_event(event_id) and event.type == "team":
+        flash("You must join a team to access this page")
         return redirect(url_for("events.joiner", event_id=event_id))
 
     if event.started_date > datetime.datetime.now():
+        flash("Event has not started yet")
         return redirect(url_for("events.index"))
 
     teams = models.Team.objects(status="active").order_by("-score", "updated_date")
@@ -220,6 +222,7 @@ def submit_challenge(event_id, challenge_id):
     answer = request.args.get("answer")
 
     if now > event.ended_date:
+        flash("Event Time Out")
         return redirect(url_for("events.index", msg="Event Time Out"))
 
     if not transaction and event_challenge.check_answer(answer):
