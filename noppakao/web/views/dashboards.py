@@ -330,7 +330,7 @@ def publish_dashboard(event_id):
         ]
 
         pipeline_team = [
-            {"$match": {"event": ObjectId(event_id), "status": "active"}},
+            {"$match": {"event": ObjectId(event_id)}},
             {
                 "$group": {
                     "_id": {
