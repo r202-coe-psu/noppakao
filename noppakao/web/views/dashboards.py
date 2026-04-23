@@ -14,6 +14,7 @@ from flask import (
 )
 
 from flask_login import login_user, logout_user, login_required, current_user
+import logging
 
 from noppakao import models
 from .. import forms
@@ -21,6 +22,7 @@ from .. import oauth2
 from .. import caches
 
 module = Blueprint("dashboards", __name__, url_prefix="/dashboard")
+logger = logging.getLogger(__name__)
 
 
 # อันนี้แก้ คำนวณการคิดคะแนนผิด (ตรวจสอบตรงนี้ใหม่) fix
@@ -174,6 +176,7 @@ def index(event_id):
             teams_transaction_list.append(team_info)
 
         teams_transaction = teams_transaction_list
+        logger.info("teams_transaction: %s", teams_transaction)
         return render_template(
             "/dashboards/index.html",
             event=event,
@@ -235,11 +238,10 @@ def index(event_id):
         users_transaction_list = []
         for user_info in users_transaction:
             user = models.User.objects(id=user_info["user_id"]).first()
-            team = models.Team.objects(id=user_info["team_id"]).first()
-            if not team or team.status != "active":
+            if not user or user.status != "active":
                 continue
 
-            user_info["team_image"] = team.get_logo_url()
+            user_info["team_image"] = user.get_avatar_url()
 
             users_transaction_list.append(user_info)
         users_transaction = users_transaction_list
@@ -403,7 +405,7 @@ def publish_dashboard(event_id):
                     team_info["organizations"].append(member.organization)
 
             teams_transaction_list.append(team_info)
-
+        logger.info("teams_transaction: %s", teams_transaction)
         teams_transaction = teams_transaction_list
         return render_template(
             "/dashboards/publish_dashboard.html",
