@@ -27,7 +27,6 @@ RUN . /venv/bin/activate && $PYTHON -m poetry install --no-interaction --only ma
 COPY noppakao/web/static/package.json noppakao/web/static/package-lock.json noppakao/web/static/
 RUN npm install --prefix noppakao/web/static
 COPY . /app
-ENV NOPPHAKAO_SETTINGS=/app/noppakao-development.cfg
 
 RUN npm --prefix noppakao/web/static run tw:minify
 RUN npm install --prefix noppakao/web/static

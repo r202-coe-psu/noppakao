@@ -11,12 +11,13 @@ from . import acl
 from . import caches
 from . import oauth2
 
+from ..utils.config import init_config
+
 app = Flask(__name__)
 
 
 def create_app():
-    app.config.from_object("noppakao.default_settings")
-    app.config.from_envvar("NOPPHAKAO_SETTINGS", silent=True)
+    init_config(app.config)
 
     NOPPHAKAO_CACHE_DIR = app.config.get("NOPPHAKAO_CACHE_DIR")
     p = pathlib.Path(NOPPHAKAO_CACHE_DIR)
