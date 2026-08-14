@@ -42,6 +42,7 @@ BaseChallengeForm = model_form(
             },
         },
         "answer_type": {"label": "Answer Type"},
+        "hard_level": {"label": "Hard Level"},
         "challenge_url": {
             "label": "Challenge URL",
             "render_kw": {
@@ -58,6 +59,17 @@ class ChallengeForm(BaseChallengeForm):
         validators=[],
     )
     category = fields.SelectField("Category", validators=[validators.InputRequired()])
+
+
+class ChallengeSearchForm(FlaskForm):
+    class Meta:
+        csrf = False  # เป็นฟอร์มค้นหาแบบ GET ไม่ต้องใช้ csrf
+
+    search = fields.StringField(
+        "Challenge Name",
+        render_kw={"placeholder": "Search challenge name"},
+    )
+    category = fields.SelectField("Type", choices=[], validate_choice=False)
 
 
 class UploadChallengeFileForm(FlaskForm):

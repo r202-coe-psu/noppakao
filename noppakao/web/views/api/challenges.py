@@ -17,6 +17,7 @@ def get_all_data(challenge_id):
         "name": challenge.name,
         "category": challenge.category.name,
         "answer_type": challenge.answer_type,
+        "hard_level": challenge.hard_level,
         "answer": challenge.answer,
         "description": challenge.description,
         "challenge_url": challenge.challenge_url,

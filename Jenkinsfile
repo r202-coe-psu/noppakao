@@ -20,6 +20,35 @@ pipeline {
                 }
             }
         }
+        stage('Deploy to Staging') {
+            when {
+                branch 'develop'
+            }
+            steps {
+                withCredentials([
+                    sshUserPrivateKey(credentialsId: 'r202-staging-ssh', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER'),
+                    string(credentialsId: 'r202-staging-host', variable: 'SSH_HOST'),
+                    string(credentialsId: 'r202-staging-port', variable: 'SSH_PORT')
+                ]) {
+                    sh '''
+                        echo "Starting deployment to Staging server..."
+                        
+                        ssh -i $SSH_KEY -p $SSH_PORT -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "
+                            
+                            echo '==> Deploying noppakao Staging...'
+                            cd /home/projects/noppakao
+                            git -C /home/projects/noppakao fetch origin develop
+                            git -C /home/projects/noppakao checkout develop
+                            git -C /home/projects/noppakao reset --hard origin/develop
+                            git -C /home/projects/noppakao pull
+                            docker compose -f docker-compose.staging.yml up -d --build --force-recreate
+
+                        "
+                        echo "Deployment process finished successfully!"
+                    '''
+                }
+            }
+        }
 
         stage('Deploy to Production') {
             when {

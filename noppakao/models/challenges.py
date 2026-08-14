@@ -1,25 +1,22 @@
-import mongoengine as me
 import datetime
+
+import mongoengine as me
 
 STATUS_CHOICES = ["active", "disactive"]
 
 ANSWER_TYPES = ["flag", "plaintext"]
+
+HARD_LEVEL_CHOICES = ["easy", "medium", "hard"]
 
 
 class ChallengeResource(me.Document):
     meta = {"collection": "challenge_resources"}
     challenge = me.ReferenceField("Challenge", dbref=True)
     file = me.FileField()  # จัดเก็บไฟล์
-    status = me.StringField(
-        default="active", choices=STATUS_CHOICES, required=True
-    )  # บอกถึงสถานะ
-    created_date = me.DateTimeField(
-        required=True, default=datetime.datetime.now, auto_now=True
-    )
+    status = me.StringField(default="active", choices=STATUS_CHOICES, required=True)  # บอกถึงสถานะ
+    created_date = me.DateTimeField(required=True, default=datetime.datetime.now, auto_now=True)
     created_by = me.ReferenceField("User", dbref=True, required=True)  # คนสุดท้ายที่กดอัพเดต
-    updated_date = me.DateTimeField(
-        required=True, default=datetime.datetime.now, auto_now=True
-    )  # เวลาการสร้างหรืออัพเดตล่าสุด
+    updated_date = me.DateTimeField(required=True, default=datetime.datetime.now, auto_now=True)  # เวลาการสร้างหรืออัพเดตล่าสุด
     updated_by = me.ReferenceField("User", dbref=True, required=True)  # คนสุดท้ายที่กดอัพเดต
 
 
@@ -29,6 +26,7 @@ class Challenge(me.Document):
     name = me.StringField(required=True, max_length=256)  # หัวข้อโจทย์
     description = me.StringField()  # รายละเอียด
     category = me.ReferenceField("Category", dbref=True)  # หมวดหมู่
+    hard_level = me.StringField(choices=HARD_LEVEL_CHOICES)
 
     hint = me.StringField(max_length=512)  # คำใบ้
     answer = me.StringField(required=True, max_length=512)  # ธงหรือก็คือคำตอบ
@@ -37,16 +35,10 @@ class Challenge(me.Document):
     # Challenge Information
     challenge_url = me.StringField()
 
-    status = me.StringField(
-        default="active", choices=STATUS_CHOICES, required=True
-    )  # บอกถึงสถานะ
-    created_date = me.DateTimeField(
-        required=True, default=datetime.datetime.now, auto_now=True
-    )
+    status = me.StringField(default="active", choices=STATUS_CHOICES, required=True)  # บอกถึงสถานะ
+    created_date = me.DateTimeField(required=True, default=datetime.datetime.now, auto_now=True)
     created_by = me.ReferenceField("User", dbref=True, required=True)  # คนสุดท้ายที่กดอัพเดต
-    updated_date = me.DateTimeField(
-        required=True, default=datetime.datetime.now, auto_now=True
-    )  # เวลาการสร้างหรืออัพเดตล่าสุด
+    updated_date = me.DateTimeField(required=True, default=datetime.datetime.now, auto_now=True)  # เวลาการสร้างหรืออัพเดตล่าสุด
     updated_by = me.ReferenceField("User", dbref=True, required=True)  # คนสุดท้ายที่กดอัพเดต
 
     def get_uploaded_date(self):
