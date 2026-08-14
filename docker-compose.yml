@@ -1,39 +1,38 @@
 services:
-    mongodb:
-        image: mongo
-        container_name: noppakao-mongodb
-        volumes:
-            - ../deployment/noppakao/mongodb/data/db:/data/db
-            - /etc/localtime:/etc/localtime:ro
-        restart: always
-        networks:
-            - default
-        logging:
-            options:
-                max-size: "10m"
-                max-file: "3"
-    web:
-        build: .
-        image: noppakao-image
-        container_name: noppakao-web
-        volumes:
-            - ../deployment:/deployment
-            - /etc/localtime:/etc/localtime:ro
-        ports:
-            - 7080:7080
-        links:
-            - mongodb
-        networks:
-            - default
-        restart: always
-        env_file:
-            - .env
-        command:
-            /venv/bin/gunicorn -w 8 --bind 0.0.0.0:7080 "noppakao.web:create_app()" --log-file=- --log-level debug --capture-output
-        logging:
-            options:
-                max-size: "10m"
-                max-file: "3"
+  mongodb:
+    image: mongo:7.0
+    container_name: noppakao-mongodb
+    volumes:
+      - ../deployment/noppakao/mongodb/data/db:/data/db
+      - /etc/localtime:/etc/localtime:ro
+    restart: always
+    networks:
+      - default
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+  web:
+    build: .
+    image: noppakao-image
+    container_name: noppakao-web
+    volumes:
+      - ../deployment:/deployment
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 7080:7080
+    links:
+      - mongodb
+    networks:
+      - default
+    restart: always
+    env_file:
+      - .env
+    command: /venv/bin/gunicorn -w 8 --bind 0.0.0.0:7080 "noppakao.web:create_app()" --log-file=- --log-level debug --capture-output
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 networks:
-    default:
+  default:
