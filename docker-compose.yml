@@ -1,6 +1,6 @@
 services:
   mongodb:
-    image: mongo:7.0
+    image: mongo:7
     container_name: noppakao-mongodb
     volumes:
       - ../deployment/noppakao/mongodb/data/db:/data/db
