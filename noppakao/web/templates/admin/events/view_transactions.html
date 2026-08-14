@@ -1,5 +1,6 @@
 {% extends "base/default-page.html" %}
 {% import '/base/html-renderer-refactor.html' as renderer %}
+{% from '/components/badges.html' import hard_level_badge %}
 
 {% block content %}
 <div class="container mx-auto px-4">
@@ -18,6 +19,7 @@
     </div>
     <div class="flex items-center gap-3 mt-1">
       <span class="font-bold text-lg">{{ event_challenge.challenge.name }}</span>
+      {{ hard_level_badge(event_challenge.challenge) }}
     </div>
     <div class="flex flex-col items-start gap-2 mt-1">
       <span class="badge badge-primary font-semibold">Type: {{ event_challenge.challenge.answer_type }}</span>

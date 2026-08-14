@@ -1,5 +1,6 @@
 {% extends "base/default-page.html" %}
 {% import '/base/html-renderer-refactor.html' as renderer %}
+{% from '/components/badges.html' import hard_level_badge %}
 
 {% block content %}
 <div class="flex flex-col gap-4">
@@ -63,7 +64,12 @@
               {% if event_categorys[i].name == challenge.category.name %}
               <tr>
                 <td><i class="ph ph-cube"></i></td>
-                <td>{{ challenge.name }}</td>
+                <td>
+                  <div class="flex flex-row gap-2 items-center flex-wrap">
+                    <span>{{ challenge.name }}</span>
+                    {{ hard_level_badge(challenge) }}
+                  </div>
+                </td>
                 <td class="flex flex-row gap-2 justify-center items-center">
                   <a href="{{ url_for('admin.challenges.create_or_edit',challenge_id=challenge.id ) }}"
                     aria-label="Edit Challenge">

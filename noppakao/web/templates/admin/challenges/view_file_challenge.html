@@ -1,5 +1,6 @@
 {% extends "base/default-page.html" %}
 {% import '/base/html-renderer-refactor.html' as renderer %}
+{% from '/components/badges.html' import hard_level_badge %}
 
 {% block content %}
 <div class="max-w-3xl mx-auto px-4">
@@ -34,6 +35,7 @@
                             <i class="folder icon"></i>
                         </span>
                         <h4 class="font-bold">{{ challenge_resource.challenge.name }}</h4>
+                        {{ hard_level_badge(challenge_resource.challenge, class_="ml-2") }}
                     </div>
                     <div class="mt-1 text-sm">
                         {{ challenge_resource.file.filename }}

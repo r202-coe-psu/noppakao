@@ -1,4 +1,5 @@
 {% extends "base/default-page.html" %}
+{% from '/components/badges.html' import hard_level_badge %}
 
 {% block content %}
 <div class="flex gap-4">
@@ -39,7 +40,12 @@
             {% if event_categorys[i].name == event_challenge.challenge.category.name %}
             <tr class="hover">
               <td><i class="cube icon text-primary"></i></td>
-              <td>{{ event_challenge.challenge.name }}</td>
+              <td>
+                <div class="flex flex-row gap-2 items-center flex-wrap">
+                  <span>{{ event_challenge.challenge.name }}</span>
+                  {{ hard_level_badge(event_challenge.challenge) }}
+                </div>
+              </td>
               <td class="text-center">{{ event_challenge.success_score }}</td>
               <td class="text-center">{{ event_challenge.first_blood_score }}</td>
               <td class="text-center">{{ event_challenge.hint_score }}</td>

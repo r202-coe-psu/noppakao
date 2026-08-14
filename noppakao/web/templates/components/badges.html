@@ -1,0 +1,14 @@
+{# แสดง badge ระดับความยาก ถ้าโจทย์ไม่มี hard_level จะไม่แสดงอะไรเลย #}
+{% macro hard_level_badge(challenge, class_="") %}
+{% set hard_level = challenge.hard_level if challenge else None %}
+{% if hard_level %}
+{% set styles = {
+"easy": "badge-success",
+"medium": "badge-warning",
+"hard": "badge-error"
+} %}
+<span class="badge badge-sm {{ styles.get(hard_level, 'badge-ghost') }} {{ class_ }}">
+  {{ hard_level|capitalize }}
+</span>
+{% endif %}
+{% endmacro %}

@@ -42,6 +42,7 @@ BaseChallengeForm = model_form(
             },
         },
         "answer_type": {"label": "Answer Type"},
+        "hard_level": {"label": "Hard Level"},
         "challenge_url": {
             "label": "Challenge URL",
             "render_kw": {

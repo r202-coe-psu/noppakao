@@ -91,9 +91,14 @@
             url: '/api/challenge/' + challengeId,
             type: 'get',
             success: function (response) {
+              const hardLevelStyles = { easy: 'badge-success', medium: 'badge-warning', hard: 'badge-error' };
+              const hardLevelBadge = response.hard_level
+                ? `<span class="badge badge-sm ${hardLevelStyles[response.hard_level] || 'badge-ghost'}">${response.hard_level}</span>`
+                : '';
+
               $('.response').html(`
                 <div class="space-y-2">
-                  <p><span class="font-bold">Name:</span> ${response.name}</p>
+                  <p><span class="font-bold">Name:</span> ${response.name} ${hardLevelBadge}</p>
                   <p><span class="font-bold">Category:</span> ${response.category}</p>
                   <p><span class="font-bold">Answer Type:</span> ${response.answer_type}</p>
                   <p><span class="font-bold">Answer:</span> ${response.answer}</p>
