@@ -37,12 +37,7 @@ def index():
         query &= Q(name__icontains=search)
 
     if category_id:
-        selected_category = next(
-            (category for category in categories if f"{category.id}" == category_id),
-            None,
-        )
-        if selected_category:
-            query &= Q(category=selected_category)
+        query &= Q(category=category_id)
 
     challenges = models.Challenge.objects(query).select_related()
 
