@@ -20,7 +20,10 @@ def init_config(config_obj):
             or key.startswith("MONGODB_")
             or key == "SECRET_KEY"
         ):
-            config_obj[key] = value
+            if value.isdigit():
+                config_obj[key] = int(value)
+            else:
+                config_obj[key] = value
 
     if os.environ.get("NOPPHAKAO_SETTINGS"):
         config_obj.from_envvar("NOPPHAKAO_SETTINGS", silent=True)
