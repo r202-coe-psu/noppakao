@@ -23,7 +23,8 @@ bcrypt = Bcrypt()
 @module.route("/", methods=["GET", "POST"])
 @acl.roles_required("admin")
 def index():
-    category_ids = models.Challenge.objects().distinct("category")
+    category_refs = models.Challenge.objects().distinct("category")
+    category_ids = [c.id if hasattr(c, "id") else c for c in category_refs if c]
     categories = models.Category.objects(id__in=category_ids)
 
     form = forms.challenges.ChallengeSearchForm(request.args)
