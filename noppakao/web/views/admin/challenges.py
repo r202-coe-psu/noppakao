@@ -23,10 +23,8 @@ bcrypt = Bcrypt()
 @module.route("/", methods=["GET", "POST"])
 @acl.roles_required("admin")
 def index():
-    categories = []
-    for challenge in models.Challenge.objects():
-        if challenge.category and not challenge.category in categories:
-            categories.append(challenge.category)
+    category_ids = models.Challenge.objects().distinct("category")
+    categories = models.Category.objects(id__in=category_ids)
 
     form = forms.challenges.ChallengeSearchForm(request.args)
     form.category.choices = [("", "All types")] + [(f"{category.id}", category.name) for category in categories]
@@ -46,7 +44,7 @@ def index():
         if selected_category:
             query &= Q(category=selected_category)
 
-    challenges = models.Challenge.objects(query)
+    challenges = models.Challenge.objects(query).select_related()
 
     event_categorys = []
     for challenge in challenges:
