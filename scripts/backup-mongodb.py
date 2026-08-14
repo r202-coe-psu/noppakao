@@ -24,11 +24,11 @@ Usage examples:
 
 How to restore the backup:
     For Full Backup (.archive.gz):
-        mongorestore --uri="mongodb://localhost:27017/sindhudb" --archive=backups/sindhudb_backup_YYYYMMDD_HHMMSS_all.archive.gz --gzip --drop
+        mongorestore --uri="mongodb://localhost:27017/noppakaodb" --archive=backups/noppakaodb_backup_YYYYMMDD_HHMMSS_all.archive.gz --gzip --drop
 
     For Filtered Backup (.tar.gz):
-        tar -xzf backups/sindhudb_backup_YYYYMMDD_HHMMSS_1m.tar.gz -C backups/
-        mongorestore --uri="mongodb://localhost:27017/sindhudb" --gzip --drop backups/sindhudb_backup_YYYYMMDD_HHMMSS_1m/sindhudb
+        tar -xzf backups/noppakaodb_backup_YYYYMMDD_HHMMSS_1m.tar.gz -C backups/
+        mongorestore --uri="mongodb://localhost:27017/noppakaodb" --gzip --drop backups/noppakaodb_backup_YYYYMMDD_HHMMSS_1m/noppakaodb
 """
 
 import argparse
@@ -79,7 +79,7 @@ def backup_mongodb_full(mongodb_uri: str) -> None:
 
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     backup_filename = os.path.join(
-        backup_dir, f"sindhudb_backup_{timestamp}_all.archive.gz"
+        backup_dir, f"noppakaodb_backup_{timestamp}_all.archive.gz"
     )
 
     print("=" * 60)
@@ -161,10 +161,10 @@ def backup_mongodb_filtered(
     """Performs a time-filtered database backup using PyMongo and BSON export."""
     client: MongoClient = MongoClient(mongodb_uri)
     db = client.get_database()
-    db_name = db.name or "sindhudb"
+    db_name = db.name or "noppakaodb"
 
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    backup_folder_name = f"sindhudb_backup_{timestamp}_{period_code}"
+    backup_folder_name = f"noppakaodb_backup_{timestamp}_{period_code}"
     backup_dir = os.path.abspath("backups")
     os.makedirs(backup_dir, exist_ok=True)
 
@@ -284,7 +284,7 @@ def prompt_period_choice() -> str:
 def backup_mongodb(period: Optional[str] = None) -> None:
     """Main backup function entry point."""
     load_dotenv()
-    mongodb_uri = os.getenv("MONGODB_URI", "mongodb://localhost:27017/sindhudb")
+    mongodb_uri = os.getenv("MONGODB_URI", "mongodb://mongodb:27017/noppakaodb")
 
     selected_option = "1"
 

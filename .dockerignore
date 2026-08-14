@@ -1,0 +1,45 @@
+# Version control
+.git
+.gitignore
+
+# Virtual Environments
+.venv
+venv
+ENV
+env
+
+# Dependencies & Node modules
+node_modules
+noppakao/web/static/node_modules
+
+# Backups & Data
+backups
+reports
+data
+*.archive.gz
+*.tar.gz
+
+# Python bytecode & cache
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+.coverage
+htmlcov
+.cache
+
+# Environment & Config files containing secrets
+.env
+.env.*
+*.cfg
+*.cfg.simple
+
+# SonarQube & CI/CD
+sonar-project.properties
+Jenkinsfile
+
+# OS & IDE
+.DS_Store
+.idea
+.vscode
