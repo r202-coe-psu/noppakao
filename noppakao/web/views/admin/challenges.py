@@ -1,28 +1,20 @@
-import datetime
-import mongoengine as me
-import os
-from mongoengine.queryset.visitor import Q
-
 from flask import (
     Blueprint,
-    render_template,
-    url_for,
-    request,
-    session,
-    redirect,
-    send_file,
     abort,
+    redirect,
+    render_template,
+    request,
+    send_file,
+    url_for,
 )
-
-from werkzeug.security import check_password_hash
 from flask_bcrypt import Bcrypt
-from flask_login import login_user, logout_user, login_required, current_user
-from noppakao.utils import updater_info
+from flask_login import current_user
+from mongoengine.queryset.visitor import Q
+
 from noppakao import models
 from noppakao.web import forms
-from ... import acl, oauth2
 
-from .. import paginations
+from ... import acl
 
 module = Blueprint("challenges", __name__, url_prefix="/challenges")
 bcrypt = Bcrypt()
@@ -31,17 +23,41 @@ bcrypt = Bcrypt()
 @module.route("/", methods=["GET", "POST"])
 @acl.roles_required("admin")
 def index():
-    challenges = models.Challenge.objects()
-    event_categorys = []
+    categories = []
+    for challenge in models.Challenge.objects():
+        if challenge.category and not challenge.category in categories:
+            categories.append(challenge.category)
 
+    form = forms.challenges.ChallengeSearchForm(request.args)
+    form.category.choices = [("", "All types")] + [(f"{category.id}", category.name) for category in categories]
+
+    search = (form.search.data or "").strip()
+    category_id = (form.category.data or "").strip()
+
+    query = Q()
+    if search:
+        query &= Q(name__icontains=search)
+
+    if category_id:
+        selected_category = next(
+            (category for category in categories if f"{category.id}" == category_id),
+            None,
+        )
+        if selected_category:
+            query &= Q(category=selected_category)
+
+    challenges = models.Challenge.objects(query)
+
+    event_categorys = []
     for challenge in challenges:
-        if not challenge.category in event_categorys:
+        if challenge.category and not challenge.category in event_categorys:
             event_categorys.append(challenge.category)
 
     return render_template(
         "admin/challenges/index.html",
         challenges=challenges,
         event_categorys=event_categorys,
+        form=form,
     )
 
 
@@ -55,17 +71,12 @@ def create_or_edit(challenge_id):
     if challenge_id:
         challenge = models.Challenge.objects(id=challenge_id).first()
         form = forms.challenges.ChallengeForm(obj=challenge)
-    form.category.choices = [
-        (f"{category.id}", category.name)
-        for category in models.Category.objects(status="active")
-    ]
+    form.category.choices = [(f"{category.id}", category.name) for category in models.Category.objects(status="active")]
     if not form.validate_on_submit():
         if challenge:
             form.category.data = str(challenge.category.id)
         print(form.errors)
-        return render_template(
-            "admin/challenges/create_or_edit.html", form=form, challenge=challenge
-        )
+        return render_template("admin/challenges/create_or_edit.html", form=form, challenge=challenge)
 
     if not challenge_id:
         challenge = models.Challenge()
@@ -96,9 +107,7 @@ def create_or_edit(challenge_id):
 @acl.roles_required("admin")
 def view_file_challenge(challenge_id):
     challenge = models.Challenge.objects.get(id=challenge_id)
-    challenge_resources = models.ChallengeResource.objects(
-        challenge=challenge, status="active"
-    )
+    challenge_resources = models.ChallengeResource.objects(challenge=challenge, status="active")
     form = forms.challenges.UploadChallengeFileForm()
 
     if not form.validate_on_submit():
@@ -140,9 +149,7 @@ def view_file_challenge(challenge_id):
 @acl.roles_required("admin")
 def delete(challenge_id, challenge_resource_id):
     challenge = models.Challenge.objects.get(id=challenge_id)
-    challenge_resource = models.ChallengeResource.objects.get(
-        id=challenge_resource_id, status="active"
-    )
+    challenge_resource = models.ChallengeResource.objects.get(id=challenge_resource_id, status="active")
     challenge_resource.status = "disactive"
     challenge_resource.save()
     return redirect(

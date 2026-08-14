@@ -1,4 +1,5 @@
 {% extends "base/default-page.html" %}
+{% import '/base/html-renderer-refactor.html' as renderer %}
 
 {% block content %}
 <div class="flex flex-col gap-4">
@@ -11,6 +12,34 @@
       </button>
     </a>
   </div>
+  <form method="get" action="{{ url_for('admin.challenges.index') }}"
+    class="card bg-white rounded-box shadow p-4 flex flex-col gap-2">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {{ renderer.render_field(form.search) }}
+      {{ renderer.render_search_select_field(form.category, placeholder="Search type") }}
+    </div>
+
+    <div class="flex justify-end gap-2">
+      {% if form.search.data or form.category.data %}
+      <a href="{{ url_for('admin.challenges.index') }}" class="btn btn-ghost">Clear</a>
+      {% endif %}
+      <button type="submit" class="btn btn-primary">
+        <i class="ph ph-magnifying-glass"></i>
+        Search
+      </button>
+    </div>
+  </form>
+
+  {% if not event_categorys %}
+  <p class="text-gray-500">
+    {% if form.search.data or form.category.data %}
+    No challenges match your search.
+    {% else %}
+    No challenges yet.
+    {% endif %}
+  </p>
+  {% endif %}
+
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
     {% for i in range((event_categorys|length)) %}
     <div class="bg-white rounded-box shadow">
