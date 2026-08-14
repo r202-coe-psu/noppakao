@@ -60,6 +60,17 @@ class ChallengeForm(BaseChallengeForm):
     category = fields.SelectField("Category", validators=[validators.InputRequired()])
 
 
+class ChallengeSearchForm(FlaskForm):
+    class Meta:
+        csrf = False  # เป็นฟอร์มค้นหาแบบ GET ไม่ต้องใช้ csrf
+
+    search = fields.StringField(
+        "Challenge Name",
+        render_kw={"placeholder": "Search challenge name"},
+    )
+    category = fields.SelectField("Type", choices=[], validate_choice=False)
+
+
 class UploadChallengeFileForm(FlaskForm):
     uploaded_file = file.MultipleFileField(
         "File type (.zip)",
