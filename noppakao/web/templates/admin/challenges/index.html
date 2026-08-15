@@ -93,6 +93,7 @@
 </div>
 
 {% for challenge in challenges %}
+{% set challenge_resources = resources_by_challenge.get(challenge.id|string, []) %}
 <dialog id="challenge_preview_{{ challenge.id }}" class="modal">
   <div class="modal-box max-w-4xl w-full mx-auto">
     <h3 class="text-lg font-bold flex flex-row gap-2 items-center flex-wrap">
@@ -114,9 +115,9 @@
         </p>
         {% endif %}
 
-        {% if challenge.get_challenge_resources() %}
+        {% if challenge_resources %}
         <p>Files:</p>
-        {% for challenge_resource in challenge.get_challenge_resources() %}
+        {% for challenge_resource in challenge_resources %}
         <p>
           <a href="{{ url_for('challenges.download', challenge_resource_id=challenge_resource.id) }}"
             target="_blank" class="group flex flex-row items-center text-primary">

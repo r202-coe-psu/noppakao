@@ -47,10 +47,18 @@ def index():
         if challenge.category and not challenge.category in event_categorys:
             event_categorys.append(challenge.category)
 
+    resources_by_challenge = {}
+    for challenge_resource in models.ChallengeResource.objects(
+        challenge__in=list(challenges),
+        status="active",
+    ).select_related():
+        resources_by_challenge.setdefault(str(challenge_resource.challenge.id), []).append(challenge_resource)
+
     return render_template(
         "admin/challenges/index.html",
         challenges=challenges,
         event_categorys=event_categorys,
+        resources_by_challenge=resources_by_challenge,
         form=form,
     )
 
@@ -70,7 +78,6 @@ def create_or_edit(challenge_id):
     if not form.validate_on_submit():
         if challenge:
             form.category.data = str(challenge.category.id)
-        print(form.errors)
         return render_template(
             "admin/challenges/create_or_edit.html",
             form=form,
@@ -112,7 +119,6 @@ def view_file_challenge(challenge_id):
     form = forms.challenges.UploadChallengeFileForm()
 
     if not form.validate_on_submit():
-        print(form.errors)
         return render_template(
             "/admin/challenges/view_file_challenge.html",
             challenge_resources=challenge_resources,

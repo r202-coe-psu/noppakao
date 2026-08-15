@@ -13,6 +13,9 @@ module = Blueprint("challenge", __name__, url_prefix="/challenge")
 @acl.roles_required("admin")
 def get_all_data(challenge_id):
     challenge = models.Challenge.objects(id=challenge_id).first()
+    if not challenge:
+        return abort(404)
+
     data = {
         "name": challenge.name,
         "category": challenge.category.name,
