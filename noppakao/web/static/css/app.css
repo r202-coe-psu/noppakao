@@ -2036,6 +2036,9 @@
       }
     }
   }
+  .mx-0 {
+    margin-inline: calc(var(--spacing) * 0);
+  }
   .mx-2 {
     margin-inline: calc(var(--spacing) * 2);
   }
@@ -2703,6 +2706,9 @@
   }
   .loading-lg {
     width: calc(var(--size-selector, 0.25rem) * 7);
+  }
+  .w-1 {
+    width: calc(var(--spacing) * 1);
   }
   .w-2\/3 {
     width: calc(2/3 * 100%);
@@ -3786,6 +3792,11 @@
     --fontsize: 0.75rem;
     --btn-p: 0.75rem;
     --size: calc(var(--size-field, 0.25rem) * 8);
+  }
+  .btn-xs {
+    --fontsize: 0.6875rem;
+    --btn-p: 0.5rem;
+    --size: calc(var(--size-field, 0.25rem) * 6);
   }
   .badge-accent {
     --badge-color: var(--color-accent);

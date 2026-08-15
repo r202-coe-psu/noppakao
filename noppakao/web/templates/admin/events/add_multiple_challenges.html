@@ -22,7 +22,10 @@
       <div class="mb-4 flex flex-col gap-2 border-b pb-4">
         <input type="text" id="search-challenge" class="input input-bordered w-full" placeholder="Search challenge name..." onkeyup="filterChallenges()">
         
-        <div class="flex flex-wrap gap-2 mt-2">
+        <div class="flex flex-wrap gap-2 mt-2 items-center">
+          <button type="button" class="btn btn-xs btn-outline" onclick="toggleAllCategories(this)">Uncheck All</button>
+          <div class="divider divider-horizontal mx-0 w-1"></div>
+
           {% set categories = [] %}
           {% for challenge in challenges %}
             {% if challenge.category.name not in categories %}
@@ -140,6 +143,18 @@
 
 <script>
   let selectedChallengesOrder = [];
+
+  function toggleAllCategories(btn) {
+    const categoryCheckboxes = document.querySelectorAll('.category-filter');
+    const isUnchecking = btn.textContent.trim() === 'Uncheck All';
+    
+    categoryCheckboxes.forEach(cb => {
+      cb.checked = !isUnchecking;
+    });
+    
+    btn.textContent = isUnchecking ? 'Check All' : 'Uncheck All';
+    filterChallenges();
+  }
 
   function filterChallenges() {
     const searchQuery = document.getElementById('search-challenge').value.toLowerCase();
