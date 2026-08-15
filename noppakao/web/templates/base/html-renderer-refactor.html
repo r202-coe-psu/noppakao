@@ -332,12 +332,12 @@ readonly=False) %}
 </script>
 {% endmacro %}
 
-{% macro render_text_area_field(field) %}
+{% macro render_text_area_field(field, height="h-24") %}
 <fieldset class="fieldset" id="field-{{ field.id }}">
   <legend class="fieldset-legend">
     {{ field.label.text }}
   </legend>
-  <textarea class="w-full h-24 textarea" name="{{ field.name }}" id="{{ field.id }}"
+  <textarea class="w-full {{ height }} textarea" name="{{ field.name }}" id="{{ field.id }}"
     placeholder="กรอก{{ field.label.text }}ที่นี่">{{ field.data if field.data else field.default if field.default else "" }}</textarea>
   <div class="fieldset-label">
     <p class="validator-hint">
