@@ -22,6 +22,12 @@ def init_config(config_obj):
         ):
             if value.isdigit():
                 config_obj[key] = int(value)
+            elif (value.startswith("{") and value.endswith("}")) or (value.startswith("[") and value.endswith("]")):
+                import ast
+                try:
+                    config_obj[key] = ast.literal_eval(value)
+                except (ValueError, SyntaxError):
+                    config_obj[key] = value
             else:
                 config_obj[key] = value
 
