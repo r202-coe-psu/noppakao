@@ -1,5 +1,6 @@
 {% extends "base/default-page.html" %}
 {% import '/base/html-renderer-refactor.html' as renderer %}
+{% from '/components/badges.html' import hard_level_badge %}
 
 {% block content %}
 <div class="max-w-3xl mx-auto ">
@@ -51,10 +52,76 @@
         {{ renderer.render_text_area_field(form.challenge_url) }}
       </div>
 
-      <div class="flex justify-end mt-6">
+      <div class="mb-2">
+        {{ renderer.render_multiple_file_input(form.uploaded_file) }}
+      </div>
+
+      {% if challenge and challenge.get_challenge_resources() %}
+      <h3 class="text-2xl font-bold pb-2 my-4 border-b">Existing Challenge Resources</h3>
+
+      <div class="space-y-2">
+        {% for challenge_resource in challenge.get_challenge_resources() %}
+        <div class="card bg-base-100 shadow-sm">
+          <div class="card-body p-4 flex flex-row items-center justify-between">
+            <div>
+              <div class="flex items-center">
+                <span class="text-yellow-500 mr-2">
+                  <i class="folder icon"></i>
+                </span>
+                <h4 class="font-bold">{{ challenge_resource.challenge.name }}</h4>
+                {{ hard_level_badge(challenge_resource.challenge, class_="ml-2") }}
+              </div>
+              <div class="mt-1 text-sm">
+                {{ challenge_resource.file.filename }}
+                <span class="text-blue-500">({{ '%0.2f'| format(challenge_resource.file.length / 1024) }}
+                  KB)</span>
+              </div>
+            </div>
+            <button type="button" class="btn btn-error btn-sm"
+              onclick="showDeleteFileModal('{{ challenge_resource.id }}')">
+              Delete
+            </button>
+          </div>
+        </div>
+
+        <dialog id="delete_file_modal_{{ challenge_resource.id }}" class="modal">
+          <div class="modal-box">
+            <h3 class="font-bold text-lg">Delete File</h3>
+            <p class="py-4">
+              Are you sure you want to delete
+              <span class="text-error">{{ challenge_resource.file.filename }}</span>?
+            </p>
+            <div class="modal-action">
+              <a class="btn btn-error"
+                href="{{ url_for('admin.challenges.delete', challenge_resource_id=challenge_resource.id, challenge_id=challenge.id) }}">
+                Delete
+              </a>
+              <button type="button" class="btn"
+                onclick="closeDeleteFileModal('{{ challenge_resource.id }}')">Cancel</button>
+            </div>
+          </div>
+        </dialog>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="flex justify-end gap-2 mt-6">
+        <a class="btn" href="{{ url_for('admin.challenges.index') }}">Cancel</a>
         <button class="btn btn-primary" type="submit">Save</button>
       </div>
     </div>
   </form>
 </div>
+{% endblock %}
+
+{% block additional_js %}
+<script>
+  function showDeleteFileModal(challenge_resource_id) {
+    document.getElementById('delete_file_modal_' + challenge_resource_id).showModal();
+  }
+
+  function closeDeleteFileModal(challenge_resource_id) {
+    document.getElementById('delete_file_modal_' + challenge_resource_id).close();
+  }
+</script>
 {% endblock %}

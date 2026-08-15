@@ -146,13 +146,7 @@ def delete(challenge_id, challenge_resource_id):
     challenge_resource = models.ChallengeResource.objects.get(id=challenge_resource_id, status="active")
     challenge_resource.status = "disactive"
     challenge_resource.save()
-    return redirect(
-        url_for(
-            "admin.challenges.view_file_challenge",
-            challenge_id=challenge.id,
-            challenge=challenge,
-        )
-    )
+    return redirect(url_for("admin.challenges.create_or_edit", challenge_id=challenge.id))
 
 
 @module.route("/<challenge_id>/download_file", methods=["GET", "POST"])
