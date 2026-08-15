@@ -13,6 +13,7 @@ from mongoengine.queryset.visitor import Q
 
 from noppakao import models
 from noppakao.web import forms
+from noppakao.web.views.api import challenges as api_challenges
 
 from ... import acl
 
@@ -59,6 +60,7 @@ def index():
         challenges=challenges,
         event_categorys=event_categorys,
         resources_by_challenge=resources_by_challenge,
+        preview_flag_prefix=api_challenges.PREVIEW_FLAG_PREFIX,
         form=form,
     )
 
@@ -83,6 +85,7 @@ def create_or_edit(challenge_id):
             form=form,
             challenge=challenge,
             delete_form=delete_form,
+            preview_flag_prefix=api_challenges.PREVIEW_FLAG_PREFIX,
         )
 
     if not challenge_id:

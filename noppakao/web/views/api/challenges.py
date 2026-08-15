@@ -8,6 +8,9 @@ from noppakao.web import acl
 
 module = Blueprint("challenge", __name__, url_prefix="/challenge")
 
+# preview ของ admin ไม่ผูกกับ event เลยไม่มี event.flag_prefix ใช้ค่านี้แทนให้เหมือนตอนแข่งจริง
+PREVIEW_FLAG_PREFIX = "flag"
+
 
 @module.route("/<challenge_id>")
 @acl.roles_required("admin")
@@ -33,13 +36,13 @@ def get_all_data(challenge_id):
 @acl.roles_required("admin")
 def check_answer(challenge_id):
     """ตรวจคำตอบสำหรับ preview ของ admin ใช้เกณฑ์เดียวกับ EventChallenge.check_answer
-    แต่ไม่ผูกกับ event จึงไม่มี flag_prefix ให้ส่งเข้ามาเองได้"""
+    แต่ไม่ผูกกับ event จึง default flag_prefix เป็น flag และให้ส่ง prefix อื่นเข้ามาเองได้"""
     challenge = models.Challenge.objects(id=challenge_id).first()
     if not challenge:
         return abort(404)
 
     answer = request.args.get("answer", "")
-    flag_prefix = request.args.get("flag_prefix", "")
+    flag_prefix = request.args.get("flag_prefix") or PREVIEW_FLAG_PREFIX
 
     if challenge.answer_type == "flag":
         expected = f"{flag_prefix}{{{challenge.answer}}}"
