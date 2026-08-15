@@ -9,20 +9,52 @@
 
   <div class="grid grid-cols-2 gap-4">
     <!-- Selected Challenges -->
-    <div class="border rounded-lg p-4 h-[500px] overflow-y-auto">
+    <div class="border rounded-lg p-4 h-[600px] overflow-y-auto">
       <h3 class="text-lg font-semibold mb-2">Selected Challenges</h3>
       <ul id="selected-challenges" class="space-y-2"></ul>
     </div>
 
     <!-- Available Challenges -->
-    <div class="border rounded-lg p-4 h-[500px] overflow-y-auto">
+    <div class="border rounded-lg p-4 h-[600px] flex flex-col">
       <h3 class="text-lg font-semibold mb-2">Available Challenges</h3>
-      <ul id="available-challenges" class="space-y-2">
-        {% for value, label in form.challenges.choices %}
-        <li class="flex items-center">
-          <input type="checkbox" name="challenges" class="checkbox checkbox-primary mr-2" value="{{ value }}"
-            onchange="updateChallenges(this)" id="challenge-{{ value }}">
-          <label class="ml-2" for="challenge-{{ value }}"> {{ label }}</label>
+      
+      <!-- Filters -->
+      <div class="mb-4 flex flex-col gap-2 border-b pb-4">
+        <input type="text" id="search-challenge" class="input input-bordered w-full" placeholder="Search challenge name..." onkeyup="filterChallenges()">
+        
+        <div class="flex flex-wrap gap-2 mt-2 items-center">
+          <button type="button" class="btn btn-xs btn-outline" onclick="toggleAllCategories(this)">Uncheck All</button>
+          <div class="divider divider-horizontal mx-0 w-1"></div>
+
+          {% set categories = [] %}
+          {% for challenge in challenges %}
+            {% if challenge.category.name not in categories %}
+              {% set _ = categories.append(challenge.category.name) %}
+            {% endif %}
+          {% endfor %}
+          
+          {% for category in categories %}
+          <label class="cursor-pointer flex items-center gap-1">
+            <input type="checkbox" class="checkbox checkbox-sm checkbox-primary category-filter" value="{{ category }}" onchange="filterChallenges()" checked>
+            <span class="badge badge-outline badge-primary">{{ category }}</span>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <ul id="available-challenges" class="space-y-2 overflow-y-auto flex-1">
+        {% for challenge in challenges %}
+        <li class="flex items-center challenge-item" data-name="{{ challenge.name | lower }}" data-category="{{ challenge.category.name }}">
+          <input type="checkbox" name="challenges" class="checkbox checkbox-primary mr-2" value="{{ challenge.id }}"
+            data-challenge-name="{{ challenge.name }}" data-challenge-category="{{ challenge.category.name }}"
+            onchange="updateChallenges(this)" id="challenge-{{ challenge.id }}">
+          <label class="cursor-pointer" for="challenge-{{ challenge.id }}"> 
+            <span class="sr-only">Select {{ challenge.name }}</span>
+          </label>
+          <div class="ml-2 flex items-center gap-2 cursor-pointer text-blue-600 hover:underline" onclick="showChallengePreview('{{ challenge.id }}')">
+            <span>{{ challenge.name }}</span>
+            <span class="badge badge-outline badge-primary">{{ challenge.category.name }}</span>
+          </div>
         </li>
         {% endfor %}
       </ul>
@@ -33,12 +65,125 @@
   </div>
 </form>
 
+{% from '/components/badges.html' import hard_level_badge %}
+{% for challenge in challenges %}
+{% set challenge_resources = resources_by_challenge.get(challenge.id|string, []) %}
+<dialog id="challenge_preview_{{ challenge.id }}" class="modal">
+  <div class="modal-box max-w-4xl w-full mx-auto">
+    <h3 class="text-lg font-bold flex flex-row gap-2 items-center flex-wrap">
+      {{ challenge.name }}
+      {{ hard_level_badge(challenge) }}
+      <span class="badge badge-ghost badge-sm">Preview</span>
+    </h3>
+    <div>
+      <div class="p-4">
+        <p class="whitespace-pre-line">{{ challenge.description }}</p>
+        {% if challenge.answer_type != 'plaintext' %}
+        <p>Example Submit: <span class="text-gray-500 italic">{{ event.flag_prefix }}{Answer}</span></p>
+        {% endif %}
+
+        {% if challenge.challenge_url %}
+        <p>
+          Link URL: <a href="{{ challenge.challenge_url }}" target="_blank" class="text-primary">{{
+            challenge.challenge_url }}</a>
+        </p>
+        {% endif %}
+
+        {% if challenge_resources %}
+        <p>Files:</p>
+        {% for challenge_resource in challenge_resources %}
+        <p>
+          <a href="{{ url_for('challenges.download', challenge_resource_id=challenge_resource.id) }}"
+            target="_blank" class="group flex flex-row items-center text-primary">
+            <i class="ph-fill ph-box-arrow-down mr-2 text-primary"></i>
+            <span class="group-hover:underline">{{ challenge_resource.file.filename }}</span>
+            <span class="text-blue-600 group-hover:underline ml-1">
+              ({{ '%0.2f' | format(challenge_resource.file.length / 1024) }} KB)
+            </span>
+          </a>
+        </p>
+        {% endfor %}
+        {% endif %}
+      </div>
+
+      {% if challenge.hint %}
+      <div id="preview-hint-button-{{ challenge.id }}" class="w-full flex justify-center items-center">
+        <button type="button" class="btn btn-primary w-full text-white"
+          onclick="revealPreviewHint('{{ challenge.id }}')">
+          <i class="ph-fill ph-eye"></i>
+          Show hint
+        </button>
+      </div>
+      <div id="preview-hint-{{ challenge.id }}"
+        class="hidden p-4 mb-4 bg-base-100 border border-gray-300 rounded-lg border-t-2 border-t-primary">
+        {{ challenge.hint }}
+      </div>
+      {% endif %}
+
+      <div class="flex flex-row gap-2 mt-2">
+        <input type="text" class="input w-full" id="preview-answer-{{ challenge.id }}"
+          placeholder="Enter your answer..." autocomplete="off"
+          {% if challenge.answer_type == 'flag' %}value="{{ event.flag_prefix }}{}"{% endif %}
+          onkeydown="if (event.key === 'Enter') { event.preventDefault(); checkPreviewAnswer('{{ challenge.id }}') }">
+        <button type="button" class="btn btn-primary"
+          onclick="checkPreviewAnswer('{{ challenge.id }}')">Submit</button>
+      </div>
+      <div id="preview-result-{{ challenge.id }}" class="mt-2"></div>
+    </div>
+
+    <div class="modal-action">
+      <button type="button" class="btn btn-error"
+        onclick="closeChallengePreview('{{ challenge.id }}')">
+        Close
+        <i class="ph ph-x"></i>
+      </button>
+    </div>
+  </div>
+</dialog>
+{% endfor %}
+
 <script>
   let selectedChallengesOrder = [];
 
+  function toggleAllCategories(btn) {
+    const categoryCheckboxes = document.querySelectorAll('.category-filter');
+    const isUnchecking = btn.textContent.trim() === 'Uncheck All';
+    
+    categoryCheckboxes.forEach(cb => {
+      cb.checked = !isUnchecking;
+    });
+    
+    btn.textContent = isUnchecking ? 'Check All' : 'Uncheck All';
+    filterChallenges();
+  }
+
+  function filterChallenges() {
+    const searchQuery = document.getElementById('search-challenge').value.toLowerCase();
+    const categoryCheckboxes = document.querySelectorAll('.category-filter');
+    const checkedCategories = Array.from(categoryCheckboxes)
+                                   .filter(cb => cb.checked)
+                                   .map(cb => cb.value);
+
+    const items = document.querySelectorAll('.challenge-item');
+    items.forEach(item => {
+      const name = item.dataset.name;
+      const category = item.dataset.category;
+      
+      const matchesSearch = name.includes(searchQuery);
+      const matchesCategory = checkedCategories.includes(category);
+      
+      if (matchesSearch && matchesCategory) {
+        item.style.display = 'flex';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  }
+
   function updateChallenges(checkbox) {
+    const challengeName = checkbox.dataset.challengeName;
+    const challengeCategory = checkbox.dataset.challengeCategory;
     const selectedList = document.getElementById('selected-challenges');
-    const challengeText = checkbox.nextElementSibling.textContent;
     const challengeId = checkbox.value;
 
     if (checkbox.checked) {
@@ -46,29 +191,48 @@
       const li = document.createElement('li');
       li.className = 'bg-blue-100 p-2 rounded';
       li.dataset.challengeId = challengeId;
-      li.innerHTML = `
-        <div class="flex flex-col gap-2">
-          <div>${challengeText}</div>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="text-sm">First Blood Score:</label>
-              <input type="number" name="first_blood_score_${challengeId}" class="input input-bordered w-full" required>
-            </div>
-            <div>
-              <label class="text-sm">Success Score:</label>
-              <input type="number" name="success_score_${challengeId}" class="input input-bordered w-full" required>
-            </div>
-            <div>
-              <label class="text-sm">Hint Score:</label>
-              <input type="number" name="hint_score_${challengeId}" class="input input-bordered w-full" required>
-            </div>
-            <div>
-              <label class="text-sm">Fail Score:</label>
-              <input type="number" name="fail_score_${challengeId}" class="input input-bordered w-full" required>
-            </div>
-          </div>
+
+      const container = document.createElement('div');
+      container.className = 'flex flex-col gap-2';
+
+      const header = document.createElement('div');
+      header.className = 'flex items-center gap-2';
+
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'font-semibold';
+      nameSpan.textContent = challengeName;
+
+      const categorySpan = document.createElement('span');
+      categorySpan.className = 'badge badge-outline badge-primary';
+      categorySpan.textContent = challengeCategory;
+
+      header.appendChild(nameSpan);
+      header.appendChild(categorySpan);
+
+      const scoreGrid = document.createElement('div');
+      scoreGrid.className = 'grid grid-cols-2 gap-2';
+      scoreGrid.innerHTML = `
+        <div>
+          <label class="text-sm">First Blood Score:</label>
+          <input type="number" name="first_blood_score_${challengeId}" class="input input-bordered w-full" required>
+        </div>
+        <div>
+          <label class="text-sm">Success Score:</label>
+          <input type="number" name="success_score_${challengeId}" class="input input-bordered w-full" required>
+        </div>
+        <div>
+          <label class="text-sm">Hint Score:</label>
+          <input type="number" name="hint_score_${challengeId}" class="input input-bordered w-full" required>
+        </div>
+        <div>
+          <label class="text-sm">Fail Score:</label>
+          <input type="number" name="fail_score_${challengeId}" class="input input-bordered w-full" required>
         </div>
       `;
+
+      container.appendChild(header);
+      container.appendChild(scoreGrid);
+      li.appendChild(container);
       selectedList.appendChild(li);
     } else {
       const items = selectedList.getElementsByTagName('li');
@@ -86,6 +250,47 @@
     event.preventDefault();
     document.getElementById('challenge-order').value = JSON.stringify(selectedChallengesOrder);
     document.getElementById('challenge-form').submit();
+  }
+
+  function showChallengePreview(challenge_id) {
+    document.getElementById('challenge_preview_' + challenge_id).showModal();
+  }
+
+  function closeChallengePreview(challenge_id) {
+    document.getElementById('challenge_preview_' + challenge_id).close();
+  }
+
+  function revealPreviewHint(challenge_id) {
+    document.getElementById('preview-hint-button-' + challenge_id).classList.add('hidden');
+    document.getElementById('preview-hint-' + challenge_id).classList.remove('hidden');
+  }
+
+  function checkPreviewAnswer(challenge_id) {
+    const input = document.getElementById('preview-answer-' + challenge_id);
+    const result = document.getElementById('preview-result-' + challenge_id);
+    const answer = input.value;
+
+    if (!answer) {
+      result.innerHTML = '';
+      return;
+    }
+
+    const flagPrefix = "{{ event.flag_prefix }}";
+
+    fetch(`/api/challenge/${challenge_id}/check?answer=${encodeURIComponent(answer)}&flag_prefix=${encodeURIComponent(flagPrefix)}`)
+      .then(response => response.json())
+      .then(data => {
+        result.className = data.correct
+          ? 'mt-2 alert alert-success text-center'
+          : 'mt-2 alert alert-error text-center';
+        result.innerHTML = data.correct
+          ? '<i class="ph-fill ph-check-circle"></i><span class="font-semibold">Correct Answer</span>'
+          : '<i class="ph-fill ph-x-circle"></i><span class="font-semibold">Wrong Answer</span>';
+      })
+      .catch(() => {
+        result.className = 'mt-2 alert alert-warning text-center';
+        result.innerText = 'Cannot check answer right now';
+      });
   }
 </script>
 {% endblock %}

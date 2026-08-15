@@ -1,3 +1,4 @@
+import datetime
 from flask import Blueprint, request, send_file, url_for, abort
 from flask.json import jsonify
 from flask_login import current_user, login_required
@@ -13,7 +14,16 @@ module = Blueprint("events", __name__, url_prefix="/events")
 @login_required
 def show_hint(event_id, event_challege_id):
     event = models.Event.objects(id=event_id).first()
+    if not event:
+        return abort(404)
+
+    if not current_user.has_roles("admin"):
+        if event.started_date > datetime.datetime.now():
+            return abort(403)
+
     event_challenge = models.EventChallenge.objects(id=event_challege_id).first()
+    if not event_challenge:
+        return abort(404)
 
     if event.type == "team":
         team = models.Team.objects(members__in=[current_user], status="active", event=event).first()
@@ -48,7 +58,17 @@ def show_hint(event_id, event_challege_id):
 @login_required
 def check_hint(event_id, event_challege_id):
     event = models.Event.objects(id=event_id).first()
+    if not event:
+        return abort(404)
+
+    if not current_user.has_roles("admin"):
+        if event.started_date > datetime.datetime.now():
+            return abort(403)
+
     event_challenge = models.EventChallenge.objects(id=event_challege_id).first()
+    if not event_challenge:
+        return abort(404)
+
     if event.type == "team":
         team = models.Team.objects(members__in=[current_user], status="active").first()
         trasaction = models.Transaction.objects(
