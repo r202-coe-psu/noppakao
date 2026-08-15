@@ -139,7 +139,7 @@
                       <p>Files:</p>
                       {% for challenge_resource in challenge.get_challenge_resources() %}
                       <p>
-                        <a href="{{ url_for('challenges.download', challenge_resource_id=challenge_resource.id) }}"
+                        <a href="{{ url_for('challenges.download', challenge_resource_id=challenge_resource.id, event_id=event.id) }}"
                           target="_blank" class="group flex flex-row items-center text-primary">
 
                           <i class="ph-fill ph-box-arrow-down mr-2 text-primary"></i>
