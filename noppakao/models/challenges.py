@@ -28,7 +28,7 @@ class Challenge(me.Document):
     category = me.ReferenceField("Category", dbref=True)  # หมวดหมู่
     hard_level = me.StringField(choices=HARD_LEVEL_CHOICES)
 
-    hint = me.StringField(max_length=512)  # คำใบ้
+    hint = me.StringField()  # คำใบ้
     answer = me.StringField(required=True, max_length=512)  # ธงหรือก็คือคำตอบ
     answer_type = me.StringField(choices=ANSWER_TYPES, default="flag", required=True)
 

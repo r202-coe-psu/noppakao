@@ -13,6 +13,7 @@ from mongoengine.queryset.visitor import Q
 
 from noppakao import models
 from noppakao.web import forms
+from noppakao.web.views.api import challenges as api_challenges
 
 from ... import acl
 
@@ -47,10 +48,19 @@ def index():
         if challenge.category and not challenge.category in event_categorys:
             event_categorys.append(challenge.category)
 
+    resources_by_challenge = {}
+    for challenge_resource in models.ChallengeResource.objects(
+        challenge__in=list(challenges),
+        status="active",
+    ).select_related():
+        resources_by_challenge.setdefault(str(challenge_resource.challenge.id), []).append(challenge_resource)
+
     return render_template(
         "admin/challenges/index.html",
         challenges=challenges,
         event_categorys=event_categorys,
+        resources_by_challenge=resources_by_challenge,
+        preview_flag_prefix=api_challenges.PREVIEW_FLAG_PREFIX,
         form=form,
     )
 
@@ -66,11 +76,17 @@ def create_or_edit(challenge_id):
         challenge = models.Challenge.objects(id=challenge_id).first()
         form = forms.challenges.ChallengeForm(obj=challenge)
     form.category.choices = [(f"{category.id}", category.name) for category in models.Category.objects(status="active")]
+    delete_form = forms.challenges.DeleteChallengeResourceForm()
     if not form.validate_on_submit():
         if challenge:
             form.category.data = str(challenge.category.id)
-        print(form.errors)
-        return render_template("admin/challenges/create_or_edit.html", form=form, challenge=challenge)
+        return render_template(
+            "admin/challenges/create_or_edit.html",
+            form=form,
+            challenge=challenge,
+            delete_form=delete_form,
+            preview_flag_prefix=api_challenges.PREVIEW_FLAG_PREFIX,
+        )
 
     if not challenge_id:
         challenge = models.Challenge()
@@ -80,19 +96,20 @@ def create_or_edit(challenge_id):
     challenge.updated_by = current_user
     challenge.save()
 
-    if form.uploaded_file.data:
-        for file in form.uploaded_file.data:
-            challenge_resource = models.ChallengeResource()
-            if form.uploaded_file.data:
-                challenge_resource.file.put(
-                    file,
-                    filename=file.filename,
-                    content_type=file.content_type,
-                )
-                challenge_resource.challenge = challenge
-            challenge_resource.created_by = current_user
-            challenge_resource.updated_by = current_user
-            challenge_resource.save()
+    # ถ้าไม่ได้เลือกไฟล์ใหม่ flask จะยังส่ง FileStorage เปล่า (filename == "") มาให้ ต้องกรองออก
+    for file in form.uploaded_file.data or []:
+        if not file or not file.filename:
+            continue
+        challenge_resource = models.ChallengeResource()
+        challenge_resource.file.put(
+            file,
+            filename=file.filename,
+            content_type=file.content_type,
+        )
+        challenge_resource.challenge = challenge
+        challenge_resource.created_by = current_user
+        challenge_resource.updated_by = current_user
+        challenge_resource.save()
 
     return redirect(url_for("admin.challenges.index"))
 
@@ -105,28 +122,25 @@ def view_file_challenge(challenge_id):
     form = forms.challenges.UploadChallengeFileForm()
 
     if not form.validate_on_submit():
-        print(form.errors)
         return render_template(
             "/admin/challenges/view_file_challenge.html",
             challenge_resources=challenge_resources,
             form=form,
             challenge=challenge,
         )
-    print(form.uploaded_file.data)
-
-    if form.uploaded_file.data:
-        for file in form.uploaded_file.data:
-            challenge_resource = models.ChallengeResource()
-            if form.uploaded_file.data:
-                challenge_resource.file.put(
-                    file,
-                    filename=file.filename,
-                    content_type=file.content_type,
-                )
-                challenge_resource.challenge = challenge
-            challenge_resource.created_by = current_user
-            challenge_resource.updated_by = current_user
-            challenge_resource.save()
+    for file in form.uploaded_file.data or []:
+        if not file or not file.filename:
+            continue
+        challenge_resource = models.ChallengeResource()
+        challenge_resource.file.put(
+            file,
+            filename=file.filename,
+            content_type=file.content_type,
+        )
+        challenge_resource.challenge = challenge
+        challenge_resource.created_by = current_user
+        challenge_resource.updated_by = current_user
+        challenge_resource.save()
 
     return render_template(
         "/admin/challenges/view_file_challenge.html",
@@ -138,21 +152,29 @@ def view_file_challenge(challenge_id):
 
 @module.route(
     "/<challenge_id>/challenge_resource/<challenge_resource_id>/delete",
-    methods=["GET", "POST"],
+    methods=["POST"],
 )
 @acl.roles_required("admin")
 def delete(challenge_id, challenge_resource_id):
-    challenge = models.Challenge.objects.get(id=challenge_id)
-    challenge_resource = models.ChallengeResource.objects.get(id=challenge_resource_id, status="active")
+    form = forms.challenges.DeleteChallengeResourceForm()
+    if not form.validate_on_submit():
+        return abort(400)
+
+    challenge = models.Challenge.objects(id=challenge_id).first()
+    if not challenge:
+        return abort(404)
+
+    challenge_resource = models.ChallengeResource.objects(
+        id=challenge_resource_id,
+        challenge=challenge,
+        status="active",
+    ).first()
+    if not challenge_resource:
+        return abort(404)
+
     challenge_resource.status = "disactive"
     challenge_resource.save()
-    return redirect(
-        url_for(
-            "admin.challenges.view_file_challenge",
-            challenge_id=challenge.id,
-            challenge=challenge,
-        )
-    )
+    return redirect(url_for("admin.challenges.create_or_edit", challenge_id=challenge.id))
 
 
 @module.route("/<challenge_id>/download_file", methods=["GET", "POST"])

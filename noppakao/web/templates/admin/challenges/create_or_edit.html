@@ -1,5 +1,9 @@
 {% extends "base/default-page.html" %}
 {% import '/base/html-renderer-refactor.html' as renderer %}
+{% from '/components/badges.html' import hard_level_badge %}
+
+
+{% set challenge_resources = challenge.get_challenge_resources() | list if challenge else [] %}
 
 {% block content %}
 <div class="max-w-3xl mx-auto ">
@@ -24,7 +28,7 @@
       </div>
 
       <div class="mb-2">
-        {{ renderer.render_text_area_field(form.description) }}
+        {{ renderer.render_text_area_field(form.description, height="h-40") }}
       </div>
 
       <div class="mb-2">
@@ -36,7 +40,7 @@
       </div>
 
       <div class="mb-2">
-        {{ renderer.render_field(form.hint) }}
+        {{ renderer.render_text_area_field(form.hint, height="h-40") }}
       </div>
 
       <div class="mb-2">
@@ -51,10 +55,236 @@
         {{ renderer.render_text_area_field(form.challenge_url) }}
       </div>
 
-      <div class="flex justify-end mt-6">
+      <div class="mb-2">
+        {{ renderer.render_multiple_file_input(form.uploaded_file) }}
+      </div>
+
+      {% if challenge_resources %}
+      <h3 class="text-2xl font-bold pb-2 my-4 border-b">Existing Challenge Resources</h3>
+
+      <div class="space-y-2">
+        {% for challenge_resource in challenge_resources %}
+        <div class="card bg-base-100 shadow-sm">
+          <div class="card-body p-4 flex flex-row items-center justify-between">
+            <div>
+              <div class="flex items-center">
+                <span class="text-yellow-500 mr-2">
+                  <i class="folder icon"></i>
+                </span>
+                <h4 class="font-bold">{{ challenge_resource.challenge.name }}</h4>
+                {{ hard_level_badge(challenge_resource.challenge, class_="ml-2") }}
+              </div>
+              <div class="mt-1 text-sm">
+                {{ challenge_resource.file.filename }}
+                <span class="text-blue-500">({{ '%0.2f'| format(challenge_resource.file.length / 1024) }}
+                  KB)</span>
+              </div>
+            </div>
+            <button type="button" class="btn btn-error btn-sm"
+              onclick="showDeleteFileModal('{{ challenge_resource.id }}')">
+              Delete
+            </button>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="flex justify-end gap-2 mt-6">
+        <a class="btn" href="{{ url_for('admin.challenges.index') }}">Cancel</a>
+        <button type="button" class="btn btn-secondary" onclick="showChallengePreview()">
+          <i class="ph-fill ph-play"></i>
+          Preview
+        </button>
         <button class="btn btn-primary" type="submit">Save</button>
       </div>
     </div>
   </form>
+
+  {# dialog ลบไฟล์อยู่นอก form หลัก เพราะ form ซ้อน form ไม่ได้ #}
+  {% if challenge_resources %}
+  {% for challenge_resource in challenge_resources %}
+  <dialog id="delete_file_modal_{{ challenge_resource.id }}" class="modal">
+    <div class="modal-box">
+      <h3 class="font-bold text-lg">Delete File</h3>
+      <p class="py-4">
+        Are you sure you want to delete
+        <span class="text-error">{{ challenge_resource.file.filename }}</span>?
+      </p>
+      <div class="modal-action">
+        <form method="post"
+          action="{{ url_for('admin.challenges.delete', challenge_resource_id=challenge_resource.id, challenge_id=challenge.id) }}">
+          {{ delete_form.csrf_token }}
+          <button type="submit" class="btn btn-error">Delete</button>
+        </form>
+        <button type="button" class="btn" onclick="closeDeleteFileModal('{{ challenge_resource.id }}')">Cancel</button>
+      </div>
+    </div>
+  </dialog>
+  {% endfor %}
+  {% endif %}
+
+  {# preview อยู่นอก form หลัก เพื่อไม่ให้ช่องกรอกคำตอบถูกส่งไปพร้อมกับฟอร์มจริง #}
+  <dialog id="challenge_preview_modal" class="modal">
+    <div class="modal-box max-w-4xl w-full mx-auto">
+      <h3 class="text-lg font-bold flex flex-row gap-2 items-center flex-wrap">
+        Challenge Details
+        <span id="preview-hard-level"></span>
+        <span class="badge badge-ghost badge-sm">Preview</span>
+      </h3>
+      <div>
+        <div class="p-4">
+          <p id="preview-name" class="text-xl font-bold"></p>
+          <p id="preview-description" class="whitespace-pre-line"></p>
+          <p id="preview-example" class="hidden">
+            Example Submit:
+            <span class="text-gray-500 italic">{{ preview_flag_prefix }}{Answer}</span>
+          </p>
+          <p id="preview-url-wrapper" class="hidden">
+            Link URL: <a id="preview-url" class="text-primary" target="_blank"></a>
+          </p>
+          <div id="preview-files-wrapper" class="hidden">
+            <p>Files:</p>
+            <div id="preview-files"></div>
+          </div>
+        </div>
+
+        <div id="preview-hint-button" class="w-full flex justify-center items-center hidden">
+          <button type="button"
+            class="btn btn-primary w-full text-white relative overflow-hidden group transition-all duration-300 ease-in-out"
+            onclick="revealPreviewHint()">
+            <i class="ph-fill ph-eye"></i>
+            Show hint
+          </button>
+        </div>
+        <div id="preview-hint" class="hidden p-4 mb-4 bg-base-100 border border-gray-300 rounded-lg border-t-2 border-t-primary">
+        </div>
+
+        <div class="flex flex-row gap-2 mt-2">
+          <input type="text" class="input w-full" placeholder="Enter your answer..." disabled>
+          <button type="button" class="btn btn-primary" disabled>Submit</button>
+        </div>
+      </div>
+
+      <div class="modal-action">
+        <button type="button" class="btn btn-error" onclick="closeChallengePreview()">
+          Close
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+    </div>
+  </dialog>
 </div>
+{% endblock %}
+
+{% block additional_js %}
+<script>
+  function showDeleteFileModal(challenge_resource_id) {
+    document.getElementById('delete_file_modal_' + challenge_resource_id).showModal();
+  }
+
+  function closeDeleteFileModal(challenge_resource_id) {
+    document.getElementById('delete_file_modal_' + challenge_resource_id).close();
+  }
+</script>
+
+<script>
+  {% set existing_resources = [] %}
+  {% if challenge %}
+  {% for challenge_resource in challenge_resources %}
+  {% set _ = existing_resources.append({
+  "filename": challenge_resource.file.filename,
+  "size": challenge_resource.file.length
+  }) %}
+  {% endfor %}
+  {% endif %}
+  const existingResources = {{ existing_resources | tojson }};
+
+  const hardLevelStyles = { easy: 'badge-success', medium: 'badge-warning', hard: 'badge-error' };
+
+  function setPreviewText(elementId, value, wrapperId) {
+    const element = document.getElementById(elementId);
+    element.textContent = value;
+    const wrapper = document.getElementById(wrapperId || elementId);
+    wrapper.classList.toggle("hidden", !value);
+  }
+
+  // รวมไฟล์ที่อัปโหลดไว้แล้ว กับไฟล์ที่เพิ่งเลือกแต่ยังไม่ได้ save
+  function collectPreviewFiles() {
+    const pending = Array.from(document.getElementById("uploaded_file").files).map(file => ({
+      filename: file.name,
+      size: file.size,
+    }));
+    return existingResources.concat(pending);
+  }
+
+  function renderPreviewFiles() {
+    const files = collectPreviewFiles();
+    const wrapper = document.getElementById("preview-files-wrapper");
+    const list = document.getElementById("preview-files");
+
+    wrapper.classList.toggle("hidden", files.length === 0);
+    list.innerHTML = "";
+
+    files.forEach(file => {
+      const row = document.createElement("p");
+      row.className = "flex flex-row items-center text-primary";
+      row.innerHTML = '<i class="ph-fill ph-box-arrow-down mr-2 text-primary"></i>';
+
+      const name = document.createElement("span");
+      name.textContent = file.filename;
+
+      const size = document.createElement("span");
+      size.className = "text-blue-600 ml-1";
+      size.textContent = `(${(file.size / 1024).toFixed(2)} KB)`;
+
+      row.append(name, size);
+      list.appendChild(row);
+    });
+  }
+
+  function renderPreviewHardLevel() {
+    const hardLevel = document.getElementById("hard_level").value;
+    const badge = document.getElementById("preview-hard-level");
+
+    badge.textContent = hardLevel ? hardLevel.charAt(0).toUpperCase() + hardLevel.slice(1) : "";
+    badge.className = hardLevel
+      ? `badge badge-sm ${hardLevelStyles[hardLevel] || 'badge-ghost'}`
+      : "hidden";
+  }
+
+  function revealPreviewHint() {
+    document.getElementById("preview-hint-button").classList.add("hidden");
+    document.getElementById("preview-hint").classList.remove("hidden");
+  }
+
+  function showChallengePreview() {
+    const url = document.getElementById("challenge_url").value.trim();
+    const hint = document.getElementById("hint").value.trim();
+
+    setPreviewText("preview-name", document.getElementById("name").value.trim());
+    setPreviewText("preview-description", document.getElementById("description").value.trim());
+    renderPreviewHardLevel();
+    renderPreviewFiles();
+
+    const link = document.getElementById("preview-url");
+    link.textContent = url;
+    link.href = url;
+    document.getElementById("preview-url-wrapper").classList.toggle("hidden", !url);
+
+    // ตอนเล่นจริง ถ้าเป็น plaintext จะไม่มีตัวอย่างรูปแบบ flag
+    const isPlaintext = document.getElementById("answer_type").value === "plaintext";
+    document.getElementById("preview-example").classList.toggle("hidden", isPlaintext);
+
+    document.getElementById("preview-hint").textContent = hint;
+    document.getElementById("preview-hint").classList.add("hidden");
+    document.getElementById("preview-hint-button").classList.toggle("hidden", !hint);
+
+    document.getElementById("challenge_preview_modal").showModal();
+  }
+
+  function closeChallengePreview() {
+    document.getElementById("challenge_preview_modal").close();
+  }
+</script>
 {% endblock %}

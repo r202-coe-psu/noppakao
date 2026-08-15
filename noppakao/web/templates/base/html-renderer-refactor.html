@@ -332,12 +332,12 @@ readonly=False) %}
 </script>
 {% endmacro %}
 
-{% macro render_text_area_field(field) %}
+{% macro render_text_area_field(field, height="h-24") %}
 <fieldset class="fieldset" id="field-{{ field.id }}">
   <legend class="fieldset-legend">
     {{ field.label.text }}
   </legend>
-  <textarea class="w-full h-24 textarea" name="{{ field.name }}" id="{{ field.id }}"
+  <textarea class="w-full {{ height }} textarea" name="{{ field.name }}" id="{{ field.id }}"
     placeholder="กรอก{{ field.label.text }}ที่นี่">{{ field.data if field.data else field.default if field.default else "" }}</textarea>
   <div class="fieldset-label">
     <p class="validator-hint">
@@ -352,6 +352,131 @@ readonly=False) %}
     </p>
   </div>
 </fieldset>
+{% endmacro %}
+
+{# ช่องอัปโหลดหลายไฟล์ ที่สะสมไฟล์จากการเลือกหลายครั้งได้ และลบออกจาก list ได้ก่อนกด Save
+   การลบในนี้เป็นการลบฝั่ง UI อย่างเดียว ยังไม่ยิง api เพราะไฟล์ยังไม่ถูกอัปโหลด #}
+{% macro render_multiple_file_input(field) %}
+<fieldset class="w-full fieldset" id="field-{{ field.id }}">
+  <legend class="fieldset-legend">
+    {{ field.label.text }}
+    {% if field.flags.required %}
+    <span class="text-error">*</span>
+    {% endif %}
+  </legend>
+
+  <div id="{{ field.id }}-dropzone"
+    class="w-full bg-primary/5 rounded-box border-primary border-dotted border-2 p-4 flex flex-col gap-2 items-center justify-center h-40">
+    <input type="file" multiple name="{{ field.name }}" id="{{ field.id }}" class="hidden"
+      onchange="addSelectedFiles('{{ field.id }}', this.files)">
+    <label for="{{ field.id }}" class="flex flex-col gap-2 items-center cursor-pointer">
+      <p class="btn btn-neutral px-10">เลือกไฟล์</p>
+      <p class="text-gray-500">หรือ ลากและวางไฟล์ที่นี่</p>
+    </label>
+    <p class="text-gray-500 text-sm">
+      {% for validator in field.validators %}
+      {% if validator.upload_set %}
+      รองรับเฉพาะไฟล์ {{ ", ".join(validator.upload_set) }} เท่านั้น
+      {% endif %}
+      {% endfor %}
+    </p>
+  </div>
+
+  <div class="space-y-2 mt-2" id="{{ field.id }}-file-list"></div>
+
+  <p class="validator-hint text-error">
+    {% for error in field.errors %}
+    {{ error }}
+    {% if not loop.last %}<br>{% endif %}
+    {% endfor %}
+  </p>
+</fieldset>
+
+<script>
+  const selectedFileStores = window.selectedFileStores || (window.selectedFileStores = {});
+
+  function getFileStore(fieldId) {
+    if (!selectedFileStores[fieldId]) {
+      selectedFileStores[fieldId] = new DataTransfer();
+    }
+    return selectedFileStores[fieldId];
+  }
+
+  function addSelectedFiles(fieldId, files) {
+    const store = getFileStore(fieldId);
+    Array.from(files).forEach(file => {
+      const duplicated = Array.from(store.files).some(
+        selected => selected.name === file.name && selected.size === file.size
+      );
+      if (!duplicated) store.items.add(file);
+    });
+    syncFileInput(fieldId);
+  }
+
+  // ลบเฉพาะฝั่ง UI เพราะไฟล์ยังไม่ได้ถูกอัปโหลดขึ้น server
+  function removeSelectedFile(fieldId, index) {
+    getFileStore(fieldId).items.remove(index);
+    syncFileInput(fieldId);
+  }
+
+  function syncFileInput(fieldId) {
+    const input = document.getElementById(fieldId);
+    input.files = getFileStore(fieldId).files;
+    renderSelectedFiles(fieldId);
+  }
+
+  function renderSelectedFiles(fieldId) {
+    const list = document.getElementById(fieldId + "-file-list");
+    list.innerHTML = "";
+
+    Array.from(getFileStore(fieldId).files).forEach((file, index) => {
+      const card = document.createElement("div");
+      card.className = "card bg-base-100 shadow-sm";
+
+      const body = document.createElement("div");
+      body.className = "card-body p-4 flex flex-row items-center justify-between";
+
+      const info = document.createElement("div");
+      info.className = "flex items-center gap-2 min-w-0";
+      info.innerHTML = '<span class="text-yellow-500"><i class="ph ph-file"></i></span>';
+
+      const name = document.createElement("span");
+      name.className = "font-bold truncate";
+      name.textContent = file.name;
+
+      const size = document.createElement("span");
+      size.className = "text-blue-500 text-sm whitespace-nowrap";
+      size.textContent = `(${(file.size / 1024).toFixed(2)} KB)`;
+
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "btn btn-error btn-sm";
+      remove.textContent = "Delete";
+      remove.onclick = () => removeSelectedFile(fieldId, index);
+
+      info.append(name, size);
+      body.append(info, remove);
+      card.appendChild(body);
+      list.appendChild(card);
+    });
+  }
+
+  (function () {
+    const dropzone = document.getElementById("{{ field.id }}-dropzone");
+
+    dropzone.addEventListener("dragover", event => event.preventDefault());
+    dropzone.addEventListener("dragenter", event => {
+      event.preventDefault();
+      dropzone.classList.add("bg-primary/10");
+    });
+    dropzone.addEventListener("dragleave", () => dropzone.classList.remove("bg-primary/10"));
+    dropzone.addEventListener("drop", event => {
+      event.preventDefault();
+      dropzone.classList.remove("bg-primary/10");
+      addSelectedFiles("{{ field.id }}", event.dataTransfer.files);
+    });
+  })();
+</script>
 {% endmacro %}
 
 {% macro render_multiple_select_field(field, id_prefix='') %}
