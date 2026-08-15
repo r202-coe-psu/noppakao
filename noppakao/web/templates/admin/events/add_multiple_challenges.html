@@ -46,7 +46,8 @@
         {% for challenge in challenges %}
         <li class="flex items-center challenge-item" data-name="{{ challenge.name | lower }}" data-category="{{ challenge.category.name }}">
           <input type="checkbox" name="challenges" class="checkbox checkbox-primary mr-2" value="{{ challenge.id }}"
-            onchange="updateChallenges(this, '{{ challenge.name | replace("'", "\\'") }}', '{{ challenge.category.name | replace("'", "\\'") }}')" id="challenge-{{ challenge.id }}">
+            data-challenge-name="{{ challenge.name }}" data-challenge-category="{{ challenge.category.name }}"
+            onchange="updateChallenges(this)" id="challenge-{{ challenge.id }}">
           <label class="cursor-pointer" for="challenge-{{ challenge.id }}"> 
             <span class="sr-only">Select {{ challenge.name }}</span>
           </label>
@@ -179,7 +180,9 @@
     });
   }
 
-  function updateChallenges(checkbox, challengeName, challengeCategory) {
+  function updateChallenges(checkbox) {
+    const challengeName = checkbox.dataset.challengeName;
+    const challengeCategory = checkbox.dataset.challengeCategory;
     const selectedList = document.getElementById('selected-challenges');
     const challengeId = checkbox.value;
 
@@ -188,32 +191,48 @@
       const li = document.createElement('li');
       li.className = 'bg-blue-100 p-2 rounded';
       li.dataset.challengeId = challengeId;
-      li.innerHTML = `
-        <div class="flex flex-col gap-2">
-          <div class="flex items-center gap-2">
-            <span class="font-semibold">${challengeName}</span>
-            <span class="badge badge-outline badge-primary">${challengeCategory}</span>
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="text-sm">First Blood Score:</label>
-              <input type="number" name="first_blood_score_${challengeId}" class="input input-bordered w-full" required>
-            </div>
-            <div>
-              <label class="text-sm">Success Score:</label>
-              <input type="number" name="success_score_${challengeId}" class="input input-bordered w-full" required>
-            </div>
-            <div>
-              <label class="text-sm">Hint Score:</label>
-              <input type="number" name="hint_score_${challengeId}" class="input input-bordered w-full" required>
-            </div>
-            <div>
-              <label class="text-sm">Fail Score:</label>
-              <input type="number" name="fail_score_${challengeId}" class="input input-bordered w-full" required>
-            </div>
-          </div>
+
+      const container = document.createElement('div');
+      container.className = 'flex flex-col gap-2';
+
+      const header = document.createElement('div');
+      header.className = 'flex items-center gap-2';
+
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'font-semibold';
+      nameSpan.textContent = challengeName;
+
+      const categorySpan = document.createElement('span');
+      categorySpan.className = 'badge badge-outline badge-primary';
+      categorySpan.textContent = challengeCategory;
+
+      header.appendChild(nameSpan);
+      header.appendChild(categorySpan);
+
+      const scoreGrid = document.createElement('div');
+      scoreGrid.className = 'grid grid-cols-2 gap-2';
+      scoreGrid.innerHTML = `
+        <div>
+          <label class="text-sm">First Blood Score:</label>
+          <input type="number" name="first_blood_score_${challengeId}" class="input input-bordered w-full" required>
+        </div>
+        <div>
+          <label class="text-sm">Success Score:</label>
+          <input type="number" name="success_score_${challengeId}" class="input input-bordered w-full" required>
+        </div>
+        <div>
+          <label class="text-sm">Hint Score:</label>
+          <input type="number" name="hint_score_${challengeId}" class="input input-bordered w-full" required>
+        </div>
+        <div>
+          <label class="text-sm">Fail Score:</label>
+          <input type="number" name="fail_score_${challengeId}" class="input input-bordered w-full" required>
         </div>
       `;
+
+      container.appendChild(header);
+      container.appendChild(scoreGrid);
+      li.appendChild(container);
       selectedList.appendChild(li);
     } else {
       const items = selectedList.getElementsByTagName('li');
