@@ -113,6 +113,7 @@ def challenge(event_id):
     event_challenges = models.EventChallenge.objects(event=event, status="active")
     event_categorys = []
 
+    resources_by_challenge = {}
     challenge_ids = [ec.challenge.id for ec in event_challenges]
     challenge_resources = models.ChallengeResource.objects(
         challenge__in=challenge_ids, status="active"
