@@ -24,3 +24,23 @@ def get_all_data(challenge_id):
         "hint": challenge.hint,
     }
     return jsonify(data)
+
+
+@module.route("/<challenge_id>/check")
+@acl.roles_required("admin")
+def check_answer(challenge_id):
+    """ตรวจคำตอบสำหรับ preview ของ admin ใช้เกณฑ์เดียวกับ EventChallenge.check_answer
+    แต่ไม่ผูกกับ event จึงไม่มี flag_prefix ให้ส่งเข้ามาเองได้"""
+    challenge = models.Challenge.objects(id=challenge_id).first()
+    if not challenge:
+        return abort(404)
+
+    answer = request.args.get("answer", "")
+    flag_prefix = request.args.get("flag_prefix", "")
+
+    if challenge.answer_type == "flag":
+        expected = f"{flag_prefix}{{{challenge.answer}}}"
+    else:
+        expected = challenge.answer
+
+    return jsonify({"correct": answer == expected})
