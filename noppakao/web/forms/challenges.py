@@ -1,7 +1,6 @@
 from flask_mongoengine.wtf import model_form
 from flask_wtf import FlaskForm, file
-from wtforms import fields, widgets, validators
-
+from wtforms import fields, validators
 
 from noppakao import models
 
@@ -77,3 +76,7 @@ class UploadChallengeFileForm(FlaskForm):
         "File type (.zip)",
         validators=[],
     )
+
+
+class DeleteChallengeResourceForm(FlaskForm):
+    pass

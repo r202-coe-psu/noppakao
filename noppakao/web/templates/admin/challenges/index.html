@@ -61,7 +61,7 @@
             </thead>
             <tbody>
               {% for challenge in challenges %}
-              {% if event_categorys[i].name == challenge.category.name %}
+              {% if challenge.category and event_categorys[i].name == challenge.category.name %}
               <tr>
                 <td><i class="ph ph-cube"></i></td>
                 <td>
@@ -81,78 +81,6 @@
                   </a>
                 </td>
               </tr>
-
-              <dialog id="challenge_preview_{{ challenge.id }}" class="modal">
-                <div class="modal-box max-w-4xl w-full mx-auto">
-                  <h3 class="text-lg font-bold flex flex-row gap-2 items-center flex-wrap">
-                    {{ challenge.name }}
-                    {{ hard_level_badge(challenge) }}
-                    <span class="badge badge-ghost badge-sm">Preview</span>
-                  </h3>
-                  <div>
-                    <div class="p-4">
-                      <p class="whitespace-pre-line">{{ challenge.description }}</p>
-                      {% if challenge.answer_type != 'plaintext' %}
-                      <p>Example Submit: <span class="text-gray-500 italic">{Answer}</span></p>
-                      {% endif %}
-
-                      {% if challenge.challenge_url %}
-                      <p>
-                        Link URL: <a href="{{ challenge.challenge_url }}" target="_blank" class="text-primary">{{
-                          challenge.challenge_url }}</a>
-                      </p>
-                      {% endif %}
-
-                      {% if challenge.get_challenge_resources() %}
-                      <p>Files:</p>
-                      {% for challenge_resource in challenge.get_challenge_resources() %}
-                      <p>
-                        <a href="{{ url_for('challenges.download', challenge_resource_id=challenge_resource.id) }}"
-                          target="_blank" class="group flex flex-row items-center text-primary">
-                          <i class="ph-fill ph-box-arrow-down mr-2 text-primary"></i>
-                          <span class="group-hover:underline">{{ challenge_resource.file.filename }}</span>
-                          <span class="text-blue-600 group-hover:underline ml-1">
-                            ({{ '%0.2f' | format(challenge_resource.file.length / 1024) }} KB)
-                          </span>
-                        </a>
-                      </p>
-                      {% endfor %}
-                      {% endif %}
-                    </div>
-
-                    {% if challenge.hint %}
-                    <div id="preview-hint-button-{{ challenge.id }}" class="w-full flex justify-center items-center">
-                      <button type="button" class="btn btn-primary w-full text-white"
-                        onclick="revealPreviewHint('{{ challenge.id }}')">
-                        <i class="ph-fill ph-eye"></i>
-                        Show hint
-                      </button>
-                    </div>
-                    <div id="preview-hint-{{ challenge.id }}"
-                      class="hidden p-4 mb-4 bg-base-100 border border-gray-300 rounded-lg border-t-2 border-t-primary">
-                      {{ challenge.hint }}
-                    </div>
-                    {% endif %}
-
-                    <div class="flex flex-row gap-2 mt-2">
-                      <input type="text" class="input w-full" id="preview-answer-{{ challenge.id }}"
-                        placeholder="Enter your answer..." autocomplete="off"
-                        onkeydown="if (event.key === 'Enter') { event.preventDefault(); checkPreviewAnswer('{{ challenge.id }}') }">
-                      <button type="button" class="btn btn-primary"
-                        onclick="checkPreviewAnswer('{{ challenge.id }}')">Submit</button>
-                    </div>
-                    <div id="preview-result-{{ challenge.id }}" class="mt-2"></div>
-                  </div>
-
-                  <div class="modal-action">
-                    <button type="button" class="btn btn-error"
-                      onclick="closeChallengePreview('{{ challenge.id }}')">
-                      Close
-                      <i class="ph ph-x"></i>
-                    </button>
-                  </div>
-                </div>
-              </dialog>
               {% endif %}
               {% endfor %}
             </tbody>
@@ -163,6 +91,80 @@
     {% endfor %}
   </div>
 </div>
+
+{% for challenge in challenges %}
+<dialog id="challenge_preview_{{ challenge.id }}" class="modal">
+  <div class="modal-box max-w-4xl w-full mx-auto">
+    <h3 class="text-lg font-bold flex flex-row gap-2 items-center flex-wrap">
+      {{ challenge.name }}
+      {{ hard_level_badge(challenge) }}
+      <span class="badge badge-ghost badge-sm">Preview</span>
+    </h3>
+    <div>
+      <div class="p-4">
+        <p class="whitespace-pre-line">{{ challenge.description }}</p>
+        {% if challenge.answer_type != 'plaintext' %}
+        <p>Example Submit: <span class="text-gray-500 italic">{Answer}</span></p>
+        {% endif %}
+
+        {% if challenge.challenge_url %}
+        <p>
+          Link URL: <a href="{{ challenge.challenge_url }}" target="_blank" class="text-primary">{{
+            challenge.challenge_url }}</a>
+        </p>
+        {% endif %}
+
+        {% if challenge.get_challenge_resources() %}
+        <p>Files:</p>
+        {% for challenge_resource in challenge.get_challenge_resources() %}
+        <p>
+          <a href="{{ url_for('challenges.download', challenge_resource_id=challenge_resource.id) }}"
+            target="_blank" class="group flex flex-row items-center text-primary">
+            <i class="ph-fill ph-box-arrow-down mr-2 text-primary"></i>
+            <span class="group-hover:underline">{{ challenge_resource.file.filename }}</span>
+            <span class="text-blue-600 group-hover:underline ml-1">
+              ({{ '%0.2f' | format(challenge_resource.file.length / 1024) }} KB)
+            </span>
+          </a>
+        </p>
+        {% endfor %}
+        {% endif %}
+      </div>
+
+      {% if challenge.hint %}
+      <div id="preview-hint-button-{{ challenge.id }}" class="w-full flex justify-center items-center">
+        <button type="button" class="btn btn-primary w-full text-white"
+          onclick="revealPreviewHint('{{ challenge.id }}')">
+          <i class="ph-fill ph-eye"></i>
+          Show hint
+        </button>
+      </div>
+      <div id="preview-hint-{{ challenge.id }}"
+        class="hidden p-4 mb-4 bg-base-100 border border-gray-300 rounded-lg border-t-2 border-t-primary">
+        {{ challenge.hint }}
+      </div>
+      {% endif %}
+
+      <div class="flex flex-row gap-2 mt-2">
+        <input type="text" class="input w-full" id="preview-answer-{{ challenge.id }}"
+          placeholder="Enter your answer..." autocomplete="off"
+          onkeydown="if (event.key === 'Enter') { event.preventDefault(); checkPreviewAnswer('{{ challenge.id }}') }">
+        <button type="button" class="btn btn-primary"
+          onclick="checkPreviewAnswer('{{ challenge.id }}')">Submit</button>
+      </div>
+      <div id="preview-result-{{ challenge.id }}" class="mt-2"></div>
+    </div>
+
+    <div class="modal-action">
+      <button type="button" class="btn btn-error"
+        onclick="closeChallengePreview('{{ challenge.id }}')">
+        Close
+        <i class="ph ph-x"></i>
+      </button>
+    </div>
+  </div>
+</dialog>
+{% endfor %}
 {% endblock %}
 
 {% block additional_js %}

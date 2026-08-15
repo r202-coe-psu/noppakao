@@ -1,7 +1,7 @@
-from flask import Blueprint, request, send_file, url_for, abort
+import hmac
+
+from flask import Blueprint, abort, request
 from flask.json import jsonify
-from flask_login import current_user, login_required
-from mongoengine import Q
 
 from noppakao import models
 from noppakao.web import acl
@@ -43,4 +43,4 @@ def check_answer(challenge_id):
     else:
         expected = challenge.answer
 
-    return jsonify({"correct": answer == expected})
+    return jsonify({"correct": hmac.compare_digest(answer, expected)})

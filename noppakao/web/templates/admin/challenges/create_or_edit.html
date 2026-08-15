@@ -83,24 +83,6 @@
             </button>
           </div>
         </div>
-
-        <dialog id="delete_file_modal_{{ challenge_resource.id }}" class="modal">
-          <div class="modal-box">
-            <h3 class="font-bold text-lg">Delete File</h3>
-            <p class="py-4">
-              Are you sure you want to delete
-              <span class="text-error">{{ challenge_resource.file.filename }}</span>?
-            </p>
-            <div class="modal-action">
-              <a class="btn btn-error"
-                href="{{ url_for('admin.challenges.delete', challenge_resource_id=challenge_resource.id, challenge_id=challenge.id) }}">
-                Delete
-              </a>
-              <button type="button" class="btn"
-                onclick="closeDeleteFileModal('{{ challenge_resource.id }}')">Cancel</button>
-            </div>
-          </div>
-        </dialog>
         {% endfor %}
       </div>
       {% endif %}
@@ -115,6 +97,29 @@
       </div>
     </div>
   </form>
+
+  {# dialog ลบไฟล์อยู่นอก form หลัก เพราะ form ซ้อน form ไม่ได้ #}
+  {% if challenge and challenge.get_challenge_resources() %}
+  {% for challenge_resource in challenge.get_challenge_resources() %}
+  <dialog id="delete_file_modal_{{ challenge_resource.id }}" class="modal">
+    <div class="modal-box">
+      <h3 class="font-bold text-lg">Delete File</h3>
+      <p class="py-4">
+        Are you sure you want to delete
+        <span class="text-error">{{ challenge_resource.file.filename }}</span>?
+      </p>
+      <div class="modal-action">
+        <form method="post"
+          action="{{ url_for('admin.challenges.delete', challenge_resource_id=challenge_resource.id, challenge_id=challenge.id) }}">
+          {{ delete_form.csrf_token }}
+          <button type="submit" class="btn btn-error">Delete</button>
+        </form>
+        <button type="button" class="btn" onclick="closeDeleteFileModal('{{ challenge_resource.id }}')">Cancel</button>
+      </div>
+    </div>
+  </dialog>
+  {% endfor %}
+  {% endif %}
 
   {# preview อยู่นอก form หลัก เพื่อไม่ให้ช่องกรอกคำตอบถูกส่งไปพร้อมกับฟอร์มจริง #}
   <dialog id="challenge_preview_modal" class="modal">
