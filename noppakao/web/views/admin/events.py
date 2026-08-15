@@ -113,15 +113,24 @@ def challenge(event_id):
     event_challenges = models.EventChallenge.objects(event=event, status="active")
     event_categorys = []
 
+    resources_by_challenge = {}
+
     for event_challenge in event_challenges:
         if not event_challenge.challenge.category in event_categorys:
             event_categorys.append(event_challenge.challenge.category)
+            
+        challenge_resources = models.ChallengeResource.objects(
+            challenge=event_challenge.challenge, status="active"
+        )
+        for challenge_resource in challenge_resources:
+            resources_by_challenge.setdefault(str(event_challenge.challenge.id), []).append(challenge_resource)
 
     return render_template(
         "/admin/events/challenge.html",
         event_challenges=event_challenges,
         event=event,
         event_categorys=event_categorys,
+        resources_by_challenge=resources_by_challenge,
     )
 
 
