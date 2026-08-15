@@ -98,13 +98,28 @@ def create_or_edit(challenge_id):
 @module.route("<challenge_resource_id>/download_file", methods=["GET", "POST"])
 @login_required
 def download(challenge_resource_id):
-    challenge_resource = models.ChallengeResource.objects(id=challenge_resource_id)
     try:
         challenge_resource = models.ChallengeResource.objects(
             id=challenge_resource_id
         ).first()
-    except:
+    except Exception:
         return abort(404)
+
+    if not challenge_resource:
+        return abort(404)
+
+    if not current_user.has_roles("admin"):
+        now = datetime.datetime.now()
+        event_challenges = models.EventChallenge.objects(
+            challenge=challenge_resource.challenge, status="active"
+        )
+        has_started_event = False
+        for ec in event_challenges:
+            if ec.event and ec.event.started_date <= now:
+                has_started_event = True
+                break
+        if not has_started_event:
+            return abort(403)
 
     res = send_file(
         challenge_resource.file,

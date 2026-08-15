@@ -21,7 +21,15 @@ module = Blueprint("events", __name__, url_prefix="/events")
 
 @module.route("/dashboards", methods=["GET", "POST"])
 def dashboards():
-    events = models.Event.objects(status="active")
+    now = datetime.datetime.now()
+    if current_user.is_authenticated and current_user.has_roles("admin"):
+        events = models.Event.objects(status="active")
+    else:
+        events = models.Event.objects(
+            status="active",
+            publish_started_date__lte=now,
+            publish_ended_date__gte=now,
+        )
     return render_template(
         "events/dashboards.html",
         events=events,
@@ -35,9 +43,16 @@ def index():
     users = models.User.objects(status="active", roles__ne="admin").order_by(
         "-score", "updated_date"
     )
-    events = models.Event.objects()
-    event_role = models.EventRole.objects()
     now = datetime.datetime.now()
+    if current_user.has_roles("admin"):
+        events = models.Event.objects()
+    else:
+        events = models.Event.objects(
+            status="active",
+            publish_started_date__lte=now,
+            publish_ended_date__gte=now,
+        )
+    event_role = models.EventRole.objects()
     msg = request.args.get("msg")
     return render_template(
         "events/index.html",
@@ -56,6 +71,10 @@ def joiner(event_id):
     event = models.Event.objects.get(id=event_id)
     teams = models.Team.objects(event=event, status="active")
     now = datetime.datetime.now()
+    if not current_user.has_roles("admin"):
+        if now < event.register_started_date or now > event.register_ended_date:
+            flash("Registration is not active for this event")
+            return redirect(url_for("events.index"))
     return render_template("events/joiner.html", event=event, teams=teams, now=now)
 
 
@@ -65,6 +84,13 @@ def joiner(event_id):
 @module.route("/<event_id>/team/<team_id>/edit", methods=["GET", "POST"])
 @login_required
 def create_or_edit_team(event_id, team_id):
+    event = models.Event.objects.get(id=event_id)
+    now = datetime.datetime.now()
+    if not current_user.has_roles("admin"):
+        if now < event.register_started_date or now > event.register_ended_date:
+            flash("Registration is not active for this event")
+            return redirect(url_for("events.joiner", event_id=event_id))
+
     # check if user is in team
     if team_id:
         team = models.Team.objects.get(id=team_id)
@@ -72,7 +98,6 @@ def create_or_edit_team(event_id, team_id):
             flash("You are not a member of this team")
             return redirect(url_for("events.joiner", event_id=event_id))
 
-    event = models.Event.objects.get(id=event_id)
     form = forms.teams.TeamsEventForm()
 
     if team_id:
@@ -116,6 +141,12 @@ def create_or_edit_team(event_id, team_id):
 @login_required
 def join(event_id):
     event = models.Event.objects(id=event_id).first()
+    now = datetime.datetime.now()
+    if not current_user.has_roles("admin"):
+        if now < event.register_started_date or now > event.register_ended_date:
+            flash("Registration is not active for this event")
+            return redirect(url_for("events.index"))
+
     all_team = models.EventCompetitor.objects(event=event).distinct(field="team")
     all_team_competitor = [team.members for team in all_team if team.status == "active"]
     code = request.args.get("code")
@@ -157,6 +188,13 @@ def leave_team(event_id, team_id):
 @module.route("/<event_id>/teams/<team_id>/join_team", methods=["GET", "POST"])
 @login_required
 def join_team(event_id, team_id):
+    event = models.Event.objects.get(id=event_id)
+    now = datetime.datetime.now()
+    if not current_user.has_roles("admin"):
+        if now < event.register_started_date or now > event.register_ended_date:
+            flash("Registration is not active for this event")
+            return redirect(url_for("events.joiner", event_id=event_id))
+
     team = models.Team.objects.get(id=team_id)
 
     if models.Team.objects(
@@ -178,7 +216,7 @@ def challenge(event_id):
         flash("You must join a team to access this page")
         return redirect(url_for("events.joiner", event_id=event_id))
 
-    if event.started_date > datetime.datetime.now():
+    if event.started_date > datetime.datetime.now() and not current_user.has_roles("admin"):
         flash("Event has not started yet")
         return redirect(url_for("events.index"))
 
@@ -191,7 +229,7 @@ def challenge(event_id):
     event_challenges = models.EventChallenge.objects(event=event, status="active")
 
     dialog_state = {"status": request.args.get("dialog_state", None)}
-    if not current_user.check_join_event(event.id):
+    if not current_user.check_join_event(event.id) and not current_user.has_roles("admin"):
         msg = "คุณกำลังพยายามเข้าไปใน กิจกรรมที่คุณไม่ได้เข้าร่วม"
         return redirect(url_for("events.index", msg=msg))
 
@@ -221,9 +259,13 @@ def submit_challenge(event_id, challenge_id):
     now = datetime.datetime.now()
     answer = request.args.get("answer")
 
-    if now > event.ended_date:
-        flash("Event Time Out")
-        return redirect(url_for("events.index", msg="Event Time Out"))
+    if not current_user.has_roles("admin"):
+        if now < event.started_date:
+            flash("Event has not started yet")
+            return redirect(url_for("events.index", msg="Event has not started yet"))
+        if now > event.ended_date:
+            flash("Event Time Out")
+            return redirect(url_for("events.index", msg="Event Time Out"))
 
     if not transaction and event_challenge.check_answer(answer):
         transaction = models.Transaction()
