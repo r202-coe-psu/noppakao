@@ -113,17 +113,18 @@ def challenge(event_id):
     event_challenges = models.EventChallenge.objects(event=event, status="active")
     event_categorys = []
 
-    resources_by_challenge = {}
+    challenge_ids = [ec.challenge.id for ec in event_challenges]
+    challenge_resources = models.ChallengeResource.objects(
+        challenge__in=challenge_ids, status="active"
+    )
+    for challenge_resource in challenge_resources:
+        resources_by_challenge.setdefault(
+            str(challenge_resource.challenge.id), []
+        ).append(challenge_resource)
 
     for event_challenge in event_challenges:
         if not event_challenge.challenge.category in event_categorys:
             event_categorys.append(event_challenge.challenge.category)
-            
-        challenge_resources = models.ChallengeResource.objects(
-            challenge=event_challenge.challenge, status="active"
-        )
-        for challenge_resource in challenge_resources:
-            resources_by_challenge.setdefault(str(event_challenge.challenge.id), []).append(challenge_resource)
 
     return render_template(
         "/admin/events/challenge.html",
@@ -210,12 +211,14 @@ def add_multiple_challenges(event_id):
     challenge_order = json.loads(request.form.get("challenge_order", "[]"))
 
     resources_by_challenge = {}
-    for challenge in challenges:
-        challenge_resources = models.ChallengeResource.objects(
-            challenge=challenge, status="active"
-        )
-        for challenge_resource in challenge_resources:
-            resources_by_challenge.setdefault(str(challenge.id), []).append(challenge_resource)
+    challenge_ids = [c.id for c in challenges]
+    challenge_resources = models.ChallengeResource.objects(
+        challenge__in=challenge_ids, status="active"
+    )
+    for challenge_resource in challenge_resources:
+        resources_by_challenge.setdefault(
+            str(challenge_resource.challenge.id), []
+        ).append(challenge_resource)
 
     if not form.validate_on_submit():
         return render_template(
