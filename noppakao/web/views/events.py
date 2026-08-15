@@ -212,7 +212,11 @@ def join_team(event_id, team_id):
 @login_required
 def challenge(event_id):
     event = models.Event.objects(id=event_id).first()
-    if not current_user.check_team_event(event_id) and event.type == "team":
+    if (
+        not current_user.check_team_event(event_id)
+        and event.type == "team"
+        and not current_user.has_roles("admin")
+    ):
         flash("You must join a team to access this page")
         return redirect(url_for("events.joiner", event_id=event_id))
 
