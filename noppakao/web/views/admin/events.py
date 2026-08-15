@@ -209,12 +209,21 @@ def add_multiple_challenges(event_id):
     ]
     challenge_order = json.loads(request.form.get("challenge_order", "[]"))
 
+    resources_by_challenge = {}
+    for challenge in challenges:
+        challenge_resources = models.ChallengeResource.objects(
+            challenge=challenge, status="active"
+        )
+        for challenge_resource in challenge_resources:
+            resources_by_challenge.setdefault(str(challenge.id), []).append(challenge_resource)
+
     if not form.validate_on_submit():
         return render_template(
             "/admin/events/add_multiple_challenges.html",
             event=event,
             form=form,
             challenges=challenges,
+            resources_by_challenge=resources_by_challenge,
         )
 
     for challenge_id in challenge_order:
