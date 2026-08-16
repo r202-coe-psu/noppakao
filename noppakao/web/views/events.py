@@ -1,17 +1,14 @@
 import datetime
-import mongoengine as me
 
 from flask import (
     Blueprint,
-    render_template,
-    url_for,
-    request,
-    session,
-    redirect,
     flash,
+    redirect,
+    render_template,
+    request,
+    url_for,
 )
-
-from flask_login import login_user, logout_user, login_required, current_user
+from flask_login import current_user, login_required
 
 from noppakao import models
 from noppakao.web import forms
@@ -40,9 +37,7 @@ def dashboards():
 @login_required
 def index():
     teams = models.Team.objects(status="active").order_by("-score", "updated_date")
-    users = models.User.objects(status="active", roles__ne="admin").order_by(
-        "-score", "updated_date"
-    )
+    users = models.User.objects(status="active", roles__ne="admin").order_by("-score", "updated_date")
     now = datetime.datetime.now()
     if current_user.has_roles("admin"):
         events = models.Event.objects()
@@ -78,9 +73,7 @@ def joiner(event_id):
     return render_template("events/joiner.html", event=event, teams=teams, now=now)
 
 
-@module.route(
-    "/<event_id>/team/create/", methods=["GET", "POST"], defaults={"team_id": None}
-)
+@module.route("/<event_id>/team/create/", methods=["GET", "POST"], defaults={"team_id": None})
 @module.route("/<event_id>/team/<team_id>/edit", methods=["GET", "POST"])
 @login_required
 def create_or_edit_team(event_id, team_id):
@@ -197,9 +190,7 @@ def join_team(event_id, team_id):
 
     team = models.Team.objects.get(id=team_id)
 
-    if models.Team.objects(
-        event=event_id, members__in=[current_user._get_current_object()]
-    ).first():
+    if models.Team.objects(event=event_id, members__in=[current_user._get_current_object()]).first():
         return redirect(url_for("events.joiner", event_id=event_id))
 
     team.members.append(current_user._get_current_object())
@@ -212,11 +203,7 @@ def join_team(event_id, team_id):
 @login_required
 def challenge(event_id):
     event = models.Event.objects(id=event_id).first()
-    if (
-        not current_user.check_team_event(event_id)
-        and event.type == "team"
-        and not current_user.has_roles("admin")
-    ):
+    if not current_user.check_team_event(event_id) and event.type == "team" and not current_user.has_roles("admin"):
         flash("You must join a team to access this page")
         return redirect(url_for("events.joiner", event_id=event_id))
 
@@ -225,9 +212,7 @@ def challenge(event_id):
         return redirect(url_for("events.index"))
 
     teams = models.Team.objects(status="active").order_by("-score", "updated_date")
-    users = models.User.objects(status="active", roles__ne="admin").order_by(
-        "-score", "updated_date"
-    )
+    users = models.User.objects(status="active", roles__ne="admin").order_by("-score", "updated_date")
     challenge_resources = models.ChallengeResource.objects()
 
     event_challenges = models.EventChallenge.objects(event=event, status="active")
@@ -249,17 +234,13 @@ def challenge(event_id):
     )
 
 
-@module.route(
-    "/<event_id>/challenges/<challenge_id>/submit_challenge", methods=["GET", "POST"]
-)
+@module.route("/<event_id>/challenges/<challenge_id>/submit_challenge", methods=["GET", "POST"])
 @login_required
 def submit_challenge(event_id, challenge_id):
     event_challenge = models.EventChallenge.objects(id=challenge_id).first()
 
     event = models.Event.objects.get(id=event_id)
-    transaction = models.Transaction.objects(
-        event_challenge=event_challenge, status__in=["success", "first_blood"]
-    )
+    transaction = models.Transaction.objects(event_challenge=event_challenge, status__in=["success", "first_blood"])
     now = datetime.datetime.now()
     answer = request.args.get("answer")
 
@@ -281,21 +262,15 @@ def submit_challenge(event_id, challenge_id):
         transaction.answer = answer
         transaction.user = current_user
         if event.type == "team":
-            team = models.Team.objects(
-                members__in=[current_user], status="active", event=event
-            ).first()
+            team = models.Team.objects(members__in=[current_user], status="active", event=event).first()
             transaction.team = team
         transaction.save()
-        return redirect(
-            url_for("events.challenge", event_id=event.id, dialog_state="first_blood")
-        )
+        return redirect(url_for("events.challenge", event_id=event.id, dialog_state="first_blood"))
 
     transaction = models.Transaction()
 
     if event.type == "team":
-        team = models.Team.objects(
-            members__in=[current_user], status="active", event=event
-        ).first()
+        team = models.Team.objects(members__in=[current_user], status="active", event=event).first()
         transaction.team = team
 
     if event_challenge.solve_challenge():
@@ -315,9 +290,7 @@ def submit_challenge(event_id, challenge_id):
         transaction.answer = answer
         transaction.user = current_user
         transaction.save()
-        return redirect(
-            url_for("events.challenge", event_id=event.id, dialog_state="fail")
-        )
+        return redirect(url_for("events.challenge", event_id=event.id, dialog_state="fail"))
 
     transaction.type = "answer"
     transaction.status = "success"
@@ -328,6 +301,4 @@ def submit_challenge(event_id, challenge_id):
     transaction.user = current_user
     transaction.save()
 
-    return redirect(
-        url_for("events.challenge", event_id=event.id, dialog_state="success")
-    )
+    return redirect(url_for("events.challenge", event_id=event.id, dialog_state="success"))
