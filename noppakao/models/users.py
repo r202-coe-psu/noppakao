@@ -242,8 +242,8 @@ class User(me.Document, UserMixin):
     def get_avatar_url(self):
         if self.avatar:
             return url_for(
-                "accounts.get_avatar",
-                team_id=self.id,
+                "accounts.get_user_avatar",
+                user_id=self.id,
                 filename=self.avatar.filename,
             )
         else:
