@@ -1,7 +1,7 @@
-import mongoengine as me
 import datetime
-from bson import ObjectId
 
+import mongoengine as me
+from bson import ObjectId
 from flask_login import current_user
 
 STATUS_CHOICES = ["active", "disactive"]
@@ -19,54 +19,173 @@ class Event(me.Document):
 
     flag_prefix = me.StringField(required=True)
 
-    started_date = me.DateTimeField(
-        required=True, default=datetime.datetime.now, auto_now=True
-    )
-    ended_date = me.DateTimeField(
-        required=True, default=datetime.datetime.now, auto_now=True
-    )
+    started_date = me.DateTimeField(required=True, default=datetime.datetime.now, auto_now=True)
+    ended_date = me.DateTimeField(required=True, default=datetime.datetime.now, auto_now=True)
 
-    register_started_date = me.DateTimeField(
-        required=True, default=datetime.datetime.now
-    )
+    register_started_date = me.DateTimeField(required=True, default=datetime.datetime.now)
     register_ended_date = me.DateTimeField(required=True, default=datetime.datetime.now)
 
-    publish_started_date = me.DateTimeField(
-        required=True, default=datetime.datetime.now
-    )
+    publish_started_date = me.DateTimeField(required=True, default=datetime.datetime.now)
     publish_ended_date = me.DateTimeField(required=True, default=datetime.datetime.now)
 
     status = me.StringField(default="active", choices=STATUS_CHOICES)  # บอกถึงสถานะ
-    created_date = me.DateTimeField(
-        required=True, default=datetime.datetime.now, auto_now=True
-    )
+    created_date = me.DateTimeField(required=True, default=datetime.datetime.now, auto_now=True)
     created_by = me.ReferenceField("User", dbref=True, required=True)  # คนสุดท้ายที่กดอัพเดต
-    updated_date = me.DateTimeField(
-        required=True, default=datetime.datetime.now, auto_now=True
-    )  # เวลาการสร้างหรืออัพเดตล่าสุด
+    updated_date = me.DateTimeField(required=True, default=datetime.datetime.now, auto_now=True)  # เวลาการสร้างหรืออัพเดตล่าสุด
     updated_by = me.ReferenceField("User", dbref=True, required=True)  # คนสุดท้ายที่กดอัพเดต
 
+    def get_challenge_ids(self):
+        from . import request_cache
+
+        def compute():
+            challenge_ids = []
+            for event_challenge in EventChallenge.objects(event=self, status="active").only("challenge"):
+                challenge_id = request_cache.reference_id(event_challenge._data.get("challenge"))
+                if challenge_id and challenge_id not in challenge_ids:
+                    challenge_ids.append(challenge_id)
+
+            return challenge_ids
+
+        return request_cache.request_memo(f"challenge-ids:{self.id}", compute)
+
     def get_challenge_categories(self):
-        from . import categories
+        from . import categories, challenges, request_cache
 
-        event_challenges = EventChallenge.objects(event=self, status="active")
-        event_categories = []
-        for event_challenge in event_challenges:
-            if event_challenge.challenge.category not in event_categories:
-                event_categories.append(event_challenge.challenge.category)
+        def compute():
+            challenge_ids = self.get_challenge_ids()
+            if not challenge_ids:
+                return []
 
-        return event_categories
+            category_by_challenge = {
+                challenge.id: request_cache.reference_id(challenge._data.get("category"))
+                for challenge in challenges.Challenge.objects(id__in=challenge_ids).only("category")
+            }
+
+            category_ids = []
+            for challenge_id in challenge_ids:
+                category_id = category_by_challenge.get(challenge_id)
+                if category_id and category_id not in category_ids:
+                    category_ids.append(category_id)
+
+            found = {category.id: category for category in categories.Category.objects(id__in=category_ids)}
+            return [found[i] for i in category_ids if i in found]
+
+        return request_cache.request_memo(f"challenge-categories:{self.id}", compute)
+
+    def get_challenge_resources_map(self):
+        from . import challenges, request_cache
+
+        def compute():
+            challenge_ids = self.get_challenge_ids()
+            if not challenge_ids:
+                return {}
+
+            resources = {}
+            for resource in challenges.ChallengeResource.objects(challenge__in=challenge_ids, status="active"):
+                challenge_id = request_cache.reference_id(resource._data.get("challenge"))
+                resources.setdefault(challenge_id, []).append(resource)
+
+            return resources
+
+        return request_cache.request_memo(f"challenge-resources-map:{self.id}", compute)
+
+    def get_all_event_challenges(self):
+        from . import request_cache
+
+        def compute():
+            return list(EventChallenge.objects(event=self, status="active").select_related(max_depth=1))
+
+        return request_cache.request_memo(f"all-event-challenges:{self.id}", compute)
 
     def get_event_challenges(self, category):
-        from . import challenges
+        from . import request_cache
 
-        challenges_in_category = challenges.Challenge.objects(category=category)
+        category_id = getattr(category, "id", category)
 
-        event_challenges = EventChallenge.objects(
-            event=self, status="active", challenge__in=challenges_in_category
-        )
+        def compute():
+            return [
+                event_challenge
+                for event_challenge in self.get_all_event_challenges()
+                if request_cache.reference_id(getattr(event_challenge.challenge, "_data", {}).get("category")) == category_id
+            ]
 
-        return event_challenges
+        return request_cache.request_memo(f"event-challenges:{self.id}:{category_id}", compute)
+
+    def get_current_team(self):
+        """ทีมของ current_user ใน event นี้ หาครั้งเดียวต่อ request"""
+        from . import request_cache
+        from .teams import Team
+
+        def compute():
+            return Team.objects(members__in=[current_user], status="active", event=self).first()
+
+        return request_cache.request_memo(f"current-team:{self.id}:{getattr(current_user, 'id', None)}", compute)
+
+    def get_challenge_state(self):
+        from noppakao import models
+
+        from . import request_cache
+
+        def compute():
+            solved_status = ["success", "first_blood"]
+
+            event_challenge_ids = [
+                event_challenge.id for event_challenge in EventChallenge.objects(event=self, status="active").only("id")
+            ]
+
+            if not event_challenge_ids:
+                return {"solve_counts": {}, "solved": set(), "hinted": set()}
+
+            def group_by_event_challenge(match):
+                pipeline = [
+                    {"$match": match},
+                    {"$group": {"_id": "$event_challenge", "total": {"$sum": 1}}},
+                ]
+                return list(models.Transaction.objects.aggregate(pipeline))
+
+            # จำนวนคนที่แก้ได้ต่อโจทย์ นับรวมทุกคนใน event
+            solve_counts = {
+                str(row["_id"]): row["total"]
+                for row in group_by_event_challenge(
+                    {
+                        "event_challenge": {"$in": event_challenge_ids},
+                        "status": {"$in": solved_status},
+                        "event": self.id,
+                    }
+                )
+            }
+
+            if self.type == "team":
+                team = self.get_current_team()
+                owner = {"team": team.id if team else None}
+            else:
+                owner = {"user": getattr(current_user, "id", None)}
+
+            solved = {
+                str(row["_id"])
+                for row in group_by_event_challenge(
+                    {
+                        "event_challenge": {"$in": event_challenge_ids},
+                        "status": {"$in": solved_status},
+                        **owner,
+                    }
+                )
+            }
+
+            hinted = {
+                str(row["_id"])
+                for row in group_by_event_challenge(
+                    {
+                        "event_challenge": {"$in": event_challenge_ids},
+                        "type": "hint",
+                        **owner,
+                    }
+                )
+            }
+
+            return {"solve_counts": solve_counts, "solved": solved, "hinted": hinted}
+
+        return request_cache.request_memo(f"challenge-state:{self.id}:{getattr(current_user, 'id', None)}", compute)
 
     def team_rank(self):
         from noppakao import models
@@ -232,9 +351,7 @@ class Event(me.Document):
         result = list(models.Transaction.objects.aggregate(pipeline))
         result_fail = list(models.Transaction.objects.aggregate(pipeline_fail))
         if result and result_fail:
-            return result[0].get("total_score", 0) + result_fail[0].get(
-                "total_score", 0
-            )
+            return result[0].get("total_score", 0) + result_fail[0].get("total_score", 0)
         if result:
             return result[0].get("total_score", 0)
 
@@ -249,13 +366,9 @@ class EventCompetitor(me.Document):
     team_name = me.StringField(default="")
 
     status = me.StringField(default="active", choices=STATUS_CHOICES)  # บอกถึงสถานะ
-    created_date = me.DateTimeField(
-        required=True, default=datetime.datetime.now, auto_now=True
-    )
+    created_date = me.DateTimeField(required=True, default=datetime.datetime.now, auto_now=True)
     created_by = me.ReferenceField("User", dbref=True, required=True)  # คนสุดท้ายที่กดอัพเดต
-    updated_date = me.DateTimeField(
-        required=True, default=datetime.datetime.now, auto_now=True
-    )  # เวลาการสร้างหรืออัพเดตล่าสุด
+    updated_date = me.DateTimeField(required=True, default=datetime.datetime.now, auto_now=True)  # เวลาการสร้างหรืออัพเดตล่าสุด
     updated_by = me.ReferenceField("User", dbref=True, required=True)  # คนสุดท้ายที่กดอัพเดต
 
 
@@ -270,16 +383,13 @@ class EventChallenge(me.Document):
     hint_score = me.IntField(required=True, default=0, max=0)  # ใส่ค่าติดลบไปเลย
     fail_score = me.IntField(required=True, default=0, max=0)  # ใส่ค่าติดลบไปเลย
 
-    status = me.StringField(
-        default="active", choices=STATUS_CHOICES, required=True
-    )  # บอกถึงสถานะ
+    status = me.StringField(default="active", choices=STATUS_CHOICES, required=True)  # บอกถึงสถานะ
     created_by = me.ReferenceField("User", dbref=True, required=True)
     created_date = me.DateField(required=True, default=datetime.datetime.now)
     updated_date = me.DateField(required=True, default=datetime.datetime.now)
     updated_by = me.ReferenceField("User", dbref=True, required=True)
 
     def check_answer(self, answer):
-        from noppakao import models
 
         if self.challenge.answer_type == "flag":
             flag = self.event.flag_prefix + "{" + self.challenge.answer + "}"
@@ -292,23 +402,27 @@ class EventChallenge(me.Document):
         return False
 
     def total_solve_challenge(self):
-        from noppakao import models
+        return self.event.get_challenge_state()["solve_counts"].get(str(self.id), 0)
 
-        solve_challenges = models.Transaction.objects(
-            event_challenge=self,
-            status__in=["success", "first_blood"],
-            event=self.event,
-        )
+    def is_solved(self):
 
-        return len(solve_challenges)
+        return str(self.id) in self.event.get_challenge_state()["solved"]
+
+    def get_challenge_resources(self):
+        # อ่านจากชุดที่โหลดมาทั้ง event แล้ว แทนที่จะ query แยกทีละโจทย์
+        from . import request_cache
+
+        challenge_id = request_cache.reference_id(self._data.get("challenge"))
+        return self.event.get_challenge_resources_map().get(challenge_id, [])
+
+    def has_hint_unlocked(self, event_id=None):
+        return str(self.id) in self.event.get_challenge_state()["hinted"]
 
     def solve_challenge(self):
         from noppakao import models
 
         if self.event.type == "team":
-            team = models.Team.objects(
-                members__in=[current_user], status="active", event=self.event
-            ).first()
+            team = models.Team.objects(members__in=[current_user], status="active", event=self.event).first()
             solve_challenges = models.Transaction.objects(
                 event_challenge=self,
                 status__in=["success", "first_blood"],
@@ -329,16 +443,10 @@ class EventChallenge(me.Document):
 
         event = models.Event.objects(id=event_id).first()
         if event.type == "team":
-            team = models.Team.objects(
-                members__in=[current_user], status="active", event=event
-            ).first()
-            trasaction = models.Transaction.objects(
-                event_challenge=self, type="hint", team=team
-            ).first()
+            team = models.Team.objects(members__in=[current_user], status="active", event=event).first()
+            trasaction = models.Transaction.objects(event_challenge=self, type="hint", team=team).first()
         else:
-            trasaction = models.Transaction.objects(
-                event_challenge=self, type="hint", user=current_user
-            ).first()
+            trasaction = models.Transaction.objects(event_challenge=self, type="hint", user=current_user).first()
 
         return trasaction
 
@@ -352,9 +460,7 @@ class EventRole(me.Document):
     event = me.ReferenceField("Event", dbref=True, required=True)
     user = me.ReferenceField("User", dbref=True, required=True)
 
-    status = me.StringField(
-        default="active", choices=STATUS_CHOICES, required=True
-    )  # บอกถึงสถานะ
+    status = me.StringField(default="active", choices=STATUS_CHOICES, required=True)  # บอกถึงสถานะ
     created_by = me.ReferenceField("User", dbref=True, required=True)
     created_date = me.DateField(required=True, default=datetime.datetime.now)
     updated_date = me.DateField(required=True, default=datetime.datetime.now)

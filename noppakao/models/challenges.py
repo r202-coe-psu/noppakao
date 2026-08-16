@@ -50,4 +50,9 @@ class Challenge(me.Document):
         return value
 
     def get_challenge_resources(self):
-        return ChallengeResource.objects(challenge=self, status="active")
+        from . import request_cache
+
+        def compute():
+            return list(ChallengeResource.objects(challenge=self, status="active"))
+
+        return request_cache.request_memo(f"challenge-resources:{self.id}", compute)

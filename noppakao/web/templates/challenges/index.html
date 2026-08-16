@@ -96,7 +96,7 @@
                 <td class="text-center">{{ event_challenge.hint_score }}</td>
                 <td class="text-center">{{ event_challenge.fail_score }}</td>
                 <td class="text-center">{{ event_challenge.total_solve_challenge() }}</td>
-                {% if event_challenge.solve_challenge() %}
+                {% if event_challenge.is_solved() %}
                 <td><i class="ph-fill ph-trophy" style="color: rgb(255, 196, 0);"></i></td>
                 {% else %}
                 <td><i class="ph-fill ph-clock"></i>
@@ -135,9 +135,9 @@
                       </p>
                       {% endif %}
 
-                      {% if challenge.get_challenge_resources() %}
+                      {% if event_challenge.get_challenge_resources() %}
                       <p>Files:</p>
-                      {% for challenge_resource in challenge.get_challenge_resources() %}
+                      {% for challenge_resource in event_challenge.get_challenge_resources() %}
                       <p>
                         <a href="{{ url_for('challenges.download', challenge_resource_id=challenge_resource.id, event_id=event.id) }}"
                           target="_blank" class="group flex flex-row items-center text-primary">
@@ -159,12 +159,12 @@
                       {% endif %}
                     </div>
 
-                    {% if event_challenge.check_transaction_hint(event.id) %}
+                    {% if event_challenge.has_hint_unlocked(event.id) %}
                     <div id="response-{{ event_challenge.id }}"
                       class="p-4 mb-4 bg-base-100 border border-gray-300 rounded-lg border-t-2 border-t-primary">
                       {{ event_challenge.challenge.hint }}
                     </div>
-                    {% elif not event_challenge.solve_challenge() and event_challenge.challenge.hint %}
+                    {% elif not event_challenge.is_solved() and event_challenge.challenge.hint %}
                     <div id="hintbtn-{{ event_challenge.id }}" class="w-full flex justify-center items-center"
                       onclick="ClickHint('{{event.id}}','{{ event_challenge.id }}')">
                       <div class="visible w-full">
@@ -195,7 +195,7 @@
                     {% endif %}
 
 
-                    {% if not event_challenge.solve_challenge() %}
+                    {% if not event_challenge.is_solved() %}
                     <form method="GET"
                       action="{{ url_for('events.submit_challenge', event_id=event.id, challenge_id=event_challenge.id) }}">
                       <div class="flex flex-row gap-2 mt-2">
