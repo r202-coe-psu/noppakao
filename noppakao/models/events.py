@@ -82,7 +82,7 @@ class Event(me.Document):
 
             resources = {}
             for resource in challenges.ChallengeResource.objects(challenge__in=challenge_ids, status="active"):
-                challenge_id = request_cache.reference_id(resource._data.get("challenge"))
+                challenge_id = str(request_cache.reference_id(resource._data.get("challenge")))
                 resources.setdefault(challenge_id, []).append(resource)
 
             return resources
@@ -100,13 +100,13 @@ class Event(me.Document):
     def get_event_challenges(self, category):
         from . import request_cache
 
-        category_id = getattr(category, "id", category)
+        category_id = str(getattr(category, "id", category))
 
         def compute():
             return [
                 event_challenge
                 for event_challenge in self.get_all_event_challenges()
-                if request_cache.reference_id(getattr(event_challenge.challenge, "_data", {}).get("category")) == category_id
+                if str(request_cache.reference_id(getattr(event_challenge.challenge, "_data", {}).get("category"))) == category_id
             ]
 
         return request_cache.request_memo(f"event-challenges:{self.id}:{category_id}", compute)
@@ -412,7 +412,7 @@ class EventChallenge(me.Document):
         # อ่านจากชุดที่โหลดมาทั้ง event แล้ว แทนที่จะ query แยกทีละโจทย์
         from . import request_cache
 
-        challenge_id = request_cache.reference_id(self._data.get("challenge"))
+        challenge_id = str(request_cache.reference_id(self._data.get("challenge")))
         return self.event.get_challenge_resources_map().get(challenge_id, [])
 
     def has_hint_unlocked(self, event_id=None):

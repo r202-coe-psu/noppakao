@@ -13,8 +13,6 @@ from flask_login import current_user, login_required
 from noppakao import models
 from noppakao.web import forms
 
-from .. import caches
-
 module = Blueprint("events", __name__, url_prefix="/events")
 
 
@@ -203,7 +201,6 @@ def join_team(event_id, team_id):
 
 @module.route("/<event_id>/challenge", methods=["GET", "POST"])
 @login_required
-@caches.cache.cached(timeout=60, query_string=True)
 def challenge(event_id):
     event = models.Event.objects(id=event_id).first()
     if not current_user.check_team_event(event_id) and event.type == "team" and not current_user.has_roles("admin"):
