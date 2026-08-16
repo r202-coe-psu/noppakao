@@ -160,6 +160,14 @@ def index(event_id):
                 continue
 
             user_info["team_image"] = team.get_logo_url()
+            if user.organization:
+                user_info["organization_id"] = str(user.organization.id)
+                user_info["organization_image"] = user.organization.get_logo_url()
+                user_info["organization_name"] = user.organization.name
+            else:
+                user_info["organization_id"] = None
+                user_info["organization_image"] = None
+                user_info["organization_name"] = None
 
             users_transaction_list.append(user_info)
         users_transaction = users_transaction_list
@@ -170,7 +178,7 @@ def index(event_id):
             team_info["team"] = models.Team.objects(id=team_info["team_id"]).first()
             team_info["organizations"] = []
             for member in team_info["team"].members:
-                if member.organization not in team_info["organizations"]:
+                if member.organization and member.organization not in team_info["organizations"]:
                     team_info["organizations"].append(member.organization)
 
             teams_transaction_list.append(team_info)
@@ -242,6 +250,14 @@ def index(event_id):
                 continue
 
             user_info["team_image"] = user.get_avatar_url()
+            if user.organization:
+                user_info["organization_id"] = str(user.organization.id)
+                user_info["organization_image"] = user.organization.get_logo_url()
+                user_info["organization_name"] = user.organization.name
+            else:
+                user_info["organization_id"] = None
+                user_info["organization_image"] = None
+                user_info["organization_name"] = None
 
             users_transaction_list.append(user_info)
         users_transaction = users_transaction_list
@@ -391,6 +407,14 @@ def publish_dashboard(event_id):
                 continue
 
             user_info["team_image"] = team.get_logo_url()
+            if user.organization:
+                user_info["organization_id"] = str(user.organization.id)
+                user_info["organization_image"] = user.organization.get_logo_url()
+                user_info["organization_name"] = user.organization.name
+            else:
+                user_info["organization_id"] = None
+                user_info["organization_image"] = None
+                user_info["organization_name"] = None
 
             users_transaction_list.append(user_info)
         users_transaction = users_transaction_list
@@ -401,7 +425,7 @@ def publish_dashboard(event_id):
             team_info["team"] = models.Team.objects(id=team_info["team_id"]).first()
             team_info["organizations"] = []
             for member in team_info["team"].members:
-                if member.organization not in team_info["organizations"]:
+                if member.organization and member.organization not in team_info["organizations"]:
                     team_info["organizations"].append(member.organization)
 
             teams_transaction_list.append(team_info)
@@ -457,6 +481,14 @@ def publish_dashboard(event_id):
                 continue
 
             user_info["team_image"] = user.get_avatar_url()
+            if user.organization:
+                user_info["organization_id"] = str(user.organization.id)
+                user_info["organization_image"] = user.organization.get_logo_url()
+                user_info["organization_name"] = user.organization.name
+            else:
+                user_info["organization_id"] = None
+                user_info["organization_image"] = None
+                user_info["organization_name"] = None
 
             users_transaction_list.append(user_info)
         users_transaction = users_transaction_list
