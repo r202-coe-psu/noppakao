@@ -29,8 +29,9 @@
               <thead class="bg-primary/80 text-white">
                 <tr>
                   <th class="w-16">Ranking</th>
+                  <th class="w-40">Organization</th>
                   <th class="w-16">Team</th>
-                  <th class="w-2/3">Name & Organization</th>
+                  <th class="w-auto">Name & Organization</th>
                   <th class="text-left w-20">Score</th>
                 </tr>
               </thead>
@@ -47,6 +48,17 @@
                     {% else %}
                     <span class="text-lg ml-2">{{ loop.index }}</span>
                     {% endif %}
+                  </td>
+                  <td>
+                    <div class="flex flex-nowrap gap-1">
+                      {% for org in team.organizations %}
+                      <div class="avatar tooltip" data-tip="{{ org.name }}">
+                        <div class="w-9 h-9 rounded">
+                          <img src="{{ org.get_logo_url() }}" alt="{{ org.name }}">
+                        </div>
+                      </div>
+                      {% endfor %}
+                    </div>
                   </td>
                   <td>
                     <div class="avatar">
@@ -86,6 +98,7 @@
               <thead class="bg-primary/80 text-white">
                 <tr>
                   <th class="w-16">Ranking</th>
+                  <th class="w-16">Organization</th>
                   <th>Name</th>
                   <th>Team</th>
                   <th></th>
@@ -97,6 +110,17 @@
                 <tr>
                   <td>
                     <span class="text-lg ml-2">{{ loop.index }}</span>
+                  </td>
+                  <td>
+                    {% if user.organization_id %}
+                    <div class="avatar tooltip" data-tip="{{ user.organization_name }}">
+                      <div class="w-9 h-9 rounded">
+                        <img src="{{ user.organization_image }}" alt="org logo">
+                      </div>
+                    </div>
+                    {% else %}
+                    <span class="opacity-70 text-xs">No Org</span>
+                    {% endif %}
                   </td>
                   <td>{{ user.display_name }}</td>
                   <td>
