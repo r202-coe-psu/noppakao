@@ -1,0 +1,134 @@
+{% if current_user.is_authenticated %}
+<div id="toggleBtn" class="fixed left-68 top-22 w-7 h-7 bg-[#E4E4E4] rounded-sm cursor-pointer transition-all z-10">
+  <i class="absolute inset-0 flex items-center justify-center ph-bold ph-caret-left text-xl transition-transform"
+    id="toggleIcon"></i>
+</div>
+<nav id="sidebar"
+  class="h-screen sticky self-start top-0 px-5 py-7 bg-[#133c6d] justify-between flex flex-col transition-all w-72 overflow-hidden text-nowrap">
+  <div class="flex flex-col gap-16">
+    <header>
+      <div class="inline-flex items-center gap-4">
+        {% if not current_user.has_roles('admin') %}
+        <img class="w-11 rounded-lg bg-white" src="{{ url_for('static', filename='images/coe-no-text.png') }}"
+          alt="psu-coe-logo">
+        {% endif %}
+
+        <div class="sidebar-text transition-all">
+          <div class="font-bold text-2xl text-white">COE CTF</div>
+          {% if current_user.has_roles('admin') %}
+          <span class="badge badge-sm bg-[#65b6de] text-white">Admin View</span>
+          {% endif %}
+        </div>
+      </div>
+    </header>
+    <main id="sidebar-menu">
+      <ul class="flex flex-col gap-2 text-white font-semibold text-lg">
+        {% if current_user.has_roles('admin') %}
+        <li class="h-12">
+          <a href="{{ url_for('admin.events.index') }}"
+            class="{{ 'bg-[#65b6de]' if request.endpoint and request.endpoint.startswith('admin.events.') else 'hover:bg-white/10' }} flex items-center gap-4 p-2 h-full rounded-md transition-colors">
+            <i class="ph ph-calendar-check text-2xl"></i>
+            <span class="sidebar-text transition-opacity">Events</span>
+          </a>
+        </li>
+        <li class="h-12">
+          <a href="{{ url_for('admin.courses.index') }}"
+            class="{{ 'bg-[#65b6de]' if request.endpoint and request.endpoint.startswith('admin.courses.') else 'hover:bg-white/10' }} flex items-center gap-4 p-2 h-full rounded-md transition-colors">
+            <i class="ph ph-brain text-2xl"></i>
+            <span class="sidebar-text transition-opacity">Course</span>
+          </a>
+        </li>
+        <li class="h-12">
+          <a href="{{ url_for('admin.categories.index') }}"
+            class="{{ 'bg-[#65b6de]' if request.endpoint and request.endpoint.startswith('admin.categories.') else 'hover:bg-white/10' }} flex items-center gap-4 p-2 h-full rounded-md transition-colors">
+            <i class="ph ph-squares-four text-2xl"></i>
+            <span class="sidebar-text transition-opacity">Categories</span>
+          </a>
+        </li>
+        <li class="h-12">
+          <a href="{{ url_for('admin.challenges.index') }}"
+            class="{{ 'bg-[#65b6de]' if request.endpoint and request.endpoint.startswith('admin.challenges.') else 'hover:bg-white/10' }} flex items-center gap-4 p-2 h-full rounded-md transition-colors">
+            <i class="ph ph-flag text-2xl"></i>
+            <span class="sidebar-text transition-opacity">Challenges</span>
+          </a>
+        </li>
+        <li class="h-12">
+          <a href="{{ url_for('admin.organizations.index') }}"
+            class="{{ 'bg-[#65b6de]' if request.endpoint and request.endpoint.startswith('admin.organizations.') else 'hover:bg-white/10' }} flex items-center gap-4 p-2 h-full rounded-md transition-colors">
+            <i class="ph ph-buildings text-2xl"></i>
+            <span class="sidebar-text transition-opacity">Organizations</span>
+          </a>
+        </li>
+        <li class="h-12">
+          <a href="{{ url_for('admin.accounts.index') }}"
+            class="{{ 'bg-[#65b6de]' if request.endpoint and request.endpoint.startswith('admin.accounts.') else 'hover:bg-white/10' }} flex items-center gap-4 p-2 h-full rounded-md transition-colors">
+            <i class="ph ph-users text-2xl"></i>
+            <span class="sidebar-text transition-opacity">User Management</span>
+          </a>
+        </li>
+        {% else %}
+        <li class="h-12">
+          <a href="{{ url_for('events.index') }}"
+            class="{{ 'bg-[#65b6de]' if request.endpoint and request.endpoint.startswith('events.') else 'hover:bg-white/10' }} flex items-center gap-4 p-2 h-full rounded-md transition-colors">
+            <i class="ph ph-calendar-check text-2xl"></i>
+            <span class="sidebar-text transition-opacity">Events</span>
+          </a>
+        </li>
+        <li class="h-12">
+          <a href="{{ url_for('organizations.information') }}"
+            class="{{ 'bg-[#65b6de]' if request.endpoint and request.endpoint.startswith('organizations.') else 'hover:bg-white/10' }} flex items-center gap-4 p-2 h-full rounded-md transition-colors">
+            <i class="ph ph-buildings text-2xl"></i>
+            <span class="sidebar-text transition-opacity">Organizations</span>
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+    </main>
+  </div>
+  <footer>
+    {# ข้อมูล IP กับเวลา เดิมอยู่บน navbar ที่ถูกแทนที่ด้วย sidebar นี้ #}
+    <div class="sidebar-text flex flex-col gap-1 p-2 mb-2 text-white/60 text-sm font-semibold transition-opacity">
+      <span class="flex flex-row items-center gap-2">
+        <i class="ph ph-monitor"></i>
+        {{ request.headers.get("X-Forwarded-For", request.remote_addr) }}
+      </span>
+      <span id="current-time" class="flex flex-row items-center gap-2"></span>
+    </div>
+    {% if current_user.has_roles('admin') %}
+    <a href="{{ url_for('course.dashboard') }}"
+      class="flex flex-row items-center font-semibold text-lg p-2 gap-2 text-white cursor-pointer hover:bg-white/10 transition-colors rounded-md mb-2">
+      <i class="ph-bold ph-arrows-clockwise text-2xl"></i>
+      <div class="sidebar-text transition-opacity">Switch to User View</div>
+    </a>
+    {% endif %}
+    <a href="{{ url_for('accounts.index')}}">
+      <div
+        class="sidebar-text flex flex-col mb-2 font-bold p-2 transition-all text-white cursor-pointer hover:bg-white/10 rounded-md">
+        <p class="text-white text-lg truncate">{{ current_user.first_name }} {{ current_user.last_name }}</p>
+        <p class="text-white/60 text-md font-semibold truncate">
+          {{ current_user.email }}
+        </p>
+      </div>
+    </a>
+    <a href="{{ url_for('accounts.logout') }}"
+      class="flex flex-row items-center font-semibold text-lg p-2 gap-2 text-white cursor-pointer hover:bg-white/10 transition-colors rounded-md">
+      <i class="ph-bold ph-sign-out text-2xl text-red-500"></i>
+      <div class="sidebar-text transition-opacity">Log Out</div>
+    </a>
+  </footer>
+</nav>
+
+<script type="text/javascript">
+  function updateTime() {
+    const now = new Date();
+    let hours = now.getUTCHours() + 7;
+    let minutes = now.getUTCMinutes();
+    hours = hours % 24; // Ensure hours don't exceed 24
+    hours = hours < 10 ? '0' + hours : hours;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    document.getElementById('current-time').innerHTML = `<i class="ph ph-clock"></i>${hours}:${minutes} (UTC+7)`;
+  }
+  setInterval(updateTime, 1000);
+  updateTime();
+</script>
+{% endif %}

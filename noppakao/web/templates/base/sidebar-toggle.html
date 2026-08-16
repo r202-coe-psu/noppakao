@@ -1,0 +1,26 @@
+{# สคริปต์ยืด/หด sidebar ใช้ร่วมกันระหว่าง layout ฝั่ง user กับ admin #}
+<script>
+  (function () {
+    const toggleBtn = document.getElementById('toggleBtn');
+    const sidebar = document.getElementById('sidebar');
+    const toggleIcon = document.getElementById('toggleIcon');
+    const texts = document.querySelectorAll('.sidebar-text');
+
+    if (!toggleBtn || !sidebar) return;
+
+    let collapsed = false;
+    toggleBtn.addEventListener('click', () => {
+      collapsed = !collapsed;
+      if (collapsed) {
+        sidebar.classList.replace('w-72', 'w-[80px]');
+        toggleBtn.classList.replace('left-68', 'left-16');
+        texts.forEach(t => t.classList.add('opacity-0'));
+      } else {
+        sidebar.classList.replace('w-[80px]', 'w-72');
+        toggleBtn.classList.replace('left-16', 'left-68');
+        texts.forEach(t => t.classList.remove('opacity-0'));
+      }
+      toggleIcon.classList.toggle('rotate-180');
+    });
+  })();
+</script>
