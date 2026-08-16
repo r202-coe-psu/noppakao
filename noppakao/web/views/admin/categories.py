@@ -24,8 +24,20 @@ module = Blueprint("categories", __name__, url_prefix="/categories")
 @module.route("/")
 @acl.roles_required("admin")
 def index():
-    categories = models.Category.objects().order_by("status")
-    return render_template("/admin/categories/index.html", categories=categories)
+    form = forms.categories.SearchCategoryForm(request.args)
+    form.status.choices = [("", "All")] + [
+        ("active", "Active"),
+        ("disactive", "Disactive"),
+    ]
+    query = {}
+    if form.status.data:
+        query["status"] = form.status.data
+    categories = models.Category.objects(**query).order_by("status")
+    if form.name.data:
+        categories = categories.filter(name__icontains=form.name.data)
+    return render_template(
+        "/admin/categories/index.html", categories=categories, form=form
+    )
 
 
 @module.route(

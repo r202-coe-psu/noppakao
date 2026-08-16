@@ -1,25 +1,22 @@
 import datetime
-import mongoengine as me
 
 from flask import (
     Blueprint,
-    render_template,
-    url_for,
-    request,
-    session,
-    redirect,
     Response,
+    redirect,
+    render_template,
+    request,
     send_file,
-    flash,
+    session,
+    url_for,
 )
-
-from flask_login import login_user, logout_user, login_required, current_user
+from flask_bcrypt import Bcrypt
+from flask_login import current_user, login_required, login_user, logout_user
 
 from noppakao import models
-from noppakao.web import forms, acl
-from .. import oauth2
+from noppakao.web import forms
 
-from flask_bcrypt import Bcrypt
+from .. import oauth2
 
 bcrypt = Bcrypt()
 
@@ -30,9 +27,7 @@ module = Blueprint("accounts", __name__)
 @login_required
 def index():
     teams = models.Team.objects(status="active").order_by("-score", "updated_date")
-    users = models.User.objects(status="active", roles__ne="admin").order_by(
-        "-score", "updated_date"
-    )
+    users = models.User.objects(status="active", roles__ne="admin").order_by("-score", "updated_date")
     return render_template(
         "accounts/index.html",
         teams=teams,
@@ -84,23 +79,17 @@ def register():
     if not form.validate_on_submit():
         user.username = form.username.data
         print(form.errors)
-        return render_template(
-            "/accounts/register.html", form=form, user=user, msg_error=msg_error
-        )
+        return render_template("/accounts/register.html", form=form, user=user, msg_error=msg_error)
 
     check_user = models.User.objects(username=form.username.data)
     check_email = models.User.objects(email=form.email.data)
 
     if check_user and not "edit" in request.path:
         msg_error = "This user is already in use"
-        return render_template(
-            "/accounts/register.html", form=form, user=user, msg_error=msg_error
-        )
+        return render_template("/accounts/register.html", form=form, user=user, msg_error=msg_error)
     if check_email and not "edit" in request.path:
         msg_error = "This email is already in use"
-        return render_template(
-            "/accounts/register.html", form=form, user=user, msg_error=msg_error
-        )
+        return render_template("/accounts/register.html", form=form, user=user, msg_error=msg_error)
 
     display_name = form.display_name.data
     username = form.username.data
@@ -156,9 +145,7 @@ def login_oauth(name):
 
     scheme = request.environ.get("HTTP_X_FORWARDED_PROTO", "http")
 
-    redirect_uri = url_for(
-        "accounts.authorized_oauth", name=name, _external=True, _scheme=scheme
-    )
+    redirect_uri = url_for("accounts.authorized_oauth", name=name, _external=True, _scheme=scheme)
     response = None
     if name == "google":
         response = client.google.authorize_redirect(redirect_uri)
@@ -205,8 +192,7 @@ def edit_user():
     user = current_user._get_current_object()
     form = forms.accounts.EditUserForm(obj=user)
     form.organization.choices = [
-        (f"{organization.id}", f"{organization.name}")
-        for organization in models.Organization.objects(status="active")
+        (f"{organization.id}", f"{organization.name}") for organization in models.Organization.objects(status="active")
     ]
 
     if not form.validate_on_submit():
@@ -243,17 +229,14 @@ def setup_user():
     user = current_user
     msg_error = ""
     form.organization.choices = [("", "ไม่เลือก")] + [
-        (f"{organization.id}", f"{organization.name}")
-        for organization in models.Organization.objects(status="active")
+        (f"{organization.id}", f"{organization.name}") for organization in models.Organization.objects(status="active")
     ]
     if form.display_name.data:
         if models.User.objects(display_name=form.display_name.data).first():
             msg_error = "Can't use display name"
 
     if msg_error or not form.validate_on_submit():
-        return render_template(
-            "/accounts/setup_user.html", form=form, msg_error=msg_error
-        )
+        return render_template("/accounts/setup_user.html", form=form, msg_error=msg_error)
     if form.organization.data:
         organization = models.Organization.objects(id=form.organization.data).first()
         user.organization = organization
@@ -264,18 +247,20 @@ def setup_user():
     return redirect(url_for("index.index"))
 
 
-@module.route("/avatar/<filename>")
-@login_required
-def get_avatar(filename=""):
+@module.route("/avatar/<user_id>/<filename>")
+def get_user_avatar(user_id, filename=""):
     response = Response()
     response.status_code = 404
-    user = current_user._get_current_object()
-    if user.avatar:
-        response = send_file(
-            user.avatar,
-            download_name=user.avatar.filename,
-            mimetype=user.avatar.content_type,
-        )
+    try:
+        user = models.User.objects(id=user_id).first()
+        if user and user.avatar:
+            response = send_file(
+                user.avatar,
+                download_name=user.avatar.filename,
+                mimetype=user.avatar.content_type,
+            )
+    except Exception:
+        pass
     return response
 
 

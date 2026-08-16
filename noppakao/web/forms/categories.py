@@ -16,3 +16,11 @@ BaseCategoryForm = model_form(
 
 class CategoryForm(BaseCategoryForm):
     pass
+
+
+class SearchCategoryForm(FlaskForm):
+    class Meta:
+        csrf = False
+
+    name = fields.StringField("Name")
+    status = fields.SelectField("Status")
