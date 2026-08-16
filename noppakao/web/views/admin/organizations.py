@@ -23,9 +23,12 @@ module = Blueprint("organizations", __name__, url_prefix="/organizations")
 @module.route("/", methods=["GET", "POST"])
 @acl.roles_required("admin")
 def index():
+    form = forms.organizations.SearchOrganizationForm(request.args)
     organizations = models.Organization.objects(status="active")
+    if form.name.data:
+        organizations = organizations.filter(name__icontains=form.name.data)
     return render_template(
-        "admin/organizations/index.html", organizations=organizations
+        "admin/organizations/index.html", organizations=organizations, form=form
     )
 
 

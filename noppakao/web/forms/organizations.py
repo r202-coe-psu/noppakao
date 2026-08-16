@@ -40,3 +40,7 @@ class ChangeOrganizationForm(FlaskForm):
     organization = fields.SelectField(
         "Organization", validators=[validators.InputRequired()]
     )
+
+
+class SearchOrganizationForm(FlaskForm):
+    name = fields.StringField("Name")

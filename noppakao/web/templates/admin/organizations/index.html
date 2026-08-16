@@ -1,4 +1,5 @@
 {% extends "base/default-page.html" %}
+{% import '/base/html-renderer-refactor.html' as renderer %}
 
 {% block content %}
 <div class="flex flex-col gap-4">
@@ -10,6 +11,19 @@
         Create Organization
       </button>
     </a>
+  </div>
+  <div class="bg-base-200 p-4 rounded-box border border-base-300">
+    <form method="GET" class="flex flex-col sm:flex-row sm:items-end gap-2">
+      <div class="w-full sm:max-w-sm">
+        {{ renderer.base_render(form.name, placeholder="Search by name") }}
+      </div>
+      <div class="flex gap-2 sm:mb-2.5">
+        <button type="submit" class="btn btn-primary">
+          <i class="ph-bold ph-magnifying-glass mr-2"></i> Search
+        </button>
+        <a href="{{ url_for('admin.organizations.index') }}" class="btn btn-ghost">Clear</a>
+      </div>
+    </form>
   </div>
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
     {% for organization in organizations %}
