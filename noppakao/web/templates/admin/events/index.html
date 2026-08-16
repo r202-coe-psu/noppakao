@@ -6,12 +6,20 @@
 <div class="flex flex-col gap-4">
   <div class="flex justify-between items-center">
     <h1 class="text-2xl font-bold">Events</h1>
-    <a href="{{ url_for('admin.events.create_or_edit') }}">
-      <button class="btn btn-primary w-full">
-        <i class="ph-bold ph-plus"></i>
-        Create Event
-      </button>
-    </a>
+    <div class="flex items-center gap-2">
+      <a href="{{ url_for('events.dashboards') }}" target="_blank" rel="noopener noreferrer"
+        class="btn bg-[#364989] text-white hover:bg-[#2d3d73]">
+        <i class="ph-bold ph-chart-bar"></i>
+        View All Dashboards
+        <i class="ph ph-arrow-square-out text-white/60"></i>
+      </a>
+      <a href="{{ url_for('admin.events.create_or_edit') }}">
+        <button class="btn btn-primary w-full">
+          <i class="ph-bold ph-plus"></i>
+          Create Event
+        </button>
+      </a>
+    </div>
   </div>
   <div class="bg-base-200 p-4 rounded-box border border-base-300">
     <form method="GET" class="w-full">

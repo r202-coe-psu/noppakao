@@ -27,9 +27,11 @@ def dashboards():
             publish_started_date__lte=now,
             publish_ended_date__gte=now,
         )
+    events = events.order_by("-started_date")
     return render_template(
         "events/dashboards.html",
         events=events,
+        now=now,
     )
 
 
