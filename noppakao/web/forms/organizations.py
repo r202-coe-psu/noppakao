@@ -43,4 +43,7 @@ class ChangeOrganizationForm(FlaskForm):
 
 
 class SearchOrganizationForm(FlaskForm):
+    class Meta:
+        csrf = False
+
     name = fields.StringField("Name")

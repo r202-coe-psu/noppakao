@@ -121,12 +121,11 @@
 <script type="text/javascript">
   function updateTime() {
     const now = new Date();
-    let hours = now.getUTCHours() + 7;
-    let minutes = now.getUTCMinutes();
-    hours = hours % 24; // Ensure hours don't exceed 24
-    hours = hours < 10 ? '0' + hours : hours;
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-    document.getElementById('current-time').innerHTML = `<i class="ph ph-clock"></i>${hours}:${minutes} (UTC+7)`;
+    const timeStr = now.toLocaleTimeString('en-GB', { timeZone: 'Asia/Bangkok', hour: '2-digit', minute: '2-digit', hour12: false });
+    const el = document.getElementById('current-time');
+    if (el) {
+      el.innerHTML = `<i class="ph ph-clock"></i>${timeStr} (UTC+7)`;
+    }
   }
   setInterval(updateTime, 1000);
   updateTime();

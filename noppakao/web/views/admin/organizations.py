@@ -20,7 +20,7 @@ from ... import forms, acl, oauth2
 module = Blueprint("organizations", __name__, url_prefix="/organizations")
 
 
-@module.route("/", methods=["GET", "POST"])
+@module.route("/", methods=["GET"])
 @acl.roles_required("admin")
 def index():
     form = forms.organizations.SearchOrganizationForm(request.args)

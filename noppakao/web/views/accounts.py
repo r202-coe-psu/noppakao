@@ -247,32 +247,20 @@ def setup_user():
     return redirect(url_for("index.index"))
 
 
-@module.route("/avatar/<filename>")
-@login_required
-def get_avatar(filename=""):
-    response = Response()
-    response.status_code = 404
-    user = current_user._get_current_object()
-    if user.avatar:
-        response = send_file(
-            user.avatar,
-            download_name=user.avatar.filename,
-            mimetype=user.avatar.content_type,
-        )
-    return response
-
-
 @module.route("/avatar/<user_id>/<filename>")
 def get_user_avatar(user_id, filename=""):
     response = Response()
     response.status_code = 404
-    user = models.User.objects(id=user_id).first()
-    if user and user.avatar:
-        response = send_file(
-            user.avatar,
-            download_name=user.avatar.filename,
-            mimetype=user.avatar.content_type,
-        )
+    try:
+        user = models.User.objects(id=user_id).first()
+        if user and user.avatar:
+            response = send_file(
+                user.avatar,
+                download_name=user.avatar.filename,
+                mimetype=user.avatar.content_type,
+            )
+    except Exception:
+        pass
     return response
 
 

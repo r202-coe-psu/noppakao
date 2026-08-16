@@ -19,5 +19,8 @@ class CategoryForm(BaseCategoryForm):
 
 
 class SearchCategoryForm(FlaskForm):
+    class Meta:
+        csrf = False
+
     name = fields.StringField("Name")
     status = fields.SelectField("Status")
